@@ -1,0 +1,68 @@
+; ==UserScript==
+; Window name
+WINDOW_NAME=Nox
+; Coords within the window for the top left of the board.
+ORIGIN_X=56
+ORIGIN_Y=657
+;Size of a single square.
+SIZE_X=71
+SIZE_Y=71
+;Margin between bubbles
+OFFSET_X=19
+OFFSET_Y=19
+; Number of squares on board.
+SQUARES_X=7
+SQUARES_Y=7
+; Game Mode we are in
+PQ_MODE=1
+;0 = default
+;1 = Battle
+;2 = Train Mounts
+;3 = Research Spells
+;4 = Forge Items
+PQ_PRIORITY_1=w ;Skulls
+PQ_PRIORITY_2=w ;Skulls
+PQ_PRIORITY_3=s ;Scrolls
+PQ_PRIORITY_4=a ;Anvils
+; Show moves only? or actually move?
+PQ_SHOW=1
+
+;you should also do a search and replace for the above name
+PQ_W=831
+PQ_H=1380
+;window width & height
+
+
+
+getCoords(x_num, y_num, x_start, x_end, y_start, y_end)
+{
+global ORIGIN_X
+global ORIGIN_Y
+global SIZE_X
+global SIZE_Y
+global OFFSET_X
+global OFFSET_Y
+
+x_start := ORIGIN_X + (x_num - 1) * (SIZE_X+OFFSET_X)
+x_end   := x_start + SIZE_X
+y_start := ORIGIN_Y + (y_num - 1) * (SIZE_Y+OFFSET_Y)
+y_end   := y_start + SIZE_Y
+
+return  
+}
+
+
+IfWinActive, WINDOW_NAME
+{
+	ImageSearch, FoundX, FoundY, 40,40, 300, 300, b.png
+	MsgBox The icon was found at %FoundX%x%FoundY%
+}
+
+;CoordMode Pixel  ; Interprets the coordinates below as relative to the screen rather than the active window.
+; ImageSearch, FoundX, FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, *Icon3 %A_ProgramFiles%\SomeApp\SomeApp.exe
+; if ErrorLevel = 2
+    ; MsgBox Could not conduct the search.
+; else if ErrorLevel = 1
+    ; MsgBox Icon could not be found on the screen.
+; else
+    ; MsgBox The icon was found at %FoundX%x%FoundY%
