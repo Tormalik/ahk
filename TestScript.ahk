@@ -9,8 +9,8 @@
 SetBatchLines, -1
 Process, Priority,, High
 
-#Include GDIP.ahk
-#Include Gdip_ImageSearch.ahk
+#Include Lib/GDIP.ahk
+#Include Lib/Gdip_ImageSearch.ahk
 
 OnExit, EXIT_LABEL
 
@@ -19,9 +19,13 @@ gdipToken := Gdip_Startup()
 ;;SLEEP, 2000
 ;;bmpHaystack := Gdip_BitmapFromScreen()
 
-bmpHaystack := Gdip_CreateBitmapFromFile("IMG/T-002-haystack-novo.png")
-bmpNeedle := Gdip_CreateBitmapFromFile("IMG/T-002-needle-novo.png")
-RET := Gdip_ImageSearch(bmpHaystack,bmpNeedle,LIST,0,0,0,0,0,0xFFFFFF,1,0)
+bmpHaystack := Gdip_CreateBitmapFromFile("IMG/Clipboard03.png")
+bmpNeedle := Gdip_CreateBitmapFromFile("IMG/g.png")
+;  Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
+;  ,OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0,Trans=""
+;  ,SearchDirection=1,Instances=1,LineDelim="`n",CoordDelim=",") {
+
+RET := Gdip_ImageSearch(bmpHaystack,bmpNeedle,LIST,0,0,0,0,65,0xFFFFFF,1,0)
 Gdip_DisposeImage(bmpHaystack)
 Gdip_DisposeImage(bmpNeedle)
 Gdip_Shutdown(gdipToken)

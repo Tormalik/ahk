@@ -13,6 +13,20 @@
             "sourceMaps": true,
             "outDir": "${workspaceRoot}/out",
             "preLaunchTask": "npm"
+        },
+        {
+            "name": "Build",
+            "type": "miengine",
+            "request": "launch",
+            "launchOptionType": "Local",
+            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "targetArchitecture": "x64",
+            "program": "Gdip_ImageSearch.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "processId": "1500"
         }
     ]
 }
