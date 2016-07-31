@@ -1,16 +1,21 @@
 ; ==UserScript==
+
+#SingleInstance force
+CoordMode, Mouse, Screen
+CoordMode, Pixel, Screen
+
 ; Window name
 ;WINDOW_NAME=Nox
-WINDOW_NAME=Clipboard03.png - IrfanView (Zoom: 688 x 1270)
+WINDOW_NAME=Clipboard03.png - IrfanView
 ; Coords within the window for the top left of the board.
-ORIGIN_X=69
-ORIGIN_Y=712
+ORIGIN_X=63
+ORIGIN_Y=711
 ;Size of a single square.
 SIZE_X=71
 SIZE_Y=71
 ;Margin between bubbles
-OFFSET_X=19
-OFFSET_Y=19
+OFFSET_X=20
+OFFSET_Y=20
 ; Number of squares on board.
 SQUARES_X=7
 SQUARES_Y=7
@@ -31,30 +36,32 @@ PQ_SHOW=1
 SetBatchLines, -1
 Process, Priority,, High
 
-#Include Lib/GDIP.ahk
-#Include Lib/GDIP_all.ahk
-#Include Lib/GDIP_all.ahk
-#Include Lib/Gdip_ImageSearch.ahk
-OnExit, EXIT_LABEL
+;#Include Lib/GDIP.ahk
+#Include Lib/GDIP_All.ahk
+#Include Lib/GDIpHelper.ahk
+;#Include Lib/Gdip_ImageSearch.ahk
+#Include Lib/regionGetColor.ahk ;Import color funktionen
+#Include Lib/GetColor.ahk ;eigene color funktionen
 
-
+SetUpGDIP(2 * A_ScreenWidth)
 ;you should also do a search and replace for the above name
 PQ_W=831
 PQ_H=1380
 ;window width & height
-COLORS := {b: 0, g: 2, p: 1, r: 0, u: 2, w: 2}
-arr := Object()
+COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
+c2 := {}
+arr := []
 #IfWinActive Clipboard03.png - IrfanView
-	F1::searchimage("w",ORIGIN_X,ORIGIN_Y,ORIGIN_X + SQUARES_X * (SIZE_X+OFFSET_X),ORIGIN_Y + SQUARES_Y * (SIZE_Y+OFFSET_Y))
-	F2::readstate(arr)
-	F3::readstate2(arr)
-
+	F2::searchArea()
+	F3::readState(arr)
+	F4::compareColor(0x4C9112)
+	
 #IfWinActive Nox
-	F1::searchimage("w",ORIGIN_X,ORIGIN_Y,ORIGIN_X + SQUARES_X * (SIZE_X+OFFSET_X),ORIGIN_Y + SQUARES_Y * (SIZE_Y+OFFSET_Y))
-	F2::readstate(arr)
-	F3::readstate2(arr)
+	F3::readState(arr)
 
-getCoords(x_num, y_num, ByRef x_start, ByRef y_start, ByRef x_end, ByRef y_end)
+compareColor(col)
+
+getCoords(x_num, y_num, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0)
 {
 	global ORIGIN_X
 	global ORIGIN_Y
@@ -62,161 +69,88 @@ getCoords(x_num, y_num, ByRef x_start, ByRef y_start, ByRef x_end, ByRef y_end)
 	global SIZE_Y
 	global OFFSET_X
 	global OFFSET_Y
+	WinGetPos, wX, wY, , , %WINDOW_NAME%
+	margin := 30
+	w := SIZE_X - 2 * margin
+	h := SIZE_Y - 2 * margin
 
-	margin := 15
-	x_start := ORIGIN_X + (x_num - 1) * (SIZE_X+OFFSET_X) + margin
-	x_end   := x_start + SIZE_X - margin
-	y_start := ORIGIN_Y + (y_num - 1) * (SIZE_Y+OFFSET_Y) + margin
-	y_end   := y_start + SIZE_Y - margin
-
+	x_start := wX + ORIGIN_X + (x_num - 1) * (SIZE_X+OFFSET_X) + margin
+	x_end   := x_start + w
+	
+	y_start := wY + ORIGIN_Y + (y_num - 1) * (SIZE_Y+OFFSET_Y) + margin
+	y_end   := y_start + h
+	
 	return  
 }
 
+
+drawRect(col, x, y, w, h){
+global
+	StartDrawGDIP()
+	ClearDrawGDIP()
+
+	pBrush := Gdip_BrushCreateSolid(col)
+	Gdip_FillRectangle(G, pBrush, x, y, w, h)
+	Gdip_DeleteBrush(pBrush)
+
+	EndDrawGDIP()
+	return	
+}
+
+searchArea(){
+global
+	
+	Loop, 7
+	{
+	j := A_Index
+	Loop, 7
+	{
+	i := A_Index
+		getCoords(i, j, x, y, x2, y2, w, h)
+		drawRect(0x80FF0000, x, y, w, h)
+		;msgbox % x y
+	}
+	}
+	;msgbox pling
+	StartDrawGDIP()
+	ClearDrawGDIP()
+	EndDrawGDIP()
+}
+
 readState(ByRef arr){
-	global SQUARES_X
-	global SQUARES_Y
-	global COLORS
-
-	CoordMode, Pixel, Relative
+global
 	t1:= A_now
-	x_start = 0
-	x_end = 0
-	y_start = 0
-	y_end = 0
-	arr := Object()
-	c =
-	c = %c% 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n
+
+	arr	:= []
 	Loop, 7
 	{
-		y := A_Index
+		j := A_Index
 		Loop, 7
 		{
-			x := A_Index
-			arr[x, y] := 0
+			i := A_Index
+			
+			getCoords(i, j, x, y, a, b, w, h)
+			col := regionGetColor(x, y, w, h)
+			col := compareColor(col)
+			;msgbox % col
+			arr[i, j] := col
+			;drawRect(col, x_start, y_start, w, h)
 		}
 	}
-	For key, value in COLORS
-	{
-		Loop, 7
-		{
-			y := A_Index
-			Loop, 7
-			{
-				x := A_Index
-				if (arr[x, y] == 0){
-					CoordMode, Pixel, Relative
-					getCoords(x, y, x_start, y_start, x_end, y_end)
-					;MsgBox % x_start y_start x_end y_end
-					FoundX := 0
-					FoundY := 0
-					ImageSearch, FoundX, FoundY, x_start,y_start, x_end, y_end, *80 %A_ScriptDir%\IMG\%key%.png
-					if (FoundX != "")
-					{
-						arr[x, y] := key
-						;break
-					}
-				}
-			}
-		}
-	}
+
 	t2 := A_now
 	t2 -= t1, s
 	t:= timediff(t2)
 	showGrid(arr,SQUARES_X,t)
-	return
+	return arr
 }
 
-readState2(ByRef arr){
-	global SQUARES_X
-	global SQUARES_Y
-	global COLORS
-	
 
-	t1:= A_now
-	CoordMode, Pixel, Screen
-	gdipToken := Gdip_Startup()
-
-	x_start := 0
-	x_end 	:= 0
-	y_start := 0
-	y_end 	:= 0
-	arr 	:= Object()
-	c =
-	c = %c% 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n
-	
-	Loop, 7
-	{
-		y := A_Index
-		Loop, 7
-		{
-			x := A_Index
-			arr[x, y] := 0
-		}
-	}
-	WinGet, hwnd,ID, Clipboard03.png - IrfanView	
-	bmpHaystack := Gdip_BitmapFromHWND(hwnd)
-	msgbox %wx%x%wy% - %ww%x%wh% - %bmpHaystack%
-	For key, value in COLORS
-	{
-		path = IMG/%key%.png
-		bmpNeedle := Gdip_CreateBitmapFromFile(path)
-		Loop, 7
-		{
-			y := A_Index
-			Loop, 7
-			{
-				x := A_Index
-				if (arr[x, y] == 0){
-					getCoords(x, y, x_start, y_start, x_end, y_end)
-					;MsgBox % x_start y_start x_end y_end
-					RET := Gdip_ImageSearch(bmpHaystack,bmpNeedle,, x_start,y_start, x_end, y_end,80,0xFFFFFF,1,0)
-					;ImageSearch, FoundX, FoundY, x_start,y_start, x_end, y_end, *80 %A_ScriptDir%\IMG\%key%.png
-					if (RET > 0)
-					{
-						arr[x, y] := key
-						;break
-					}
-				}
-			}
-		}
-		Gdip_DisposeImage(bmpNeedle)
-	}
-	Gdip_DisposeImage(bmpHaystack)
-	Gdip_Shutdown(gdipToken)
-	t2 := A_now
-	t2 -= t1, s
-	t:= timediff(t2)
-	showGrid(arr,SQUARES_X,t)
-	return
+getMoves(arr){
 
 }
 
-searchimage(colr, x_start, y_start, x_end, y_end){
-	FoundX := 0
-	FoundY := 0
-	CoordMode, Pixel, Relative
-	ImageSearch, FoundX, FoundY, x_start,y_start, x_end, y_end, *80 %A_ScriptDir%\IMG\%colr%.png
-	; MouseMove, x_start,y_start, 5
-	; MouseMove, x_end,y_end, 5
-	message =
-	ret := false
-    if (foundX == "")
-	{
-		message = The icon was not found
-		return false
-    }
-	else
-	{
-		MouseMove, FoundX, FoundY, 5
- 		message = The icon was found at %FoundX%x%FoundY%
-		return true
-    }
-	; GUI, Name: New  ;
-	; Gui, Add, Text,, %message%
-	; GUI, Add, Picture, xm ym+30 gCancel, %A_ScriptDir%\b2.png
-	; GUI, Add, Button, xm ym+80 Default gCancel, Cancel
-	; GUI, Show, , Background Test
-}
+
 ;===== SUPPORT =====
 ;Displays a 2 dimensional grid according to data in array arr
 showGrid(ByRef arr, length, t)
@@ -232,32 +166,28 @@ showGrid(ByRef arr, length, t)
 	StringTrimLeft, header, header, 1 ;Remove first char
 	;clipboard = %header% ;DEBUG
 	;Create List to display
-	Gui, Add, ListView, +Grid h180 w220, %header%
-	c =
-	c = %c% 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n
+	Gui, +AlwaysOnTop +ToolWindow
+	Gui, Add, ListView, +Grid h180 w320, %header%
+	;c =
+	;c = %c% 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n
 	;msgbox %arr%, %length% ;DEBUG
 	Loop, %length%
 	{
 		y := A_index
 		LV_Add(y,arr[1, y],arr[2, y],arr[3, y],arr[4, y],arr[5, y],arr[6, y],arr[7, y])
-		Loop, %length%
-		{
-			x := A_index
-			val := arr[x, y]
-			c = %c%%val% | 
-		}
-		c = %c%`r`n 
+		; Loop, %length%
+		; {
+			; x := A_index
+			; val := arr[x, y]
+			; ;c = %c%%val% | 
+		; }
+		;c = %c%`r`n 
 	}
 	Gui, Add, Text,, Dauer %t%
 	;LV_ModifyCol()  ; Auto-size each column to fit its contents.
-	clipboard := c
+	;clipboard := c
 	Gui, Show, 
 	sleep 3000
-	return
-}
-
-Cancel(){
-	Gui, Destroy
 	return
 }
 
@@ -290,15 +220,8 @@ timediff(st)
    return result
 }
 
-EXIT_LABEL: ; be really sure the script will shutdown GDIP
-Gdip_Shutdown(gdipToken)
-EXITAPP
 
-;CoordMode Pixel  ; Interprets the coordinates below as relative to the screen rather than the active window.
-; ImageSearch, FoundX, FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, *Icon3 %A_ProgramFiles%\SomeApp\SomeApp.exe
-; if ErrorLevel = 2
-    ; MsgBox Could not conduct the search.
-; else if ErrorLevel = 1
-    ; MsgBox Icon could not be found on the screen.
-; else
-    ; MsgBox The icon was found at %FoundX%x%FoundY%
+
+
+
+ExitApp

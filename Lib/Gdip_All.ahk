@@ -1,291 +1,2713 @@
-<!DOCTYPE html><html lang="de" xmlns:fb="http://ogp.me/ns/fb#" xml:lang="de" class="" xmlns="http://www.w3.org/1999/xhtml">
-<head><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-            window.pending_require_calls = [];
-            window.require = function() {
-                window.pending_require_calls.push(arguments);
-            }
-            window.when_ready_configure_requirejs = function() {
-                /* global: REQUIREJS_CONFIG set below in ui/page/scripts.py */
-                if (!window.REQUIREJS_CONFIG) return;
+; Gdip standard library v1.45 by tic (Tariq Porter) 07/09/11
+; Modifed by Rseding91 using fincs 64 bit compatible Gdip library 5/1/2013
+; Supports: Basic, _L ANSi, _L Unicode x86 and _L Unicode x64
+;
+; Updated 2/20/2014 - fixed Gdip_CreateRegion() and Gdip_GetClipRegion() on AHK Unicode x86
+;
+;#####################################################################################
+;#####################################################################################
+; STATUS ENUMERATION
+; Return values for functions specified to have status enumerated return type
+;#####################################################################################
+;
+; Ok =						= 0
+; GenericError				= 1
+; InvalidParameter			= 2
+; OutOfMemory				= 3
+; ObjectBusy				= 4
+; InsufficientBuffer		= 5
+; NotImplemented			= 6
+; Win32Error				= 7
+; WrongState				= 8
+; Aborted					= 9
+; FileNotFound				= 10
+; ValueOverflow				= 11
+; AccessDenied				= 12
+; UnknownImageFormat		= 13
+; FontFamilyNotFound		= 14
+; FontStyleNotFound			= 15
+; NotTrueTypeFont			= 16
+; UnsupportedGdiplusVersion	= 17
+; GdiplusNotInitialized		= 18
+; PropertyNotFound			= 19
+; PropertyNotSupported		= 20
+; ProfileNotFound			= 21
+;
+;#####################################################################################
+;#####################################################################################
+; FUNCTIONS
+;#####################################################################################
+;
+; UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
+; BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
+; StretchBlt(dDC, dx, dy, dw, dh, sDC, sx, sy, sw, sh, Raster="")
+; SetImage(hwnd, hBitmap)
+; Gdip_BitmapFromScreen(Screen=0, Raster="")
+; CreateRectF(ByRef RectF, x, y, w, h)
+; CreateSizeF(ByRef SizeF, w, h)
+; CreateDIBSection
+;
+;#####################################################################################
 
-                /* global: configure_requirejs comes from require_async.js bundle */
-                if (!window.configure_requirejs) return;
-                window.configure_requirejs();
-                window.configure_requirejs = undefined;
-            }
-        </script><script async="async" type="text/javascript" src="https://cfl.dropboxstatic.com/static/javascript/compiled/require_bundle.min-vflzmNrzs.js"></script><link href="https://cfl.dropboxstatic.com/static/css/comments-vflcaHbQR.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/comments_annotations-vfljyvcl4.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/deprecated/components/multiaccount_login_modal-vflyVRU8f.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/file_comments_pane-vfl5rZQd1.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/foundation-vflA-47iD.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/modal-vflESt9QA.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/notify-vflXk59fn.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_audio-vflognSBl.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_error-vflmBHqVj.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_flexbox_layout-vflVvYgB6.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_flippable-vflpRGQLA.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_image-vflI9poDS.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_image_with_annotations-vfl1PTHrh.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_linkfile-vflzpnXCF.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_quality_popup-vflyrlOUZ.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/preview_toolbar-vfloZAcu4.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/react_file_viewer-vfl3j_TOq.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/video-js-vfllqOHND.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:100,200,300,400,600,700&amp;subset=latin,latin-ext" type="text/css" rel="stylesheet" />
-<script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    var jaguarStreaming = jaguarStreaming || {};
-    jaguarStreaming.preloadImg = function (url) {
-        var img = new Image();
-        img.src = url;
-    }
-</script><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    jaguarStreaming.preloadImg("https://cfl.dropboxstatic.com/static/images/sprites/web_sprites-vflDxdBb_.png");
-</script><link href="https://cfl.dropboxstatic.com/static/css/packaged/components-vflI2coXO.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/recaptcha_challenge-vflrcf67y.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/scooter/scooter-scoped-vfl-wEGDN.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/accessibility-vfle8A-zy.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    jaguarStreaming.preloadImg("https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif");
-</script><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    jaguarStreaming.preloadImg("https://cfl.dropboxstatic.com/static/images/security_keys/insert-vflkCfC4_.png");
-</script><link href="https://cfl.dropboxstatic.com/static/css/growth/shared_link_signup_modals-vflloFpus.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<link href="https://cfl.dropboxstatic.com/static/css/growth/bright_modal-vfltS1uv-.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    jaguarStreaming.preloadImg("https://cfl.dropboxstatic.com/static/images/dropbox_39x36-vflMxv3gQ.png");
-</script><link href="https://cfl.dropboxstatic.com/static/css/growth/compact_form-vflfQZ6wi.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-    jaguarStreaming.preloadImg("https://cfl.dropboxstatic.com/static/images/growth/dropbox_with_files-vflYCKclD.png");
-</script><link href="https://cfl.dropboxstatic.com/static/css/sprites/web_sprites-vflnPZuZr.css" type="text/css" crossorigin="anonymous" rel="stylesheet" />
-<script nonce="w5FdpkJXsJE+3kvMZEoe">
-window._goch_ = {};
-window.addEventListener('click', function(event) {
-    'use strict';
-    for (var elm = event.target; elm; elm = elm.parentElement) {
-        if (elm.id &&
-            window._goch_.hasOwnProperty(elm.id) &&
-            window._goch_[elm.id].call(elm, event) === false) {
-            event.preventDefault();
-        }
-    }
-}, true);
-</script><meta content="IE=edge, chrome=1" http-equiv="X-UA-Compatible" /><meta content="noindex, nofollow, noimageindex" name="robots" /><meta content="origin-when-crossorigin" name="referrer" /><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-                window._document_observe_listeners = [];
-                document.observe = function(event, func) {
-                    window._document_observe_listeners.push({event: event, func: func});
-                };
-                </script><link href="https://cfl.dropboxstatic.com/static/images/favicon-vflk5FiAC.ico" rel="shortcut icon" /><link href="https://cfl.dropboxstatic.com/static/images/dropbox_webclip_60-vflN_uQqB.png" rel="apple-touch-icon" /><link href="https://cfl.dropboxstatic.com/static/images/dropbox_webclip_76-vflVDzAci.png" rel="apple-touch-icon" sizes="76x76" /><link href="https://cfl.dropboxstatic.com/static/images/dropbox_webclip_120-vflppIksR.png" rel="apple-touch-icon" sizes="120x120" /><link href="https://cfl.dropboxstatic.com/static/images/dropbox_webclip_152-vflnR85Xl.png" rel="apple-touch-icon" sizes="152x152" /><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">window.ST=+new Date();</script><meta content="text/html; charset=UTF-8" http-equiv="content-type" /><meta content="Dropbox ist ein kostenloser Service, mit dem Sie Ihre Fotos, Dokumente und Videos überall dabei haben und leicht mit anderen gemeinsam nutzen können. Sie brauchen nie wieder eine Datei per E-Mail an sich selbst zu schicken." name="description" /><meta content="Online-Speicher, kostenloser Speicher, Dateifreigabe, Dateien freigeben, toll, Cloud-Speicher, Online-Sicherung, plattformübergreifend, Synchronisation, Synchronisierung, Freigabe, Mac, Windows, OS X, Linux, Backup, Zusammenarbeit, Dateiversionierung, Dateirevisionen, Fernzugriff, Löschung rückgängig machen" name="keywords" /><meta content="https://www.dropbox.com/s/0e9gdfetbfa8v0o/Gdip_All.ahk" property="og:url" /><meta content="Dropbox" property="og:site_name" /><meta content="Gdip_All.ahk" property="og:title" /><meta content="210019893730" property="fb:app_id" /><meta content="website" property="og:type" /><meta content="Mit Dropbox freigegeben" property="og:description" /><meta content="https://cf.dropboxstatic.com/static/images/icons128/page_white.png" property="og:image" /><meta content="128" property="og:image:width" /><meta content="128" property="og:image:height" /><meta content="summary" name="twitter:card" /><meta content="@Dropbox" name="twitter:site" /><meta content="https://www.dropbox.com/s/0e9gdfetbfa8v0o/Gdip_All.ahk" name="twitter:url" /><meta content="Gdip_All.ahk" name="twitter:title" /><meta content="Mit Dropbox freigegeben" name="twitter:description" /><meta content="https://cfl.dropboxstatic.com/static/images/brand/twitter-card-glyph@2x-vflVqhKLO.png" name="twitter:image" /><meta content="TnuSyOnBMNmtugbpL1ZvW2PbSF9LKvoTzrvOGS9h-b0" name="google-site-verification" /><meta content="EZKIczQcM1-DVUMz8heu1dIhNtxNbLqbaA9-HbOnCQ4" name="google-site-verification" /><meta content="tz8iotmk-pkhui406y41y5bfmfxdwmaa4a-yc0hm6r0fga7s6j0j27qmgqkmc7oovihzghbzhbdjk-uiyrz438nxsjdbj3fggwgl8oq2nf4ko8gi7j4z7t78kegbidl4" name="norton-safeweb-site-verification" /><meta content="https://cfl.dropboxstatic.com/static/images/win8_web_tile-vfl8eyKFU.png" name="msapplication-TileImage" /><meta content="#ffffff" name="msapplication-TileColor" /><title>Dropbox - Gdip_All.ahk</title><style type="text/css">.hny-saab { display: none; }</style> <script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-                        window.REQUIREJS_CONFIG= {"waitSeconds": 30, "map": {"modules/shims/react": {"external/react": "external/react-0.12.0-prod"}, "modules/shims/jquery-security-patch": {"jquery": "jquery"}, "external/react-redux-3.1.0": {"react": "modules/shims/react", "redux": "external/redux-3.3.1"}, "*": {"external/tracekit": "modules/shims/tracekit", "external/react-router": "external/react-router-2.0.0", "external/moment": "moment", "__real_jquery": "jquery", "external/underscore": "external/underscore-1.8.3", "external/react": "modules/shims/react", "external/react-0.13": "modules/shims/react", "__real_external/react": "external/react", "external/react-dom": "external/react-dom-shim", "external/reflux": "external/reflux-0.3.0", "external/immutable": "external/immutable-3", "external/redux-thunk": "external/redux-thunk-2.1.0", "jquery": "modules/shims/jquery-security-patch", "external/classnames": "classnames", "__real_external/tracekit": "TraceKit", "langpack": "javascript/langpack/de", "external/redux": "external/redux-3.3.1", "external/react-redux": "external/react-redux-3.1.0", "__real_external/rsvp": "external/rsvp", "external/rsvp": "modules/shims/rsvp"}, "modules/shims/tracekit": {"external/tracekit": "TraceKit"}, "modules/shims/rsvp": {"external/rsvp": "external/rsvp-3.2.1"}, "external/react-router-2.0.0": {"react": "modules/shims/react"}}, "shim": {"internal_javascript/v-accordion.min": {"deps": ["jquery", "internal_javascript/angular", "internal_javascript/angular-animate.min"]}, "internal_javascript/angular-sanitize.min": {"deps": ["internal_javascript/angular"]}, "internal_javascript/angular-cookies.min": {"deps": ["internal_javascript/angular"]}, "internal_javascript/ng-table": {"deps": ["jquery", "internal_javascript/angular"]}, "internal_javascript/angular-elastic-input.min": {"deps": ["internal_javascript/angular"]}, "internal_javascript/angular-animate.min": {"deps": ["internal_javascript/angular"]}, "internal_javascript/angular": {"exports": "angular", "deps": ["jquery"]}, "dropins": {"exports": "Dropbox"}, "internal_javascript/angular-filter.min": {"deps": ["internal_javascript/angular"]}, "external/highcharts": {"exports": "Highcharts", "deps": ["jquery"]}, "external/web_socket": {"exports": "WebSocket", "deps": ["modules/clean/unity/flash_config", "external/swfobject"]}, "internal_javascript/ng-infinite-scroll": {"deps": ["jquery", "internal_javascript/angular"]}, "internal_javascript/angular-elastic": {"deps": ["internal_javascript/angular"]}, "external/plupload_dev": {"exports": "plupload", "deps": ["external/moxie"]}, "external/zxcvbn": {"exports": "zxcvbn"}, "external/videojs/videojs_hls": {"deps": ["external/videojs/videojs_media_sources"]}, "internal_javascript/angular-route.min": {"deps": ["internal_javascript/angular"]}, "external/videojs/videojs_media_sources": {"deps": ["external/videojs/video"]}, "internal_javascript/jquery_sparkline.min": {"deps": ["jquery"]}, "libs": {"deps": ["jquery", "modules/core/dom", "modules/constants/page_load"]}, "external/cyfd": {"exports": "cf"}, "external/underscore": {}, "external/modernizr": {"exports": "Modernizr"}, "external/highstock": {"exports": "Highcharts", "deps": ["jquery"]}, "external/viz-1.3.0": {"exports": "Viz"}, "external/jasmine/jasmine-jquery": {"deps": ["jquery"]}, "external/typeahead.bundle": {"deps": ["jquery"]}}, "bundles": {"pkg-ab": ["modules/clean/captcha", "modules/clean/uirequest", "modules/shims/rsvp", "modules/clean/job_progress", "modules/core/accessible_announce", "modules/clean/growth/experiments/logger", "modules/clean/contacts/facebook_oauth", "modules/clean/dbmodal", "modules/clean/event_load", "modules/clean/css", "modules/clean/components/role_picker", "modules/clean/react/button", "modules/clean/image_size", "modules/shims/jquery-security-patch", "modules/clean/react/recaptcha_challenge", "modules/clean/notserver", "modules/clean/keycode", "modules/clean/teams/team_folder_modal", "modules/clean/hi_res", "modules/constants/request", "modules/core/cookies", "modules/clean/payments/cash", "modules/clean/search/search_type", "modules/constants/debug", "modules/clean/analytics", "modules/clean/teams/modals/suggest_team_invite_modal", "modules/clean/devtools/perf_hub_action_types", "modules/clean/avatar/stacked_avatars", "modules/clean/components/bubble_dropdown", "modules/clean/em_string", "modules/constants/page_load", "modules/constants/legacy", "modules/clean/react/input", "modules/clean/sso_login_checks", "modules/clean/viewer", "modules/clean/components/tooltip", "modules/clean/sharing/shared_content_link_sync_modal", "modules/clean/react/css", "modules/clean/react/form_error_mixin", "modules/clean/sprite", "modules/clean/undo", "modules/dirty/growth/shared_link_signup_modals", "modules/clean/js_environment", "modules/clean/datetime", "modules/clean/video_util", "modules/clean/sharing/wizard/share_new_folder_wizard_modal", "modules/core/i18n", "modules/core/dom", "modules/clean/validators/validators", "modules/clean/components/tabbable", "modules/clean/photos/legacy_thumb_loader", "modules/dirty/react/file_viewer/container", "modules/clean/filepath", "modules/clean/static_urls", "modules/core/controller_registry", "modules/clean/payments/validation", "modules/core/uri", "modules/clean/devtools/perf_hub_actions", "modules/clean/react/util", "modules/core/notify", "modules/constants/viewer", "modules/clean/photos/batch_thumb_loader", "modules/clean/contacts/facebook_modal", "modules/core/controller_helpers", "modules/clean/profile_services/third_party_signup", "modules/dirty/sharing/wizard_modals", "modules/constants/env", "modules/core/exception", "modules/clean/components/input", "modules/clean/profile_services/profile_services_link", "modules/constants/gandalf", "modules/clean/payments/dfb_util", "modules/constants/webtiming", "modules/shims/react", "modules/clean/components/login_form", "modules/clean/base64", "modules/clean/react/radio", "modules/clean/ajax", "modules/core/exception_tag_registry", "modules/clean/storage", "modules/clean/register_form", "modules/clean/events/rollback", "modules/clean/page_role_observer", "modules/clean/react/previews/preview_flippable", "modules/clean/user", "modules/clean/gandalf_util", "modules/shims/tracekit", "modules/clean/react/react_i18n", "modules/clean/mailcheck", "modules/clean/profile_services/profile_services_constants", "modules/clean/top_notif", "modules/clean/sharing/wizard/share_a_folder_wizard_modal", "modules/clean/react/modal", "modules/clean/flux/dispatcher", "modules/clean/components/ajax_form", "modules/clean/browse_events", "modules/clean/react/sprite", "modules/clean/teams/prop_types", "modules/clean/sharing/wizard/share_existing_folder_wizard_modal", "modules/core/browser", "modules/clean/web_timing_logger", "modules/core/html"], "pkg-ac": ["modules/clean/react/activity/users_to_notify_facepile", "modules/clean/event_handler", "modules/clean/react/file_comments/file_comments_pane", "modules/clean/comments/logging", "modules/clean/react/file_comments/annotation_bubble", "modules/clean/react/file_comments/annotation_comments_list_ui_bubble", "modules/clean/react/activity/contacts_selector_popup", "modules/clean/react/file_comments/switch_revision_ui", "modules/clean/react/file_comments/conversation_or_input_card", "modules/clean/sticker_util", "modules/clean/react/activity/contacts_selector", "modules/clean/comments/constants", "modules/clean/react/activity/comment_activity_ui", "modules/clean/react/activity/resolve_button", "modules/clean/react/activity/time_counter", "modules/clean/comments/components/file_comments_pane_container", "modules/clean/react/file_comments/comment_list_header", "modules/clean/react/file_comments/threaded_comment_header", "modules/clean/file_viewer_interface_controller", "modules/clean/comments/more_option_helpers", "modules/clean/comments/lib/animation", "modules/clean/react/activity/mentions_controller", "modules/clean/comments/url_handler", "modules/clean/react/file_comments/live_sticker", "modules/clean/react/activity/comment_input", "modules/clean/comments/components/file_preview_annotations", "modules/clean/comments/annotation_utils", "modules/clean/comments/components/switch_revision_ui_container", "modules/clean/react/file_comments/stickers", "modules/clean/comments/collection_utils", "modules/clean/comments/lib/click_outside", "modules/clean/comments/components/file_preview_overlay", "modules/clean/react/file_comments/comment_card", "modules/clean/react/file_comments/comment_list_ui", "modules/clean/string", "modules/clean/react/file_comments/comment_list_options", "modules/clean/react/file_comments/comment_tutorial", "modules/clean/react/file_comments/threaded_comment_activity_ui", "modules/clean/react/activity/users_to_notify", "modules/constants/stickers", "modules/clean/react/activity/annotation_button"], "pkg-aa": ["modules/clean/flux/base_store", "modules/clean/react/file_action_button", "modules/clean/react/copy_to_dropbox/actions", "modules/clean/unity/flash_config", "modules/clean/react/flag", "modules/clean/avatar/contact_avatar", "modules/clean/react/account_menu/logout_link", "modules/clean/previews/file_view_rams_common", "modules/dirty/sharing/share_modal", "modules/clean/file_events", "modules/clean/previews/preview_actions_helper", "modules/clean/react/file_viewer/mounted_file_actions", "modules/clean/react/select", "modules/clean/unity/check_file_cache", "modules/clean/contacts/tokenizer", "modules/clean/components/bubble_picker", "modules/clean/react/user_notifications/models", "modules/clean/sharing/content_info", "modules/clean/react/bubble", "modules/clean/flux/store_listener", "modules/clean/sharing/api", "modules/clean/react/previews/audio/preview_audio_visuals", "modules/clean/react/file_viewer/flippable_controls", "modules/clean/react/user_notifications/dispatcher", "modules/core/types", "modules/clean/sharing/actions/share_modal", "modules/clean/unity/connection", "modules/clean/api_v2/error", "modules/clean/react/browse/constants", "modules/clean/react/previews/audio/preview_audio_details", "modules/clean/display_format", "modules/clean/sharing/views/modal_content", "modules/clean/activity/activity_user", "modules/constants/python", "modules/clean/react/calendar", "modules/clean/react/account_menu/account_switcher", "modules/clean/comments/events", "modules/clean/sharing/views/sharing_bubble_menu", "modules/clean/comments/revisions", "modules/clean/teams/limited_team_invite_form", "modules/clean/react/pass/actions", "modules/clean/react/title_bubble", "modules/clean/react/user_notifications/dropdown_bluenote_row", "modules/clean/unity/features", "modules/clean/avatar/initials_avatar_with_color", "modules/clean/react/previews/audio/utils", "modules/clean/react/file_viewer/version_history_file_actions", "modules/clean/react/browse/store", "modules/clean/annotations/annotation_region", "modules/clean/uuid", "modules/clean/contacts/types", "modules/clean/revisions/file_revisions_iterator", "modules/clean/react/file_viewer/file_viewer", "modules/clean/react/previews/audio/preview_audio", "modules/clean/api_v2/types", "modules/core/visibility", "modules/clean/sharing/link_settings_modal", "modules/dirty/react/file_viewer/controller", "modules/clean/react/tooltip", "modules/clean/components/loading_indicator", "modules/clean/tokenizer", "modules/clean/comments/models/comment", "modules/clean/react/file_comments/onboarding", "modules/clean/react/pass/event_bus_queue", "modules/clean/referrer_cleansing_redirect", "modules/clean/sharing/ui_util", "modules/clean/react/bubble_dropdown", "modules/clean/annotations/annotation_highlight", "modules/clean/sharing/views/comments_help", "modules/clean/react/file_viewer/more_dropdown/models", "modules/clean/sharing/views/hover_close_button", "modules/clean/react/previews/preview_image", "modules/constants/contacts", "modules/clean/avatar/initials_avatar", "modules/constants/comments_panel", "modules/clean/file_activity/api", "modules/clean/react/pass/dispatcher", "modules/clean/react/previews/preview_blank", "modules/clean/react/browse/sort_helpers", "modules/clean/browse_interface", "modules/clean/react/previews/preview_linkfile", "modules/clean/zendesk_feedback", "modules/clean/activity/like", "modules/clean/react/previews/preview_zoom_container", "modules/clean/react/previews/audio/preview_audio_volume", "modules/clean/activity/activity", "modules/clean/file_activity/clients/file_activity_bolt_client", "modules/clean/react/share_download/models", "modules/clean/photos/thumb_loading/generic_thumb_store", "modules/clean/comments/store", "modules/clean/history", "modules/clean/sharing/link_description", "modules/clean/pagination_manager", "modules/clean/react/file_uploader/store", "modules/clean/image_viewer_annotation_interface", "modules/clean/search/search_helpers", "modules/clean/annotations/annotation", "modules/clean/react/file_viewer/store", "modules/constants/static", "modules/clean/react/helpers", "modules/clean/account/verify_email_modals", "modules/clean/react/account_menu/avatar", "modules/clean/sharing/constants", "modules/clean/teams/team_assume_user_personal_locked_modal", "modules/clean/react/previews/preview_image_zoom", "modules/core/type", "modules/clean/react/copy_to_dropbox/modal", "modules/clean/photos/thumb_loading/utils", "modules/clean/react/previews/preview_video", "modules/clean/avatar/photo_avatar", "modules/clean/notifications/updated_file_notification", "modules/clean/react/file_comments/logger", "modules/clean/dbmodal_loading", "modules/clean/loggers/file_viewer_logger", "modules/clean/react/pass/constants", "modules/clean/react/previews/preview_html", "modules/clean/sharing/api/types/metadata", "modules/clean/comments/components/ui_constants", "modules/clean/flux/action_type", "modules/clean/react/file_viewer/seen_state_facepile", "modules/clean/comments/logged_out_utils", "modules/clean/comments/models/immutable_file_activity", "modules/clean/react/file_viewer/title_bar", "modules/clean/contacts/util", "modules/clean/react/user_notifications/generic_icon", "modules/clean/react/columnheader", "modules/clean/react/user_notifications/dropdown_row", "modules/clean/image_annotations", "modules/clean/contacts/typeahead", "modules/clean/unity/web_socket", "modules/clean/react/overlay", "modules/clean/sharing/views/constants", "modules/clean/react/previews/preview_pdf", "modules/clean/sharing/link_info", "modules/clean/downloads", "modules/clean/sharing/folder_settings_modal", "modules/clean/sharing/stores/sharing_info", "modules/clean/avatar/viewer_avatar", "modules/clean/react/user_notifications/constants", "modules/clean/account/change_email_modals", "modules/clean/loggers/folder_invite_impression_logger", "modules/clean/contacts/cache", "modules/clean/react/previews/preview_toolbar", "modules/clean/sharing/signup_modal_proxy", "modules/clean/react/file_viewer/actions", "modules/clean/react/user_notifications/legacy_thumb_loader", "modules/clean/react/account_menu/install_link", "modules/clean/comments/models/loading_spinner", "modules/clean/react/copy_to_dropbox/api", "modules/clean/react/hidden", "modules/clean/avatar/style", "modules/clean/image_preview_util", "modules/clean/comments/actions", "modules/clean/react/user_notifications/dropdown_body", "modules/clean/react/previews/preview_toolbar_container", "modules/clean/sharing/api/client", "modules/clean/react/previews/preview_quality_popup", "modules/clean/comments/utils", "modules/clean/react/file_viewer/toggle_comments", "modules/clean/react/file_viewer/models", "modules/clean/react/file_viewer/full_screen_helpers", "modules/clean/react/previews/constants", "modules/clean/event_emitter", "modules/clean/notifications/file_watcher", "modules/clean/photos/thumbnail_url_util", "modules/constants/file_viewer", "modules/clean/react/user_notifications/dropdown_bell", "modules/clean/sharing/keep_a_copy_modal", "modules/clean/account/email", "modules/clean/react/selectable_list", "modules/clean/average_counter", "modules/clean/bolt", "modules/clean/sharing/views/member_list_item", "modules/clean/react/user_notifications/avatar_icon", "modules/clean/react/sprite_div", "modules/clean/annotations/annotation_region_ui", "modules/clean/annotations/annotation_highlight_ui", "modules/clean/react/user_notifications/event_emitter", "modules/constants/sharing", "modules/clean/open_with", "modules/clean/react/previews/responsive_image", "modules/clean/annotations/annotation_marker", "modules/clean/sharing/notifications", "modules/clean/react/teams/modals/limited_team_share_folder_modal", "modules/clean/react/share_download/actions", "modules/clean/react/file_comments/shared_link_signup_modals", "modules/clean/contacts/data", "modules/clean/react/account_menu/pro_gifting_link", "modules/clean/loggers/file_preview_logger", "modules/clean/react/previews/preview_password_protected", "modules/clean/comments/models/pending_comment_activity", "modules/clean/react/user_notifications/dropdown", "modules/clean/react/file_viewer/open_button_coachmark", "modules/clean/react/image", "modules/clean/react/previews/preview_error", "modules/clean/sharing/views/modal_link_info", "modules/clean/annotations/annotation_controller", "modules/clean/react/account_menu/settings_link", "modules/clean/react/previews/preview_image_with_annotations", "modules/clean/annotations/preview_image_annotations_toolbar", "modules/clean/react/file_viewer/file_preview", "modules/clean/previews/file_viewer_utils", "modules/clean/unity/logger", "modules/clean/unity/connection_error", "modules/clean/react/file_viewer/more_dropdown/views", "modules/clean/contacts/bloodhound_contacts", "modules/clean/react/user_notifications/store", "modules/clean/browse/browse_drag_utils", "modules/clean/immutability_helper", "modules/clean/react/tree_view", "modules/clean/react/file_viewer/file_preview_event_emitter", "modules/clean/sharing/strings", "modules/clean/sharing/folder_convert_gg_modal", "modules/core/user_i18n", "modules/clean/accessibility/utils", "modules/clean/react/account_menu/pro_upgrade_link", "modules/clean/react/file_viewer/utils", "modules/clean/react/portal", "modules/clean/typeahead", "modules/clean/annotations/annotation_renderer_utils", "modules/clean/annotations/annotation_marker_ui", "modules/clean/react/previews/preview_toolbar_region_creation", "modules/clean/avatar/avatar_with_default", "modules/clean/react/free_positioned", "modules/clean/react/slider", "modules/clean/sharing/views/member_list", "modules/clean/react/user_notifications/actions", "modules/clean/flux/flux_store", "modules/clean/form", "modules/clean/react/previews/password_component", "modules/clean/sharing/share_modal", "modules/clean/react/file_viewer/file_preview_update_watcher", "modules/clean/previews/preview_status_watcher", "modules/clean/multiaccount_login", "modules/clean/react/previews/audio/preview_audio_play_button", "modules/clean/react/file_viewer/copyright_flag", "modules/clean/avatar/size", "modules/clean/react/pass/store", "modules/clean/react/onboarding_modal", "modules/clean/comments/models/preview_types", "modules/clean/previews/pdf_loader", "modules/clean/react/file_viewer/shared_file_actions", "modules/clean/react/file_viewer/open_button", "modules/clean/react/browse/models", "modules/clean/bolt_nodeps", "modules/clean/react/file_viewer/more_dropdown/more_option_registry", "modules/clean/components/scooter/badge", "modules/clean/sharing/action_types", "modules/clean/react/account_menu/account_menu", "modules/clean/image_viewer_annotation_renderer", "modules/clean/api_v2/client", "modules/clean/react/file_viewer/more_dropdown", "modules/clean/comments/lib/type_check", "modules/clean/crypto", "modules/clean/components/title_bubble", "modules/clean/clipboard", "modules/clean/fuzzy", "modules/clean/sharing/parent_folder_access_modal", "modules/clean/avatar/faceholder", "modules/clean/react/account_menu/account_info", "modules/dirty/sharing/browse_ui_util", "modules/clean/react/file_viewer/constants", "modules/clean/react/file_viewer/dispatcher", "modules/clean/file_activity/clients/file_activity_data_source", "modules/clean/loggers/notification_logger", "modules/clean/react/file_viewer/coach_mark", "modules/clean/react/paging_list", "modules/clean/react/bubble_menu", "modules/clean/react/previews/image_helpers", "modules/clean/groups/api", "modules/clean/react/account_menu/account_menu_contents", "modules/clean/react/pass/utils", "modules/clean/comments/models/immutable_comment_activity", "modules/clean/contacts/list", "modules/clean/react/user_notifications/api", "modules/clean/unity/versions", "modules/clean/react/share_download/button", "modules/clean/react/outside_event", "modules/dirty/react/file_viewer/share_helpers", "modules/clean/react/account_menu/business_upgrade_link", "modules/clean/sharing/api/util/types", "modules/clean/account/email_verify_reasons", "modules/clean/previews/util", "modules/clean/comments/flux", "modules/clean/frame_messenger", "modules/clean/photos/thumb_loading/http2_thumb_loader", "modules/clean/comments/action_creators", "modules/clean/account/email_verify", "modules/clean/clipboard_v2"], "pkg-ag": ["modules/clean/react/browse/render_partials", "modules/clean/react/file_modal_controller", "modules/clean/react/browse/api", "modules/clean/file_operations/notifications", "modules/dirty/react/browse/actions", "modules/constants/browse", "modules/clean/react/file_modals"], "pkg-ae": ["modules/clean/comments/comment_dom"], "pkg-aj": ["modules/clean/react/teams/modals/limited_team_upsell_modal_banner"], "pkg-bd": ["modules/clean/unity/features/web_destiny", "modules/clean/unity/features/destiny_logger"]}, "baseUrl": "https://cfl.dropboxstatic.com/static/", "paths": {"external/underscore-1.8.3": "javascript/compiled/external/underscore-1.8.3.min-vflO2gVYs", "javascript/langpack/de": ["https://cfl.dropboxstatic.com/static/javascript/langpack/de.js?408210", "https://www.dropboxstatic.com/static/javascript/langpack/de.js?408210"], "external/lru": "javascript/compiled/external/lru.min-vflgbHB_e", "modules/clean/activity/constants": "javascript/compiled/modules/clean/activity/constants.min-vflQU1UUn", "modules/clean/beacon": "javascript/compiled/modules/clean/beacon.min-vflNsB7Zu", "external/react-dom-shim": "javascript/compiled/external/react-dom-shim.min-vflgtb4sZ", "external/immutable-3": "javascript/compiled/external/immutable-3.min-vflCDQDs_", "modules/clean/beacon_nodeps": "javascript/compiled/modules/clean/beacon_nodeps.min-vflrvR9xu", "mobile": ["https://cfl.dropboxstatic.com/static/javascript/compiled/dropbox-mobile.min-vflZG3hD5", "https://www.dropboxstatic.com/static/javascript/compiled/dropbox-mobile.min-vflZG3hD5"], "external/sjcl": "javascript/compiled/external/sjcl.min-vflRtcU5Z", "external/deep-freeze": "javascript/compiled/external/deep-freeze.min-vflLIRfOZ", "modules/clean/unity/features/web_destiny_ui": "javascript/compiled/modules/clean/unity/features/web_destiny_ui.min-vfludSCyp", "pkg-ab": "javascript/compiled/packaged/pkg-ab.min-vflAp7qrB", "pkg-ac": "javascript/compiled/packaged/pkg-ac.min-vflCHxwTj", "external/web_socket": "javascript/compiled/external/web_socket.min-vflcHTylJ", "pkg-aa": "javascript/compiled/packaged/pkg-aa.min-vflPYtHy5", "pkg-ag": "javascript/compiled/packaged/pkg-ag.min-vflQAxwb9", "pkg-ae": "javascript/compiled/packaged/pkg-ae.min-vflf_ofi9", "pkg-aj": "javascript/compiled/packaged/pkg-aj.min-vflX-7UeR", "external/videojs/video": "javascript/compiled/external/videojs/video.min-vflMq9VaQ", "internal_javascript/angular": ["https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min", "https://cfl.dropboxstatic.com/static/internal_javascript/angular.min-vflyhpYgY", "https://www.dropboxstatic.com/static/internal_javascript/angular.min-vflyhpYgY"], "dropins": ["https://cfl.dropboxstatic.com/static/api/2/dropins-vflhxRmdC", "https://www.dropboxstatic.com/static/api/2/dropins-vflhxRmdC"], "external/plupload_dev": "javascript/compiled/external/plupload_dev.min-vflDvcxir", "external/flux": "javascript/compiled/external/flux.min-vflUoCnE8", "external/reflux-0.3.0": "javascript/compiled/external/reflux-0.3.0.min-vfleGl5rg", "external/flash_detect": "javascript/compiled/external/flash_detect.min-vflQgzGKJ", "external/moxie": "javascript/compiled/external/moxie.min-vfl4ZzwgQ", "external/purify": "javascript/compiled/external/purify.min-vflkgrzs0", "external/jquery.mousewheel": "javascript/compiled/external/jquery.mousewheel.min-vflX56u0Z", "external/keymaster": "javascript/compiled/external/keymaster.min-vflLu22dA", "external/zxcvbn": "javascript/compiled/external/zxcvbn.min-vflkO7PKd", "external/videojs/videojs_hls": "javascript/compiled/external/videojs/videojs_hls.min-vfl3MI97P", "TraceKit": "javascript/compiled/external/tracekit.min-vfllJSVmx", "external/u2f-api": "javascript/compiled/external/u2f-api.min-vfl1OTTAm", "external/jquery_ui": "javascript/compiled/external/jquery_ui.min-vflnSF8u0", "libs": ["https://cfl.dropboxstatic.com/static/javascript/compiled/libs.min-vflaSnl9p", "https://www.dropboxstatic.com/static/javascript/compiled/libs.min-vflaSnl9p"], "dropbox": ["https://cfl.dropboxstatic.com/static/javascript/compiled/dropbox.min-vfl7tJzLp", "https://www.dropboxstatic.com/static/javascript/compiled/dropbox.min-vfl7tJzLp"], "modules/clean/form_util/name_parser": "javascript/compiled/modules/clean/form_util/name_parser.min-vflLDFs5j", "external/rsvp-3.2.1": "javascript/compiled/external/rsvp-3.2.1.min-vflPwaXEC", "jquery": ["https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min", "https://cfl.dropboxstatic.com/static/javascript/compiled/external/jquery.min-vfl4OBVkB", "https://www.dropboxstatic.com/static/javascript/compiled/external/jquery.min-vfl4OBVkB"], "external/sha1": "javascript/compiled/external/sha1.min-vfl0kCsR0", "external/cyfd": "javascript/compiled/external/cyfd.min-vfltMenER", "modules/clean/react/teams/modals/limited_team_folder_settings_modal": "javascript/compiled/modules/clean/react/teams/modals/limited_team_folder_settings_modal.min-vflOjfJKy", "chooser_legacy": ["https://cfl.dropboxstatic.com/static/javascript/compiled/chooser_legacy.min-vfl_S_foW", "https://www.dropboxstatic.com/static/javascript/compiled/chooser_legacy.min-vfl_S_foW"], "external/modernizr": "javascript/compiled/external/modernizr.min-vflhJ_VB_", "external/react-0.12.0-prod": "javascript/compiled/external/react-0.12.0-prod.min-vflgj5skK", "external/swfobject": "javascript/compiled/external/swfobject.min-vflxMry3o", "pkg-bd": "javascript/compiled/packaged/pkg-bd.min-vflZp7v2a", "modules/clean/web_module_timing": "javascript/compiled/modules/clean/web_module_timing.min-vflzwMrXA", "classnames": "javascript/compiled/external/classnames.min-vfl4ukfgw", "external/jquery.fs.zoomer": "javascript/compiled/external/jquery.fs.zoomer.min-vflnhtPsc", "external/eventemitter3": "javascript/compiled/external/eventemitter3.min-vflZU66d8", "external/typeahead.bundle": "javascript/compiled/external/typeahead.bundle.min-vflcIbo3p", "external/videojs/videojs_media_sources": "javascript/compiled/external/videojs/videojs_media_sources.min-vflUoIL6Q"}};
-                        window.REQUIREJS_FALLBACK_URL = "https://www.dropboxstatic.com/static/";
-                        window.DETERMINISTIC_MONKEY_CHECK = false;
-                        window.GlobalConstants = {"IS_PROD": true};
-                        window.MODULE_CONFIG = {};
+; Function:     			UpdateLayeredWindow
+; Description:  			Updates a layered window with the handle to the DC of a gdi bitmap
+; 
+; hwnd        				Handle of the layered window to update
+; hdc           			Handle to the DC of the GDI bitmap to update the window with
+; Layeredx      			x position to place the window
+; Layeredy      			y position to place the window
+; Layeredw      			Width of the window
+; Layeredh      			Height of the window
+; Alpha         			Default = 255 : The transparency (0-255) to set the window transparency
+;
+; return      				If the function succeeds, the return value is nonzero
+;
+; notes						If x or y omitted, then layered window will use its current coordinates
+;							If w or h omitted then current width and height will be used
 
-                        /* global: when_ready_configure_requirejs comes from the
-                           fake_require_snippet (ui/page/scripts.py) */
-                        when_ready_configure_requirejs();
-                        </script><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">var TeamsConstants = {"TEAM_PROMO_PAGE_IMAGE_PATHS": {"FILES": "teams/screenshot-files.png", "MEMBERS": "teams/screenshot-members.png", "SETTINGS": "teams/screenshot-settings.png"}};
-            var BrowseConstants = {"SHOW_PAPER_SEARCH_RESULTS": false, "HIDE_TRASH_CAN_BUTTON": false, "REVISION_HISTORY_WEB": true, "BROWSE_IN_REACT": false};
-            var VersionHistoryConstants = {"VERSION_HISTORY_REACT_FILE_VIEWER_ENABLED": false};
-            var PageLoadConstants = {"CSP_SCRIPT_NONCE": "w5FdpkJXsJE+3kvMZEoe", "REPO_REV": "e5cc8f19f31ee997c5fd9e2a2e38cb095fb4003c"};
-            var CommentsPanelConstants = {"ALLOW_ANNOTATION_THUMBNAILS": false, "ALLOW_ANNOTATION_IMAGE_PREVIEWS": true, "ALLOW_NO_AT_MENTIONS": false, "ALLOW_NOTIFY_FACEPILE": false, "ALLOW_ANNOTATION_REGION": true, "ALLOW_ANNOTATION_THUMBNAILS_SERVER_VIEW": false, "ALLOW_VISIBLE_AT_MENTIONS": false, "COMMENTS_COLLAPSE_INPUT": false, "ALLOW_ADD_MENTION_DROPDOWN": false, "SHOW_COMMENTS_PANEL": false, "ALLOW_STICKERS": false, "IS_COMBINED_COMMENTS_ENABLED": true, "SHOW_COMMENTS_TUTORIAL": false, "ALLOW_VIEW_ANNOTATE_MODES": true, "ALLOW_ANNOTATION_MARKER": false, "ALLOW_ANNOTATION_HIGHLIGHT": true, "ARE_DEV_TOOLS_SHOWN": false, "ALLOW_WEB_FEEDBACK": false, "ALLOW_NO_NOTIFY_HINT": false, "ALLOW_ANNOTATION_GHOST": false};
-            var MobileConstants = {"MOBILE_AD_COOKIE": "giraffe", "uid": "", "MOBILE_AD_COOKIE_EXPIRES": 7};
-            var PhotosConstants = {"IS_CAROUSEL_SUNSET": true};
-            var LocalesConstants = {"LIST_OF_LOCALES_WITHOUT_INTERNAL": [{"localeName": "Bahasa Indonesia", "decorator": "", "localeCode": "id"}, {"localeName": "Bahasa Malaysia", "decorator": "", "localeCode": "ms"}, {"localeName": "Dansk", "decorator": "", "localeCode": "da_DK"}, {"localeName": "Deutsch", "decorator": "", "localeCode": "de"}, {"localeName": "English (United Kingdom)", "decorator": "", "localeCode": "en_GB"}, {"localeName": "English (United States)", "decorator": "", "localeCode": "en"}, {"localeName": "Espa\u00f1ol (Espa\u00f1a)", "decorator": "", "localeCode": "es_ES"}, {"localeName": "Espa\u00f1ol (Latinoam\u00e9rica)", "decorator": "", "localeCode": "es"}, {"localeName": "Fran\u00e7ais", "decorator": "", "localeCode": "fr"}, {"localeName": "Italiano", "decorator": "", "localeCode": "it"}, {"localeName": "Nederlands", "decorator": "", "localeCode": "nl_NL"}, {"localeName": "Norsk (bokm\u00e5l)", "decorator": "", "localeCode": "nb_NO"}, {"localeName": "Polski", "decorator": "", "localeCode": "pl"}, {"localeName": "Portugu\u00eas (Brasil)", "decorator": "", "localeCode": "pt_BR"}, {"localeName": "P\u0443\u0441\u0441\u043a\u0438\u0439", "decorator": "", "localeCode": "ru"}, {"localeName": "Svenska", "decorator": "", "localeCode": "sv_SE"}, {"localeName": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430", "decorator": "Beta", "localeCode": "uk_UA"}, {"localeName": "\u0e44\u0e17\u0e22", "decorator": "", "localeCode": "th_TH"}, {"localeName": "\u4e2d\u6587\uff08\u7b80\u4f53\uff09", "decorator": "", "localeCode": "zh_CN"}, {"localeName": "\u4e2d\u6587\uff08\u7e41\u9ad4\uff09", "decorator": "", "localeCode": "zh_TW"}, {"localeName": "\u65e5\u672c\u8a9e", "decorator": "", "localeCode": "ja"}, {"localeName": "\ud55c\uad6d\uc5b4", "decorator": "", "localeCode": "ko"}], "LIST_OF_LOCALES_WITH_INTERNAL": [{"localeName": "Bahasa Indonesia", "decorator": "", "localeCode": "id"}, {"localeName": "Bahasa Malaysia", "decorator": "", "localeCode": "ms"}, {"localeName": "Dansk", "decorator": "", "localeCode": "da_DK"}, {"localeName": "Deutsch", "decorator": "", "localeCode": "de"}, {"localeName": "English (United Kingdom)", "decorator": "", "localeCode": "en_GB"}, {"localeName": "English (United States)", "decorator": "", "localeCode": "en"}, {"localeName": "Espa\u00f1ol (Espa\u00f1a)", "decorator": "", "localeCode": "es_ES"}, {"localeName": "Espa\u00f1ol (Latinoam\u00e9rica)", "decorator": "", "localeCode": "es"}, {"localeName": "Fran\u00e7ais", "decorator": "", "localeCode": "fr"}, {"localeName": "Italiano", "decorator": "", "localeCode": "it"}, {"localeName": "Nederlands", "decorator": "", "localeCode": "nl_NL"}, {"localeName": "Norsk (bokm\u00e5l)", "decorator": "", "localeCode": "nb_NO"}, {"localeName": "Polski", "decorator": "", "localeCode": "pl"}, {"localeName": "Portugu\u00eas (Brasil)", "decorator": "", "localeCode": "pt_BR"}, {"localeName": "P\u0443\u0441\u0441\u043a\u0438\u0439", "decorator": "", "localeCode": "ru"}, {"localeName": "Svenska", "decorator": "", "localeCode": "sv_SE"}, {"localeName": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430", "decorator": "Beta", "localeCode": "uk_UA"}, {"localeName": "\u0e44\u0e17\u0e22", "decorator": "", "localeCode": "th_TH"}, {"localeName": "\u4e2d\u6587\uff08\u7b80\u4f53\uff09", "decorator": "", "localeCode": "zh_CN"}, {"localeName": "\u4e2d\u6587\uff08\u7e41\u9ad4\uff09", "decorator": "", "localeCode": "zh_TW"}, {"localeName": "\u65e5\u672c\u8a9e", "decorator": "", "localeCode": "ja"}, {"localeName": "\ud55c\uad6d\uc5b4", "decorator": "", "localeCode": "ko"}]};
-            var PythonConstants = {"DOWNLOADS_NOTIFY_DOMAIN_PARAM_NAME": "_notify_domain", "ACCOUNT_CAPTURE": {"INVITED_ONLY": 1, "OFF": 0, "ALL": 2}, "THUMBNAIL_SIZES": ["320x568", "320x480", "720x720", "1500x500", "274x154", "392x392", "308x154", "150x150", "1600x1200", "750x500", "1280x1280", "180x180", "512x512", "1000x500", "256x256", "718x200", "100x100", "256x456", "318x416", "1024x1024", "320x320", "48x48", "2048x1536", "640x1136", "375x100", "1250x500", "16x16", "640x480", "480x320", "122x122", "2048x2048", "640x640", "128x128", "640x384", "178x178", "568x320", "1136x640", "320x640", "470x300", "256x512", "154x274", "2000x500", "80x80", "200x200", "1024x768", "800x600", "1280x960", "70x70", "1750x500", "456x256", "480x480", "360x360", "784x784", "960x640", "154x154", "359x100", "750x200", "512x256", "640x1280", "196x196", "320x240", "160x160", "478x267", "72x72", "64x64", "154x308", "1280x640", "640x320", "75x75", "800x800", "32x32"], "OREF_CONSTANTS": {"SHMODEL_SHARE_MODAL": "ssm", "EMAIL_REPLY_OF_SHMODEL": "eros", "SHARE_PAGE": "sha", "FILE_ROW_SHARE_MENU": "bsh", "EMAIL": "e", "BROWSE_UNKNOWN": "bu", "DESKTOP_HARMONY": "h", "RECENTS": "r", "EMAIL_REPLY_FROM_THREAD": "erft", "BROWSE_COMMENT_BUTTON": "bb", "BROWSE_SEARCHBOX": "bs", "SHMODEL_SHARE_MODAL_FEEDBACK_REQUEST": "ssmfr", "BROWSE_FILE_OPEN": "bo", "SHARED_LINK_PAGE": "shl", "SERVER_SIDE_CLIENT_VIEW": "sscv", "SHARED_CONTENT_LINK_PAGE": "scl", "WEB_NOTIFICATION": "wn", "DESKTOP_CONTEXT_MENU": "c", "HISTORY": "hi", "EMAIL_REPLY": "er", "DESKTOP_NOTIFICATION": "dn", "BROWSE_COMMENT_CONTEXTMENU": "bc", "FEEDBACK_REQUEST_EMAIL": "fre"}, "DOMAIN_VERIFICATION_STATUS": {"VERIFYING": 3, "ERROR_VERIFYING": 1, "VERIFIED": 4, "PENDING": 2, "ALREADY_CLAIMED": 5}, "RECENT_EVENT_TYPES": {"FILE_RENAME": 3, "PAPER_EDIT": 13, "FILE_EDIT": 2, "FILE_SHARED_VIEW": 10, "PAPER_SHARE": 15, "PAPER_VIEW": 16, "PAPER_ADD": 12, "FILE_SHARE": 7, "FILE_UNMOUNT": 6, "FILE_COMMENT_ADD": 11, "FILE_UNSHARE": 8, "FILE_ADD": 0, "FILE_DELETE": 18, "FILE_RESTORE": 4, "FILE_MOUNT": 5, "FILE_SHARED_ADD": 17, "FILE_PRIVATE_VIEW": 9, "PAPER_COMMENT": 14, "FILE_MOVE": 1}, "RECENT_EVENT_FILTER_TYPE": {"PHOTOS": 1, "ALL": 0, "DOCUMENTS": 3, "VISUAL_NOTES": 7, "VIDEOS": 2, "JUNK": 5, "COMMENTS": 4, "UNCATEGORIZED": 6}, "DOWNLOAD_ID_PARAM_NAME": "_download_id", "TRADEMARK_BUSINESS": "Dropbox Business", "FILE_REQUEST_NO_DEADLINE": -1, "MILLION_BUSINESS_COUNT": "4", "BEACON_OFFLINE_STATUS": "", "FileViewOriginType": {"WEB_NOTIFICATION": 15, "VERSION_HISTORY": 6, "SHARE_PAGE": 18, "BROWSE": 1, "UNKNOWN": 0, "SERVER_VIEW": 10, "FILE_ROW_SHARE_MENU": 14, "PHOTOS": 3, "PAPER": 13, "HARMONY": 7, "CAROUSEL": 2, "FILESYSTEM": 8, "SHARED_LINK_PAGE": 16, "NOTIFICATION": 11, "SHARED_CONTENT_LINK_PAGE": 17, "TRASH": 5, "TRAY": 9, "EMAIL": 12, "RECENTS": 4}, "MILLION_USER_COUNT": "500", "FileViewTargetType": {"SHARED_LINK": 1, "SHARED_CONTENT_LINK": 2, "PRIVATE": 0}, "REVISION_REASON": {"RENAME": 3, "UNMOUNT": 6, "UNSHARE": 8, "MOUNT": 5, "MOVE": 1, "ADD": 0, "RESTORE": 4, "PREV_PURGED": 10, "EDIT": 2, "SHARE": 7, "DELETE": 9}, "BEACON_ONLINE_STATUS": "online", "FileViewPlatformType": {"WEB": 2, "CLIENT": 1, "UNKNOWN": 5, "API": 0, "MOBILE_ANDROID": 3, "MOBILE_IOS": 4}, "THUMBNAIL_SIZE_MODE": {"STRICT": 2, "FIT_ONE_RESTRICT": 9, "LEGACY": 6, "FIT_ONE_ABSTRACT": 7, "EXACT_NO_BACKGROUND": 10, "ABSTRACT": 3, "FIT_ONE": 4, "EXACT": 1, "ORIGINAL": 5, "CUSTOM": 8}, "ACTIVITY_LOADING_MODE": {"USER_I18N": "USER_I18N", "SEEN_STATES": "SEEN_STATES", "FEEDBACK": "FEEDBACK", "FEEDBACK_METADATA": "FEEDBACK_METADATA", "COMMENTS_LIKES": "COMMENTS_LIKES"}, "FileViewModeType": {"SHARED_LINK_FILE": 7, "FILE_PREVIEW": 0, "PHOTOS_LIGHTBOX": 6, "BROWSE": 1, "UNKNOWN": 10, "SHARED_LINK_LIGHTBOX": 3, "SHARED_LINK_COLLECTION": 5, "FILE_INFO": 11, "BROWSE_LIGHTBOX": 2, "SHARED_LINK_FOLDER": 4}, "TEAM_JOIN_SOURCE": {"SHARED_LINK": 1, "NO_SOURCE": 0, "SF_INVITE": 2, "SSO_INITIATED": 6, "DOMAIN_CAPTURE": 4, "FORCED_MIGRATION": 3, "SHARED_CONTENT_LINK": 5}, "PACKAGE_EXTS": [".app", ".bundle", ".framework", ".plugin", ".kext", ".pages", ".scriv", ".dtbase", ".keynote", ".oo3", ".numbers", ".vpdoc", ".mjdoc", ".key", ".rwtheme", ".curio", ".graffle", ".omniplan", ".xcodeproj", ".qdfm", ".rwsw", ".pkg", ".mpkg", ".band", ".mapset", ".sketch", ".ufo", ".rtfd"], "FileViewActionType": {"SEARCH": 5, "CONTEXT_MENU_OPEN_FILE": 4, "CONTEXT_MENU_VIEW_COMMENTS": 3, "TOOLBAR_OPEN_FILE": 2, "TOOLBAR_VIEW_COMMENTS": 1, "REPLY": 6, "CLICK": 0}, "FILE_ACTIVITY_LOADING_MODE": {"REVISION_HISTORY": "REVISION_HISTORY", "FEEDBACK": "FEEDBACK", "COMMENTS_LIKES": "COMMENTS_LIKES", "FEEDBACK_METADATA": "FEEDBACK_METADATA", "PREVIEW_INFO": "PREVIEW_INFO", "SEEN_STATES": "SEEN_STATES", "USER_I18N": "USER_I18N"}, "OriginReferrerTypeToFileViewOriginAndAction": {"scl": [17, 0], "eros": [12, 6], "sscv": [10, 0], "fre": [12, 0], "ssmfr": [1, 0], "er": [12, 6], "dn": [11, 0], "bb": [1, 1], "bc": [1, 3], "wn": [15, 0], "bo": [1, 0], "ssm": [1, 0], "bu": [1, 0], "hi": [6, 0], "bsh": [14, 0], "bs": [1, 5], "c": [8, 4], "erft": [12, 6], "e": [12, 0], "h": [7, 0], "sha": [18, 0], "r": [4, 0], "shl": [16, 0]}, "SIGN_UP_FOR_TEAM_ONBOARDING_STATES": {"DesktopMigrationOption": 20, "InviteMembers": 200, "Register": 5, "WaitJoinApproval": 250, "ClientInstall": 300, "EmailVerification": 0, "DesktopIntro": 10, "DesktopDone": 400, "Done": 10000, "TeamDiscovery": 50, "CreateTeam": 100}, "TOKEN_VISIBILITY": {"PASSWORD": 3, "PUBLIC": 1, "TEAM_ONLY": 2}};
-            var DebugConstants = {"CPROFILE_PARAMETER": "", "CPROFILE_ENABLED": 0};
-            var FileViewerConstants = {"FILE_VIEWER_SEEN_STATE": "OFF", "FORCE_TEST_EXCEL_HTML": false, "FILE_VIEWER_PREVIEW_ERROR_ENABLED": false, "FILE_VIEWER_PRESENCE_ENABLED": false, "FILE_VIEWER_LEGACY_DISABLED": true, "FILE_VIEWER_SHOW_ACCOUNT_MENU_AVATAR": false, "FILE_VIEWER_PRESENCE_USE_BEACON": false};
-            var StaticConstants = {"static_url_video_js_swf": "https://flash.dropboxstatic.com/video-js-vflrEH96P.swf", "static_url_pdfjs_excel": "https://cf.dropboxstatic.com/static/javascript/pdf-js/pdf-js-excel/viewer/viewer-vfl1B3Jmj.html", "static_url_pdfjs_viewer": "https://cf.dropboxstatic.com/static/javascript/pdf-js/pdf-js-9e9df56/web/viewer-vflqGVZhT.html", "static_url_web_socket_swf": "https://dbxlocal.dropboxstatic.com/WebSocket-vflez_6Rn.swf"};
-            var DropboxConstants = {"DELETE_ON_UNLINK_UNSUPPORTED": 3, "DOC_PREVIEW_UNAVAILABLE_FAILED": 1, "DOC_PREVIEW_UNAVAILABLE_PROTECTED_DOC": 4, "DOC_PREVIEW_AVAILABLE": 0, "NOTIFICATION_TYPE_META": -1, "DOC_PREVIEW_IN_PROGRESS": 2, "MAX_PDF_FILE_SIZE_B": 83886080, "FILE_ACTIVITY_LOG_CLIENT_ORIGIN_TYPE": {"AT_SIGN_KEYPRESS": 6, "LITTLE_MAN_BUTTON": 5, "STICKER_BUTTON": 8, "LIKE_BUTTON": 1, "FACEPILE_ADD_BUTTON": 4, "ANNOTATION_MODE_BUTTON_IN_TOOLBAR": 10, "ANNOTATION_MODE_BUTTON_IN_COMMENTS_PANE": 11, "SUBSCRIBE_BUTTON": 2, "POST_BUTTON": 0, "MAX_EVENT_TYPE": 12, "NO_AT_SIGN_KEYPRESS": 7, "MODAL_TOGGLE_BUTTON": 3, "COMMENTS_TUTORIAL": 9}, "root_ns": 0, "DELETE_ON_UNLINK_OLD_CLIENT": 2, "PDF_PREVIEW_MODE": "pdf-js", "MAX_GIF_FILE_SIZE_B": 5242880, "MAX_WEBHOOKS_PER_APP": 25, "DELETE_ON_UNLINK_SUPPORTED_PERSONAL_ONLY": 4, "DOC_PREVIEW_UNAVAILABLE_OTHER": 5, "FILE_ACTIVITY_LOG_EVENT_TYPE": {"TUTORIAL_MENTION": 43, "CLIENT_ANNOTATION_HIDDEN": 27, "TUTORIAL_DONE": 47, "COMMENTS_OFF": 17, "SUBMITTED_FEEDBACK": 19, "CLIENT_ANNOTATION_MODE_ENABLED": 48, "CLIENT_CONTACT_LIST_SELECTED": 21, "CLIENT_SWITCH_TO_OLD_REVISION": 35, "CLIENT_ANNOTATION_UI_CLICKED": 30, "MENTION": 9, "TUTORIAL_REPLY_SUCCESS": 42, "CLIENT_STICKERS_SHOWN": 24, "ADD_MESSAGE_AS_COMMENT_ONBOARDING_CLOSED": 37, "TUTORIAL_CREATE_ANNOTATION": 39, "TUTORIAL_NEXT": 45, "CLIENT_SWITCH_TO_LATEST_REVISION": 36, "TUTORIAL_CREATE_ANNOTATION_SUCCESS": 40, "EDIT_COMMENT": 3, "CLIENT_SIGN_UP_MODAL": 14, "FILE_UNSUBSCRIBE": 12, "FILE_SUBSCRIBE": 11, "LIKE_FILE": 0, "NEW_COMMENT": 2, "DELETE_COMMENT": 4, "SET_CHECKBOX_UNCHECKED": 34, "CLIENT_SIGN_UP_SUCCESS": 16, "COMMENTS_ON": 18, "REQUEST_FEEDBACK_NO_CUSTOM_MESSAGE": 38, "UNLIKE_FILE": 1, "TUTORIAL_REPLY": 41, "MAX_EVENT_TYPE": 50, "TUTORIAL_MENTION_SUCCESS": 44, "MARK_COMMENTS_SEEN": 32, "TUTORIAL_CLOSE": 46, "UNRESOLVE_COMMENT": 8, "CLIENT_COMMENTS_HIDDEN": 23, "CLIENT_ANNOTATION_PLACED": 26, "SET_CHECKBOX_CHECKED": 33, "CLIENT_ANNOTATION_MODE_DISABLED": 49, "CLIENT_SIGN_IN_MODAL": 13, "FILE_VIEW": 10, "CLIENT_CONTACT_LIST_SHOWN": 20, "CLIENT_SIGN_IN_SUCCESS": 15, "CLIENT_ANNOTATION_UI_HOVER": 29, "RESOLVE_COMMENT": 7, "CLIENT_COMMENTS_SHOWN": 22, "UNLIKE_COMMENT": 6, "NEW_STICKER_COMMENT": 25, "CLIENT_ANNOTATION_BUTTON_CLICKED": 31, "CLIENT_ANNOTATION_DRAGGED": 28, "LIKE_COMMENT": 5}, "MAX_TEXT_FILE_SIZE_B": 4194304, "sess_id": "221122026004053987353748600066412646168", "DELETE_ON_UNLINK_SUPPORTED": 1, "PUBLIC_MODE_OVERRIDE": null, "DELETE_ON_UNLINK_SUPPORTED_TEAM_ONLY": 5, "referrer": "https://autohotkey.com/board/topic/29449-gdi-standard-library-145-by-tic/", "DOC_PREVIEW_UNAVAILABLE_BAD_FILE": 3, "FILE_ACTIVITY_ACTION_TYPE": {"UNRESOLVE_COMMENT": 8, "DELETE_COMMENT": 4, "COMMENTS_OFF": 11, "NEW_COMMENT": 2, "COMMENTS_ON": 12, "RESOLVE_COMMENT": 7, "UNLIKE_FILE": 1, "EDIT_COMMENT": 3, "UNLIKE_COMMENT": 6, "FILE_UNSUBSCRIBE": 10, "LIKE_COMMENT": 5, "FILE_SUBSCRIBE": 9, "LIKE_FILE": 0}, "MAX_LINKFILE_SIZE_B": 10240, "COUNTRY_OVERRIDE": null};
-            var GandalfConstants = {"gandalf": {"revision_history_web": true, "docpreview_excel2": false, "wopi-button-visible": false, "unity-web-debug": false, "docpreview_debug_force_test_pptx": false, "docpreview_debug_force_test_pdf": false, "unity-web-destiny": true, "docpreview_debug_force_test_deck_pdf": false, "unity-web-destiny-all-pages": false, "db_readonly_maintenance": false, "file_viewer_hide_comments": true, "tap_to_refresh": false, "docpreview-quality-popup-always": false, "saveas_experiment": true, "file_viewer_react": true, "docpreview-quality-popup-enabled": false}};
-            var ContactsConstants = {"SERVER_SEARCH_ALLOWED": false, "LEGACY_CACHE_LIMIT": "OFF"};
-            var ViewerConstants = {"datetime_format": "dd.MM.yyyy HH:mm", "ROLE_PHOTOS": "photos", "docpreview_serve_xls_html_using_riviera": false, "docpreview_validate_riviera": false, "device_management_rollout_method_values_dict": {"UNLINK_ALL": 0, "ADD_MEMBER_TO_EXCEPTIONS": 2, "UNLINK_MOST_INACTIVE": 1}, "_viewer_properties": {"is_team_assume_user_session": false, "can_moderate_comments": false, "_user_data": []}, "time_format": "HH:mm", "USER_LOCALE": "de", "docpreview_serve_from_dldoc": false, "device_management_unlimit_value": -1, "docpreview_password_protected_preview": false, "docpreview_indesign_preview": false, "date_format": "dd.MM.yyyy", "ROLE_ANONY": "anonymous", "ROLE_WORK": "work", "hls_debug_level": "off", "docpreview_riviera_on_the_fly": false, "device_management_device_type_values_dict": {"MOBILE": 2, "DESKTOP": 1}, "UID_PARAM_NAME": "_subject_uid", "prompt_ha_hiding": false, "transcoder_hls4web": 1, "ROLE_PARAM": "role", "ROLE_BOTH": "both", "ROLE_PERSONAL": "personal", "TIMEZONE_OFFSET": 0};
-            var SharingServerConstants = {"TIBURON": {"LINK_SETTINGS_REACT_UI": {}, "FILE_UI": {}, "FILE_FACES_UI": {}, "WIZARD_UI": {}, "GOLDEN_GATE_UI": {}, "FOLDER_UI": {}}, "GOLDEN_GATE": {"CAN_CONVERT_TO_GG_FOLDER": {}, "SHARING_LIMIT": 500, "SHARING_WARN_THRESHOLD": 100, "HAS_CONTENT_MANAGER": {}, "CAN_DEEP_NEST": {}, "CAN_ACT_ON_INHERITED_MEMBERS": {}, "HAS_PERMANENT_DELETE": {}, "CAN_VIEW_PARENT_FOLDER_MODAL": {}, "HAS_NEW_MEMBERSHIP_UI": {}, "HAS_GOLDEN_GATE_ICONOGRAPHY": {}}, "COMMENTING": {"CAN_SEND_FEEDBACK_REQUEST": {}}, "NDSL": {"ALLOW_DOWNLOAD": null}, "SHARING_EXPERIMENTS": {"SHOW_UPGRADE_TO_BIZ_BANNER": {}, "SIMPLIFIED_WIZARD_UI": {}, "CONSOLIDATE_NEW_FOLDER": {}}};
-            var EnvConstants = {"LIVE_TRANSCODE_SERVER": "showbox-tr.dropbox.com", "THUNDER_SERVER": "thunder.dropbox.com", "BATCH_THUMB_ENDPOINTS": ["//photos-1.dropbox.com/btjb", "//photos-2.dropbox.com/btjb", "//photos-3.dropbox.com/btjb", "//photos-4.dropbox.com/btjb", "//photos-5.dropbox.com/btjb", "//photos-6.dropbox.com/btjb"], "BOLT_SERVER": "bolt.dropbox.com", "BEACON_SERVER": "beacon.dropbox.com", "NOTES_WEBSERVER_OLD": "notes.dropbox.com", "IS_PROD": 1, "PUBSERVER": "dl.dropboxusercontent.com", "CAROUSEL_WEBSERVER": "carousel.dropbox.com", "STATIC_CONTENT_HOST": "cfl.dropboxstatic.com", "HARMONY_SERVER": "harmony.dropbox.com", "WEB_TIMING_LOG_ENDPOINT": "/web_timing_log", "PHOTOS_WEBSERVER": "photos.dropbox.com", "DL_DOC_USER_CONTENT_DOMAIN": "dl-doc.dropboxusercontent.com", "PHOTO_CLUSTER": ["photos-1.dropbox.com", "photos-2.dropbox.com", "photos-3.dropbox.com", "photos-4.dropbox.com", "photos-5.dropbox.com", "photos-6.dropbox.com"], "BLOCK_CLUSTER": "dl-web.dropbox.com", "WEBSERVER": "www.dropbox.com", "DL_DOC_DOMAIN": "dl-doc.dropbox.com", "NOTES_WEBSERVER": "paper.dropbox.com", "REDIRECT_SAFE_ORIGINS": ["www.dropbox.com", "dropbox.com", "api.dropboxapi.com", "api.dropbox.com", "linux.dropbox.com", "photos.dropbox.com", "carousel.dropbox.com", "www.dropbox.com", "paper.dropbox.com", "notes.dropbox.com", "test.composer.dropbox.com"]};
-            var StickerConstants = {"stickers": [{"live_sticker": true, "description": "", "id": 55, "set_id": 8, "name": "appreciation"}, {"live_sticker": true, "description": "", "id": 56, "set_id": 8, "name": "cool"}, {"live_sticker": true, "description": "", "id": 57, "set_id": 8, "name": "face-palm"}, {"live_sticker": true, "description": "", "id": 58, "set_id": 8, "name": "fire-hand"}, {"live_sticker": true, "description": "", "id": 59, "set_id": 8, "name": "fist-bump"}, {"live_sticker": true, "description": "", "id": 60, "set_id": 8, "name": "hilarious"}, {"live_sticker": true, "description": "", "id": 61, "set_id": 8, "name": "love-it"}, {"live_sticker": true, "description": "", "id": 62, "set_id": 8, "name": "magic-ball"}, {"live_sticker": true, "description": "", "id": 63, "set_id": 8, "name": "mind-blown"}, {"live_sticker": true, "description": "", "id": 64, "set_id": 8, "name": "shy"}, {"live_sticker": true, "description": "", "id": 65, "set_id": 8, "name": "thank-you"}, {"live_sticker": true, "description": "", "id": 66, "set_id": 8, "name": "thumbs-up"}, {"live_sticker": false, "description": "", "id": 67, "set_id": 9, "name": "01"}, {"live_sticker": false, "description": "", "id": 68, "set_id": 9, "name": "02"}, {"live_sticker": false, "description": "", "id": 69, "set_id": 9, "name": "03"}, {"live_sticker": false, "description": "", "id": 70, "set_id": 9, "name": "04"}, {"live_sticker": false, "description": "", "id": 71, "set_id": 9, "name": "05"}, {"live_sticker": false, "description": "", "id": 72, "set_id": 9, "name": "06"}, {"live_sticker": false, "description": "", "id": 73, "set_id": 9, "name": "07"}, {"live_sticker": false, "description": "", "id": 74, "set_id": 9, "name": "08"}, {"live_sticker": false, "description": "", "id": 75, "set_id": 9, "name": "09"}, {"live_sticker": false, "description": "", "id": 76, "set_id": 9, "name": "10"}, {"live_sticker": false, "description": "", "id": 77, "set_id": 9, "name": "11"}, {"live_sticker": false, "description": "", "id": 78, "set_id": 9, "name": "12"}, {"live_sticker": false, "description": "", "id": 79, "set_id": 9, "name": "13"}, {"live_sticker": false, "description": "", "id": 80, "set_id": 9, "name": "14"}, {"live_sticker": false, "description": "", "id": 81, "set_id": 9, "name": "15"}, {"live_sticker": false, "description": "", "id": 82, "set_id": 9, "name": "16"}, {"live_sticker": false, "description": "", "id": 83, "set_id": 10, "name": "01"}, {"live_sticker": false, "description": "", "id": 84, "set_id": 10, "name": "02"}, {"live_sticker": false, "description": "", "id": 85, "set_id": 10, "name": "03"}, {"live_sticker": false, "description": "", "id": 86, "set_id": 10, "name": "04"}, {"live_sticker": false, "description": "", "id": 87, "set_id": 10, "name": "05"}, {"live_sticker": false, "description": "", "id": 88, "set_id": 10, "name": "06"}, {"live_sticker": false, "description": "", "id": 89, "set_id": 10, "name": "07"}, {"live_sticker": false, "description": "", "id": 90, "set_id": 10, "name": "08"}, {"live_sticker": false, "description": "", "id": 91, "set_id": 10, "name": "09"}, {"live_sticker": false, "description": "", "id": 92, "set_id": 10, "name": "10"}, {"live_sticker": false, "description": "", "id": 93, "set_id": 10, "name": "11"}, {"live_sticker": false, "description": "", "id": 94, "set_id": 10, "name": "12"}, {"live_sticker": false, "description": "", "id": 95, "set_id": 10, "name": "13"}, {"live_sticker": false, "description": "", "id": 96, "set_id": 10, "name": "14"}, {"live_sticker": false, "description": "", "id": 97, "set_id": 10, "name": "15"}, {"live_sticker": false, "description": "", "id": 98, "set_id": 10, "name": "16"}, {"live_sticker": false, "description": "", "id": 99, "set_id": 11, "name": "01"}, {"live_sticker": false, "description": "", "id": 100, "set_id": 11, "name": "02"}, {"live_sticker": false, "description": "", "id": 101, "set_id": 11, "name": "03"}, {"live_sticker": false, "description": "", "id": 102, "set_id": 11, "name": "04"}, {"live_sticker": false, "description": "", "id": 103, "set_id": 11, "name": "05"}, {"live_sticker": false, "description": "", "id": 104, "set_id": 11, "name": "06"}, {"live_sticker": false, "description": "", "id": 105, "set_id": 11, "name": "07"}, {"live_sticker": false, "description": "", "id": 106, "set_id": 11, "name": "08"}, {"live_sticker": false, "description": "", "id": 107, "set_id": 11, "name": "09"}, {"live_sticker": false, "description": "", "id": 108, "set_id": 11, "name": "10"}, {"live_sticker": false, "description": "", "id": 109, "set_id": 11, "name": "11"}, {"live_sticker": false, "description": "", "id": 110, "set_id": 11, "name": "12"}, {"live_sticker": false, "description": "", "id": 111, "set_id": 11, "name": "13"}, {"live_sticker": false, "description": "", "id": 112, "set_id": 11, "name": "14"}, {"live_sticker": false, "description": "", "id": 113, "set_id": 11, "name": "15"}, {"live_sticker": false, "description": "", "id": 114, "set_id": 11, "name": "16"}, {"live_sticker": false, "description": "", "id": 115, "set_id": 12, "name": "01"}, {"live_sticker": false, "description": "", "id": 116, "set_id": 12, "name": "02"}, {"live_sticker": false, "description": "", "id": 117, "set_id": 12, "name": "03"}, {"live_sticker": false, "description": "", "id": 118, "set_id": 12, "name": "04"}, {"live_sticker": false, "description": "", "id": 119, "set_id": 12, "name": "05"}, {"live_sticker": false, "description": "", "id": 120, "set_id": 12, "name": "06"}, {"live_sticker": false, "description": "", "id": 121, "set_id": 12, "name": "07"}, {"live_sticker": false, "description": "", "id": 122, "set_id": 12, "name": "08"}, {"live_sticker": false, "description": "", "id": 123, "set_id": 12, "name": "09"}, {"live_sticker": false, "description": "", "id": 124, "set_id": 12, "name": "10"}, {"live_sticker": false, "description": "", "id": 125, "set_id": 12, "name": "11"}, {"live_sticker": false, "description": "", "id": 126, "set_id": 12, "name": "12"}, {"live_sticker": false, "description": "", "id": 127, "set_id": 13, "name": "01"}, {"live_sticker": false, "description": "", "id": 128, "set_id": 13, "name": "02"}, {"live_sticker": false, "description": "", "id": 129, "set_id": 13, "name": "03"}, {"live_sticker": false, "description": "", "id": 130, "set_id": 13, "name": "04"}, {"live_sticker": false, "description": "", "id": 131, "set_id": 13, "name": "05"}, {"live_sticker": false, "description": "", "id": 132, "set_id": 13, "name": "06"}, {"live_sticker": false, "description": "", "id": 133, "set_id": 13, "name": "07"}, {"live_sticker": false, "description": "", "id": 134, "set_id": 13, "name": "08"}, {"live_sticker": false, "description": "", "id": 135, "set_id": 13, "name": "09"}, {"live_sticker": false, "description": "", "id": 136, "set_id": 13, "name": "10"}, {"live_sticker": false, "description": "", "id": 137, "set_id": 13, "name": "11"}, {"live_sticker": false, "description": "", "id": 138, "set_id": 13, "name": "12"}, {"live_sticker": false, "description": "", "id": 139, "set_id": 13, "name": "13"}, {"live_sticker": false, "description": "", "id": 140, "set_id": 13, "name": "14"}, {"live_sticker": false, "description": "", "id": 141, "set_id": 13, "name": "15"}, {"live_sticker": false, "description": "", "id": 142, "set_id": 14, "name": "01"}, {"live_sticker": false, "description": "", "id": 143, "set_id": 14, "name": "02"}, {"live_sticker": false, "description": "", "id": 144, "set_id": 14, "name": "03"}, {"live_sticker": false, "description": "", "id": 145, "set_id": 14, "name": "04"}, {"live_sticker": false, "description": "", "id": 146, "set_id": 14, "name": "05"}, {"live_sticker": false, "description": "", "id": 147, "set_id": 14, "name": "06"}, {"live_sticker": false, "description": "", "id": 148, "set_id": 14, "name": "07"}, {"live_sticker": false, "description": "", "id": 149, "set_id": 14, "name": "08"}, {"live_sticker": false, "description": "", "id": 150, "set_id": 14, "name": "09"}, {"live_sticker": false, "description": "", "id": 151, "set_id": 14, "name": "10"}, {"live_sticker": false, "description": "", "id": 152, "set_id": 14, "name": "11"}, {"live_sticker": false, "description": "", "id": 153, "set_id": 14, "name": "12"}, {"live_sticker": false, "description": "", "id": 154, "set_id": 14, "name": "13"}, {"live_sticker": false, "description": "", "id": 155, "set_id": 14, "name": "14"}, {"live_sticker": false, "description": "", "id": 156, "set_id": 14, "name": "15"}], "sticker_img_url": "https://www.dropbox.com/stickers/sticker", "sticker_set_img_url": "https://www.dropbox.com/stickers/set", "sets": [{"description": "", "id": 8, "name": "wizards"}, {"description": "", "id": 9, "name": "Chillusaurus"}, {"description": "", "id": 10, "name": "Eyeballs"}, {"description": "", "id": 11, "name": "GrimCreeper"}, {"description": "", "id": 12, "name": "InKitties"}, {"description": "", "id": 13, "name": "SportBall"}, {"description": "", "id": 14, "name": "Utilitarian"}]};
-            var RequestConstants = {"REQUEST_START_TIME": 1469557656595, "IS_SPDY": 1, "REQUEST_ID": "687952c75909daf03d7ae5b4956819c1", "REQUEST_TRACING_ENABLED": false, "JS_CSRF_COOKIE": "__Host-js_csrf"};
-            var WebTimingConstants = {"LOG_JS_MODULE_TIMING": false, "LOG_RESOURCE_TIMING": false, "LOG_TIMING_DELAY": false};
-            </script> <script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if ((x != "") && (y != ""))
+		VarSetCapacity(pt, 8), NumPut(x, pt, 0, "UInt"), NumPut(y, pt, 4, "UInt")
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17219"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+	if (w = "") ||(h = "")
+		WinGetPos,,, w, h, ahk_id %hwnd%
+   
+	return DllCall("UpdateLayeredWindow"
+					, Ptr, hwnd
+					, Ptr, 0
+					, Ptr, ((x = "") && (y = "")) ? 0 : &pt
+					, "int64*", w|h<<32
+					, Ptr, hdc
+					, "int64*", 0
+					, "uint", 0
+					, "UInt*", Alpha<<16|1<<24
+					, "uint", 2)
+}
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+;#####################################################################################
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17244"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+; Function				BitBlt
+; Description			The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle 
+;						of pixels from the specified source device context into a destination device context.
+;
+; dDC					handle to destination DC
+; dx					x-coord of destination upper-left corner
+; dy					y-coord of destination upper-left corner
+; dw					width of the area to copy
+; dh					height of the area to copy
+; sDC					handle to source DC
+; sx					x-coordinate of source upper-left corner
+; sy					y-coordinate of source upper-left corner
+; Raster				raster operation code
+;
+; return				If the function succeeds, the return value is nonzero
+;
+; notes					If no raster operation is specified, then SRCCOPY is used, which copies the source directly to the destination rectangle
+;
+; BLACKNESS				= 0x00000042
+; NOTSRCERASE			= 0x001100A6
+; NOTSRCCOPY			= 0x00330008
+; SRCERASE				= 0x00440328
+; DSTINVERT				= 0x00550009
+; PATINVERT				= 0x005A0049
+; SRCINVERT				= 0x00660046
+; SRCAND				= 0x008800C6
+; MERGEPAINT			= 0x00BB0226
+; MERGECOPY				= 0x00C000CA
+; SRCCOPY				= 0x00CC0020
+; SRCPAINT				= 0x00EE0086
+; PATCOPY				= 0x00F00021
+; PATPAINT				= 0x00FB0A09
+; WHITENESS				= 0x00FF0062
+; CAPTUREBLT			= 0x40000000
+; NOMIRRORBITMAP		= 0x80000000
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdi32\BitBlt"
+					, Ptr, dDC
+					, "int", dx
+					, "int", dy
+					, "int", dw
+					, "int", dh
+					, Ptr, sDC
+					, "int", sx
+					, "int", sy
+					, "uint", Raster ? Raster : 0x00CC0020)
+}
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17260"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+;#####################################################################################
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+; Function				StretchBlt
+; Description			The StretchBlt function copies a bitmap from a source rectangle into a destination rectangle, 
+;						stretching or compressing the bitmap to fit the dimensions of the destination rectangle, if necessary.
+;						The system stretches or compresses the bitmap according to the stretching mode currently set in the destination device context.
+;
+; ddc					handle to destination DC
+; dx					x-coord of destination upper-left corner
+; dy					y-coord of destination upper-left corner
+; dw					width of destination rectangle
+; dh					height of destination rectangle
+; sdc					handle to source DC
+; sx					x-coordinate of source upper-left corner
+; sy					y-coordinate of source upper-left corner
+; sw					width of source rectangle
+; sh					height of source rectangle
+; Raster				raster operation code
+;
+; return				If the function succeeds, the return value is nonzero
+;
+; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt		
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17284"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdi32\StretchBlt"
+					, Ptr, ddc
+					, "int", dx
+					, "int", dy
+					, "int", dw
+					, "int", dh
+					, Ptr, sdc
+					, "int", sx
+					, "int", sy
+					, "int", sw
+					, "int", sh
+					, "uint", Raster ? Raster : 0x00CC0020)
+}
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+;#####################################################################################
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17300"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+; Function				SetStretchBltMode
+; Description			The SetStretchBltMode function sets the bitmap stretching mode in the specified device context
+;
+; hdc					handle to the DC
+; iStretchMode			The stretching mode, describing how the target will be stretched
+;
+; return				If the function succeeds, the return value is the previous stretching mode. If it fails it will return 0
+;
+; STRETCH_ANDSCANS 		= 0x01
+; STRETCH_ORSCANS 		= 0x02
+; STRETCH_DELETESCANS 	= 0x03
+; STRETCH_HALFTONE 		= 0x04
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+SetStretchBltMode(hdc, iStretchMode=4)
+{
+	return DllCall("gdi32\SetStretchBltMode"
+					, A_PtrSize ? "UPtr" : "UInt", hdc
+					, "int", iStretchMode)
+}
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17324"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+;#####################################################################################
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+; Function				SetImage
+; Description			Associates a new image with a static control
+;
+; hwnd					handle of the control to update
+; hBitmap				a gdi bitmap to associate the static control with
+;
+; return				If the function succeeds, the return value is nonzero
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17342"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    
+SetImage(hwnd, hBitmap)
+{
+	SendMessage, 0x172, 0x0, hBitmap,, ahk_id %hwnd%
+	E := ErrorLevel
+	DeleteObject(E)
+	return E
+}
 
-        var _javascript_key = "k3mpvuSruqsYhUi5Wo8lpGYaJFSQRTXsaRYUZY2yWy8";
-        var _js_post = false;
+;#####################################################################################
 
-        var _cf = _cf || [];
-        _cf.push(['_setJsPost', _js_post]);
-        _cf.push(['_setJavaScriptKey', _javascript_key]);
-        var itv=0; if (Date.now) itv = Date.now(); else itv = +new Date();
-        _cf.push(['_setInitTime', itv]);
-        _cf.push(['_setSDFieldNames', "pyxl17358"]);
-        _cf.push(['_setEnReadDocUrl', false]);
-    </script></head><body class="de   " dir="ltr"> <div style="display: none;" id="db-modal-multiaccount-login-modal" class="db-modal-wrapper"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div data-js-component-id="component17221" id="pyxl17220" class="login-form-container  standard"><div id="regular-login-forms"><div><form action="/ajax_multi_login" novalidate="" style="" method="POST" class="clearfix credentials-form login-form"><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="refresh_token" value="" /><input type="hidden" name="email_sig" value="" /><input type="hidden" name="login_sd" value="" id="pyxl17219" /> <div class="credentials-form__fields"><div data-js-component-id="component17224" tabindex="-1" id="pyxl17222" class="login-email text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="login_email" /><div data-error-field-name="login_email"></div></div><div class="text-input-wrapper"><input name="login_email" class="text-input-input autofocus" readonly="True" type="email" id="pyxl17223" /> <label style="" for="pyxl17223">E-Mail</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17227" tabindex="-1" id="pyxl17225" class="text-input login-password login-text-input standard"><div class="text-input-error-wrapper"><form:error name="login_password" /><div data-error-field-name="login_password"></div></div><div class="text-input-wrapper"><input class="password-input text-input-input" type="password" id="pyxl17226" name="login_password" /> <label style="" for="pyxl17226">Kennwort</label><small class="secondary-label"></small><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div><div class="clearfix"><div class="sso-description"><div class="sprite-div"><div class="sprite-frame small icon-left"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_lock" /></div><div class="sprite-text"><div class="sprite-text-inner">Einmaliges Anmelden aktiviert</div></div></div></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="remember_me" /><div data-error-field-name="remember_me"></div></div><input checked="checked" type="checkbox" id="pyxl17228" name="remember_me" /><label for="pyxl17228">Angemeldet bleiben</label></div><button disabled="True" type="submit" class="login-button button-primary"><div class="sign-in-text">Anmelden</div><div class="sso-text">Weiter</div></button><span class="login-loading-indicator"><img data-js-component-id="component17229" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" /></span></div><div class="sso-optout"><div>oder <a href="#">Mit Dropbox-Anmeldeinformationen anmelden</a></div></div><div class="login-need-help"><a href="/forgot">Kennwort vergessen?</a></div></form></div> <form action="/ajax_multi_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-phone-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><div class="login-info two-factor-uses-sms">Wir haben einen Code an die Telefonnummer gesendet, die mit den folgenden Ziffern endet: <span class="last-four-digits"></span>.</div><div class="login-info two-factor-uses-authenticator">Geben Sie den von der Authentifikator-App generierten Sicherheitscode ein.</div><div data-js-component-id="component17232" tabindex="-1" id="pyxl17230" class="text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input name="code" class="text-input-input autofocus" autocomplete="off" type="text" id="pyxl17231" /> <label style="" for="pyxl17231">6-stelliger Code</label><small class="secondary-label"></small></div></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17233" name="trusted" /><label for="pyxl17233"><div data-js-component-id="component17234" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><button type="submit" class="login-button button-primary">Senden</button><div class="two-factor-need-help"><a href="" class="resend-two-factor-code two-factor-uses-sms">Sie haben keinen Code erhalten?</a><a href="/lost_phone"><span class="two-factor-uses-sms">Ich habe mein Smartphone verloren</span><span class="two-factor-uses-authenticator">Ich kann meine Authentifikator-App nicht benutzen.</span></a></div></form> <form action="/ajax_multi_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-seckey-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><input type="hidden" name="u2f_challenge" value="" /><div class="login-info two-factor-uses-u2f"><img data-js-component-id="component17235" src="https://cfl.dropboxstatic.com/static/images/security_keys/insert-vflkCfC4_.png" data-hi-res="https://cfl.dropboxstatic.com/static/images/security_keys/insert@2x-vflTxG2RJ.png" class="seckey-insert" /><div class="two-factor-seckey-instructions"><p><span style="font-weight:bold">Stecken Sie Ihren Sicherheitsschlüssel ein.</span> <img data-js-component-id="component17236" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" class="seckey-loading-status" /><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" style="display:none" class="seckey-loading-status sprite sprite_web s_web_bulletpoint-check" /></p>Falls Ihr Sicherheitsschlüssel eine Taste oder goldenen Platte hat, tippen Sie nach dem Einstecken darauf.</div></div><div data-js-component-id="component17239" tabindex="-1" id="pyxl17237" class="text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input class="text-input-input" style="display:none" type="text" id="pyxl17238" name="code" /> <label style="" for="pyxl17238"></label><small class="secondary-label"></small></div></div><div style="display:none;" class="two-factor-seckey-instructions"><div style="color:red"><span class="error-msg">Schlüssel nicht gefunden.</span></div><button class="two-factor-seckey-retry button-tertiary">Retry</button></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17240" name="trusted" /><label for="pyxl17240"><div data-js-component-id="component17241" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><div class="two-factor-use-phone-instead"><a href="" class="two-factor-uses-sms">SMS senden</a><a href="" class="two-factor-uses-authenticator">Mobile Authentifikator-App verwenden</a></div></form></div><div style="display:none" id="web-destiny-container" class="web-destiny-container-class"><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" id="continue-as-button" class="continue-as-button-class button-primary"><div class="continue-as-user-name"></div></button></div></div></div></div></div></div><div class="preview-box"><div id="component17242" class=""><div class="react-stub"></div></div></div><div style="display: none;" id="db-modal-shared-link-immediate-signup-modal" class="db-modal-wrapper db-bright-modal-wrapper"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div class="bright-modal-logo"><img data-js-component-id="component17243" src="https://cfl.dropboxstatic.com/static/images/dropbox_39x36-vflMxv3gQ.png" /></div><div class="bright-modal-header"><span class="register-form-component">Laden Sie Dateien direkt in Ihre Dropbox herunter, indem Sie ein kostenloses Konto einrichten.&nbsp;<a class="toggle-form-link">Oder melden Sie sich an.</a></span><span class="login-form-component">Melden Sie sich an und laden Sie Dateien direkt in Ihre Dropbox herunter.&nbsp;<a class="toggle-form-link">Oder erstellen Sie ein kostenloses Konto.</a></span></div><div class="bright-modal-content"><div class="register-form-component"><div class="compact-form compact-register-form"><div data-js-component-id="component17245" class="login-form-container small form_shown register third_party_auth"><form action="/ajax_register" class="clearfix credentials-form register-form"><input type="hidden" name="cont" /><input type="hidden" name="signup_sd" value="" id="pyxl17244" /> <input type="hidden" name="signup_tag" value="shmodel_modal_register" /><input type="hidden" name="filename" value="Gdip_All.ahk" /><div class="credentials-form__fields"><div class="register-form__name-fields"><div data-js-component-id="component17248" tabindex="-1" id="pyxl17246" class="input-fname text-input__margin-right text-input small first"><div class="text-input-error-wrapper"><form:error name="fname" /><div data-error-field-name="fname"></div></div><div class="text-input-wrapper"><input name="fname" id="pyxl17247" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17247">Vorname</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17251" tabindex="-1" id="pyxl17249" class="input-lname second text-input small"><div class="text-input-error-wrapper"><form:error name="lname" /><div data-error-field-name="lname"></div></div><div class="text-input-wrapper"><input name="lname" id="pyxl17250" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17250">Nachname</label><small class="secondary-label"></small></div></div></div><div class="register-form__credential-fields"><div data-js-component-id="component17254" tabindex="-1" id="pyxl17252" class="input-email small text-input__margin-right text-input"><div class="text-input-error-wrapper"><form:error name="email" /><div data-error-field-name="email"></div></div><div class="text-input-wrapper"><input class="text-input-input" type="email" name="email" id="pyxl17253" /> <label style="" for="pyxl17253">E-Mail</label><small class="secondary-label"></small></div></div><div class="email-suggestion"></div><div data-js-component-id="component17257" tabindex="-1" id="pyxl17255" class="input-password small text-input"><div class="text-input-error-wrapper"><form:error name="password" /><div data-error-field-name="password"></div></div><div class="text-input-wrapper"><input autocomplete="off" class="password-input text-input-input" type="password" name="password" id="pyxl17256" /> <label style="" for="pyxl17256">Kennwort</label><small class="secondary-label"></small><div data-js-component-id="component17258" class="bubble-dropdown-container"><div aria-label="Kennwortstärke" class="password-input-meter small bubble-dropdown-target bubble-dropdown-target" tabindex="-1"><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div></div><div class="bubble-dropdown left"><div class="password-bubble-title"></div><div class="password-bubble-desc">Ein gutes Kennwort ist schwer zu erraten. Verwenden Sie deswegen ungewöhnliche Wörter, Insider-Witze, ungewöhnliche groSSSchreibung, kreative Rächtschraibunk und getarnte Zahlen und $ymbo1e.</div><div class="bubble-arrow-border"></div><div class="bubble-arrow"></div></div></div><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div></div><div id="react-signup-recaptcha-challenge-div"></div><div class="small checkbox checkbox-inline agree"><div class="text-input-error-wrapper"><form:error name="tos_agree" /><div data-error-field-name="tos_agree"></div></div><input type="checkbox" id="pyxl17259" name="tos_agree" /><label for="pyxl17259"><span>Ich stimme den <a href="/terms" target="_blank">AGB für Dropbox</a> zu</span></label></div><button disabled="True" type="submit" class="login-button button-primary">Konto erstellen</button><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" type="button" data-third-party-no-popup="false" class="auth-google button-primary">Mit Google registrieren</button></form></div></div></div><div class="login-form-component"><div class="compact-form compact-login-form"><div data-js-component-id="component17262" id="pyxl17261" class="login-form-container  small"><div id="regular-login-forms"><div><form action="/ajax_login" novalidate="" style="" method="POST" class="clearfix credentials-form login-form"><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="refresh_token" value="" /><input type="hidden" name="email_sig" value="" /><input type="hidden" name="login_sd" value="" id="pyxl17260" /> <div class="credentials-form__fields"><div data-js-component-id="component17265" tabindex="-1" id="pyxl17263" class="small login-email text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="login_email" /><div data-error-field-name="login_email"></div></div><div class="text-input-wrapper"><input class="text-input-input autofocus" type="email" name="login_email" id="pyxl17264" /> <label style="" for="pyxl17264">E-Mail</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17268" tabindex="-1" id="pyxl17266" class="small text-input login-password login-text-input"><div class="text-input-error-wrapper"><form:error name="login_password" /><div data-error-field-name="login_password"></div></div><div class="text-input-wrapper"><input class="password-input text-input-input" type="password" id="pyxl17267" name="login_password" /> <label style="" for="pyxl17267">Kennwort</label><small class="secondary-label"></small><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div><div id="react-login-recaptcha-challenge-div"></div><div class="clearfix"><div class="sso-description"><div class="sprite-div"><div class="sprite-frame small icon-left"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_lock" /></div><div class="sprite-text"><div class="sprite-text-inner">Einmaliges Anmelden aktiviert</div></div></div></div><div class="small checkbox checkbox-inline remember-me"><div class="text-input-error-wrapper"><form:error name="remember_me" /><div data-error-field-name="remember_me"></div></div><input checked="checked" type="checkbox" id="pyxl17269" name="remember_me" /><label for="pyxl17269">Angemeldet bleiben</label></div><button disabled="True" type="submit" class="login-button button-primary"><div class="sign-in-text">Anmelden</div><div class="sso-text">Weiter</div></button><span class="login-loading-indicator"><img data-js-component-id="component17270" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" /></span></div><div class="sso-optout"><div>oder <a href="#">Mit Dropbox-Anmeldeinformationen anmelden</a></div></div><div class="login-need-help"><a href="/forgot">Kennwort vergessen?</a></div></form></div> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-phone-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><div class="login-info two-factor-uses-sms">Wir haben einen Code an die Telefonnummer gesendet, die mit den folgenden Ziffern endet: <span class="last-four-digits"></span>.</div><div class="login-info two-factor-uses-authenticator">Geben Sie den von der Authentifikator-App generierten Sicherheitscode ein.</div><div data-js-component-id="component17273" tabindex="-1" id="pyxl17271" class="small text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input name="code" class="text-input-input autofocus" autocomplete="off" type="text" id="pyxl17272" /> <label style="" for="pyxl17272">6-stelliger Code</label><small class="secondary-label"></small></div></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17274" name="trusted" /><label for="pyxl17274"><div data-js-component-id="component17275" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><button type="submit" class="login-button button-primary">Senden</button><div class="two-factor-need-help"><a href="" class="resend-two-factor-code two-factor-uses-sms">Sie haben keinen Code erhalten?</a><a href="/lost_phone"><span class="two-factor-uses-sms">Ich habe mein Smartphone verloren</span><span class="two-factor-uses-authenticator">Ich kann meine Authentifikator-App nicht benutzen.</span></a></div></form> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-seckey-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><input type="hidden" name="u2f_challenge" value="" /><div class="login-info two-factor-uses-u2f"><img data-js-component-id="component17276" src="https://cfl.dropboxstatic.com/static/images/security_keys/insert-vflkCfC4_.png" data-hi-res="https://cfl.dropboxstatic.com/static/images/security_keys/insert@2x-vflTxG2RJ.png" class="seckey-insert" /><div class="two-factor-seckey-instructions"><p><span style="font-weight:bold">Stecken Sie Ihren Sicherheitsschlüssel ein.</span> <img data-js-component-id="component17277" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" class="seckey-loading-status" /><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" style="display:none" class="seckey-loading-status sprite sprite_web s_web_bulletpoint-check" /></p>Falls Ihr Sicherheitsschlüssel eine Taste oder goldenen Platte hat, tippen Sie nach dem Einstecken darauf.</div></div><div data-js-component-id="component17280" tabindex="-1" id="pyxl17278" class="text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input class="text-input-input" style="display:none" type="text" id="pyxl17279" name="code" /> <label style="" for="pyxl17279"></label><small class="secondary-label"></small></div></div><div style="display:none;" class="two-factor-seckey-instructions"><div style="color:red"><span class="error-msg">Schlüssel nicht gefunden.</span></div><button class="two-factor-seckey-retry button-tertiary">Retry</button></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17281" name="trusted" /><label for="pyxl17281"><div data-js-component-id="component17282" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><div class="two-factor-use-phone-instead"><a href="" class="two-factor-uses-sms">SMS senden</a><a href="" class="two-factor-uses-authenticator">Mobile Authentifikator-App verwenden</a></div></form></div><div style="display:none" id="web-destiny-container" class="web-destiny-container-class"><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" id="continue-as-button" class="continue-as-button-class button-primary"><div class="continue-as-user-name"></div></button></div></div></div></div></div><div class="bright-modal-footer"><a class="close-link">Nein danke. Weiter zur Ansicht →</a></div></div></div></div></div><div style="display: none;" id="db-modal-shared-link-download-signup-modal" class="db-modal-wrapper db-bright-modal-wrapper"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div class="bright-modal-logo"><img data-js-component-id="component17283" src="https://cfl.dropboxstatic.com/static/images/dropbox_39x36-vflMxv3gQ.png" /></div><div class="bright-modal-header"><span class="register-form-component">Laden Sie Dateien direkt in Ihre Dropbox herunter, indem Sie ein kostenloses Konto einrichten.&nbsp;<a class="toggle-form-link">Oder melden Sie sich an.</a></span><span class="login-form-component">Melden Sie sich an und laden Sie Dateien direkt in Ihre Dropbox herunter.&nbsp;<a class="toggle-form-link">Oder erstellen Sie ein kostenloses Konto.</a></span></div><div class="bright-modal-content"><div class="register-form-component"><div class="compact-form compact-register-form"><div data-js-component-id="component17285" class="login-form-container small form_shown register third_party_auth"><form action="/ajax_register" class="clearfix credentials-form register-form"><input type="hidden" name="cont" /><input type="hidden" name="signup_sd" value="" id="pyxl17284" /> <input type="hidden" name="signup_tag" value="shmodel_download_register" /><input type="hidden" name="filename" value="Gdip_All.ahk" /><div class="credentials-form__fields"><div class="register-form__name-fields"><div data-js-component-id="component17288" tabindex="-1" id="pyxl17286" class="input-fname text-input__margin-right text-input small first"><div class="text-input-error-wrapper"><form:error name="fname" /><div data-error-field-name="fname"></div></div><div class="text-input-wrapper"><input name="fname" id="pyxl17287" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17287">Vorname</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17291" tabindex="-1" id="pyxl17289" class="input-lname second text-input small"><div class="text-input-error-wrapper"><form:error name="lname" /><div data-error-field-name="lname"></div></div><div class="text-input-wrapper"><input name="lname" id="pyxl17290" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17290">Nachname</label><small class="secondary-label"></small></div></div></div><div class="register-form__credential-fields"><div data-js-component-id="component17294" tabindex="-1" id="pyxl17292" class="input-email small text-input__margin-right text-input"><div class="text-input-error-wrapper"><form:error name="email" /><div data-error-field-name="email"></div></div><div class="text-input-wrapper"><input class="text-input-input" type="email" name="email" id="pyxl17293" /> <label style="" for="pyxl17293">E-Mail</label><small class="secondary-label"></small></div></div><div class="email-suggestion"></div><div data-js-component-id="component17297" tabindex="-1" id="pyxl17295" class="input-password small text-input"><div class="text-input-error-wrapper"><form:error name="password" /><div data-error-field-name="password"></div></div><div class="text-input-wrapper"><input autocomplete="off" class="password-input text-input-input" type="password" name="password" id="pyxl17296" /> <label style="" for="pyxl17296">Kennwort</label><small class="secondary-label"></small><div data-js-component-id="component17298" class="bubble-dropdown-container"><div aria-label="Kennwortstärke" class="password-input-meter small bubble-dropdown-target bubble-dropdown-target" tabindex="-1"><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div></div><div class="bubble-dropdown left"><div class="password-bubble-title"></div><div class="password-bubble-desc">Ein gutes Kennwort ist schwer zu erraten. Verwenden Sie deswegen ungewöhnliche Wörter, Insider-Witze, ungewöhnliche groSSSchreibung, kreative Rächtschraibunk und getarnte Zahlen und $ymbo1e.</div><div class="bubble-arrow-border"></div><div class="bubble-arrow"></div></div></div><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div></div><div id="react-signup-recaptcha-challenge-div"></div><div class="small checkbox checkbox-inline agree"><div class="text-input-error-wrapper"><form:error name="tos_agree" /><div data-error-field-name="tos_agree"></div></div><input type="checkbox" id="pyxl17299" name="tos_agree" /><label for="pyxl17299"><span>Ich stimme den <a href="/terms" target="_blank">AGB für Dropbox</a> zu</span></label></div><button disabled="True" type="submit" class="login-button button-primary">Konto erstellen</button><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" type="button" data-third-party-no-popup="false" class="auth-google button-primary">Mit Google registrieren</button></form></div></div></div><div class="login-form-component"><div class="compact-form compact-login-form"><div data-js-component-id="component17302" id="pyxl17301" class="login-form-container  small"><div id="regular-login-forms"><div><form action="/ajax_login" novalidate="" style="" method="POST" class="clearfix credentials-form login-form"><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="refresh_token" value="" /><input type="hidden" name="email_sig" value="" /><input type="hidden" name="login_sd" value="" id="pyxl17300" /> <div class="credentials-form__fields"><div data-js-component-id="component17305" tabindex="-1" id="pyxl17303" class="small login-email text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="login_email" /><div data-error-field-name="login_email"></div></div><div class="text-input-wrapper"><input class="text-input-input autofocus" type="email" name="login_email" id="pyxl17304" /> <label style="" for="pyxl17304">E-Mail</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17308" tabindex="-1" id="pyxl17306" class="small text-input login-password login-text-input"><div class="text-input-error-wrapper"><form:error name="login_password" /><div data-error-field-name="login_password"></div></div><div class="text-input-wrapper"><input class="password-input text-input-input" type="password" id="pyxl17307" name="login_password" /> <label style="" for="pyxl17307">Kennwort</label><small class="secondary-label"></small><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div><div id="react-login-recaptcha-challenge-div"></div><div class="clearfix"><div class="sso-description"><div class="sprite-div"><div class="sprite-frame small icon-left"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_lock" /></div><div class="sprite-text"><div class="sprite-text-inner">Einmaliges Anmelden aktiviert</div></div></div></div><div class="small checkbox checkbox-inline remember-me"><div class="text-input-error-wrapper"><form:error name="remember_me" /><div data-error-field-name="remember_me"></div></div><input checked="checked" type="checkbox" id="pyxl17309" name="remember_me" /><label for="pyxl17309">Angemeldet bleiben</label></div><button disabled="True" type="submit" class="login-button button-primary"><div class="sign-in-text">Anmelden</div><div class="sso-text">Weiter</div></button><span class="login-loading-indicator"><img data-js-component-id="component17310" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" /></span></div><div class="sso-optout"><div>oder <a href="#">Mit Dropbox-Anmeldeinformationen anmelden</a></div></div><div class="login-need-help"><a href="/forgot">Kennwort vergessen?</a></div></form></div> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-phone-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><div class="login-info two-factor-uses-sms">Wir haben einen Code an die Telefonnummer gesendet, die mit den folgenden Ziffern endet: <span class="last-four-digits"></span>.</div><div class="login-info two-factor-uses-authenticator">Geben Sie den von der Authentifikator-App generierten Sicherheitscode ein.</div><div data-js-component-id="component17313" tabindex="-1" id="pyxl17311" class="small text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input name="code" class="text-input-input autofocus" autocomplete="off" type="text" id="pyxl17312" /> <label style="" for="pyxl17312">6-stelliger Code</label><small class="secondary-label"></small></div></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17314" name="trusted" /><label for="pyxl17314"><div data-js-component-id="component17315" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><button type="submit" class="login-button button-primary">Senden</button><div class="two-factor-need-help"><a href="" class="resend-two-factor-code two-factor-uses-sms">Sie haben keinen Code erhalten?</a><a href="/lost_phone"><span class="two-factor-uses-sms">Ich habe mein Smartphone verloren</span><span class="two-factor-uses-authenticator">Ich kann meine Authentifikator-App nicht benutzen.</span></a></div></form> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-seckey-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><input type="hidden" name="u2f_challenge" value="" /><div class="login-info two-factor-uses-u2f"><img data-js-component-id="component17316" src="https://cfl.dropboxstatic.com/static/images/security_keys/insert-vflkCfC4_.png" data-hi-res="https://cfl.dropboxstatic.com/static/images/security_keys/insert@2x-vflTxG2RJ.png" class="seckey-insert" /><div class="two-factor-seckey-instructions"><p><span style="font-weight:bold">Stecken Sie Ihren Sicherheitsschlüssel ein.</span> <img data-js-component-id="component17317" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" class="seckey-loading-status" /><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" style="display:none" class="seckey-loading-status sprite sprite_web s_web_bulletpoint-check" /></p>Falls Ihr Sicherheitsschlüssel eine Taste oder goldenen Platte hat, tippen Sie nach dem Einstecken darauf.</div></div><div data-js-component-id="component17320" tabindex="-1" id="pyxl17318" class="text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input class="text-input-input" style="display:none" type="text" id="pyxl17319" name="code" /> <label style="" for="pyxl17319"></label><small class="secondary-label"></small></div></div><div style="display:none;" class="two-factor-seckey-instructions"><div style="color:red"><span class="error-msg">Schlüssel nicht gefunden.</span></div><button class="two-factor-seckey-retry button-tertiary">Retry</button></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17321" name="trusted" /><label for="pyxl17321"><div data-js-component-id="component17322" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><div class="two-factor-use-phone-instead"><a href="" class="two-factor-uses-sms">SMS senden</a><a href="" class="two-factor-uses-authenticator">Mobile Authentifikator-App verwenden</a></div></form></div><div style="display:none" id="web-destiny-container" class="web-destiny-container-class"><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" id="continue-as-button" class="continue-as-button-class button-primary"><div class="continue-as-user-name"></div></button></div></div></div></div></div><div class="bright-modal-footer"><a class="close-link">Nein, danke. Weiter zum Download →</a></div></div></div></div></div><div style="display: none;" id="db-modal-shared-link-create-password-modal" class="db-modal-wrapper db-bright-modal-wrapper"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div class="bright-modal-logo"><img data-js-component-id="component17323" src="https://cfl.dropboxstatic.com/static/images/dropbox_39x36-vflMxv3gQ.png" /></div><div class="bright-modal-header"><div class="create-password-text"><h1 class="third-party-signup__title">Eins noch …</h1><h2 class="third-party-signup__subtitle">Wählen Sie ein Kennwort, um die Einrichtung Ihres Dropbox-Kontos fertigzustellen</h2></div><div id="profile-picture" class="third-party-signup__profile-picture c-avatar c-avatar--xl"><img /></div></div><div class="bright-modal-content"><div class="create-password-form-component"><div data-js-component-id="component17325" class="login-form-container small form_shown register"><form action="/ajax_register" class="clearfix credentials-form register-form"><input type="hidden" name="cont" /><input type="hidden" name="signup_sd" value="" id="pyxl17324" /> <input type="hidden" name="email_sig" /><input type="hidden" name="signup_tag" value="shmodel_download_register" /><input type="hidden" name="filename" value="Gdip_All.ahk" /><input type="hidden" name="refresh_token" /><input type="hidden" name="is_third_party_auth" value="1" /><div class="credentials-form__fields"><div class="register-form__name-fields"><div data-js-component-id="component17328" tabindex="-1" id="pyxl17326" class="input-fname text-input__margin-right text-input small first"><div class="text-input-error-wrapper"><form:error name="fname" /><div data-error-field-name="fname"></div></div><div class="text-input-wrapper"><input name="fname" id="pyxl17327" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17327">Vorname</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17331" tabindex="-1" id="pyxl17329" class="input-lname second text-input small"><div class="text-input-error-wrapper"><form:error name="lname" /><div data-error-field-name="lname"></div></div><div class="text-input-wrapper"><input name="lname" id="pyxl17330" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17330">Nachname</label><small class="secondary-label"></small></div></div></div><div class="register-form__credential-fields"><div data-js-component-id="component17334" tabindex="-1" id="pyxl17332" class="input-email small text-input__margin-right text-input"><div class="text-input-error-wrapper"><form:error name="email" /><div data-error-field-name="email"></div></div><div class="text-input-wrapper"><input class="text-input-input" type="email" name="email" id="pyxl17333" /> <label style="" for="pyxl17333">E-Mail</label><small class="secondary-label"></small></div></div><div class="email-suggestion"></div><div data-js-component-id="component17337" tabindex="-1" id="pyxl17335" class="input-password small text-input"><div class="text-input-error-wrapper"><form:error name="password" /><div data-error-field-name="password"></div></div><div class="text-input-wrapper"><input autocomplete="off" class="password-input text-input-input" type="password" name="password" id="pyxl17336" /> <label style="" for="pyxl17336">Kennwort</label><small class="secondary-label"></small><div data-js-component-id="component17338" class="bubble-dropdown-container"><div aria-label="Kennwortstärke" class="password-input-meter small bubble-dropdown-target bubble-dropdown-target" tabindex="-1"><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div></div><div class="bubble-dropdown left"><div class="password-bubble-title"></div><div class="password-bubble-desc">Ein gutes Kennwort ist schwer zu erraten. Verwenden Sie deswegen ungewöhnliche Wörter, Insider-Witze, ungewöhnliche groSSSchreibung, kreative Rächtschraibunk und getarnte Zahlen und $ymbo1e.</div><div class="bubble-arrow-border"></div><div class="bubble-arrow"></div></div></div><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div></div><div id="react-signup-recaptcha-challenge-div"></div><div class="small checkbox checkbox-inline agree"><div class="text-input-error-wrapper"><form:error name="tos_agree" /><div data-error-field-name="tos_agree"></div></div><input type="checkbox" id="pyxl17339" name="tos_agree" /><label for="pyxl17339"><span>Ich stimme den <a href="/terms" target="_blank">AGB für Dropbox</a> zu</span></label></div><button disabled="True" type="submit" class="login-button button-primary">Konto erstellen</button></form></div></div></div><div class="bright-modal-footer"><div class="add-to-dropbox-component"><a class="close-link">Nein, danke. →</a></div></div></div></div></div></div><div style="display: none;" id="db-modal-shared-link-welcome-modal" class="db-modal-wrapper db-bright-modal-wrapper hidden-x"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div class="bright-modal-header">Willkommen bei Dropbox!</div><div class="bright-modal-content"><div class="welcome-modal-illo"><img data-js-component-id="component17340" src="https://cfl.dropboxstatic.com/static/images/growth/dropbox_with_files-vflYCKclD.png" /></div><div class="welcome-modal-text">Sie können Ihre Dateien und Fotos jetzt ganz einfach sichern, auf jedem Gerät aufrufen und für andere freigeben.</div><a href="/home" class="go-to-dropbox-button button-primary">Meine Dropbox öffnen</a><div class="welcome-modal-no-thanks"><a href="#">Nein, danke. Ich möchte auf dieser Seite bleiben.</a></div></div></div></div></div></div><div style="display: none;" id="db-modal-shared-link-default-comments-signup-modal" class="db-modal-wrapper db-bright-modal-wrapper"><div class="db-modal-overlay"></div><div class="db-modal"><div class="db-modal-box"><a aria-label="Schließen" href="#" class="db-modal-x"></a><h2 class="db-modal-title"><div class="db-modal-title-text"></div></h2><div class="db-modal-content"><div class="bright-modal-logo"><img data-js-component-id="component17341" src="https://cfl.dropboxstatic.com/static/images/dropbox_39x36-vflMxv3gQ.png" /></div><div class="bright-modal-header"><div class="register-form-component form-component"><div class="text-variant post-comment-variant">Erstellen Sie ein kostenloses Dropbox-Konto, um Ihren Kommentar zu posten.<div class="secondary">Ihr Kommentar bleibt während der Registrierung sicher gespeichert.</div></div><div class="text-variant like-comment-variant">Erstellen Sie ein kostenloses Dropbox-Konto, um den Kommentar mit „Gefällt mir“ zu markieren.</div><div class="text-variant subscribe-variant">Erstellen Sie ein kostenloses Dropbox-Konto, um diese Datei zu abonnieren.</div><div class="text-variant default-variant">Erstellen Sie ein kostenloses Dropbox-Konto, um fortzufahren.</div></div><div class="login-form-component form-component"><div class="text-variant post-comment-variant">Melden Sie sich bei Dropbox an, um Ihren Kommentar zu posten.<div class="secondary">Ihr Kommentar bleibt während der Anmeldung sicher gespeichert.</div></div><div class="text-variant like-comment-variant">Melden Sie sich bei Dropbox an, um diesen Kommentar mit „Gefällt mir“ zu markieren.</div><div class="text-variant subscribe-variant">Melden Sie sich bei Dropbox an, um diese Datei zu abonnieren.</div><div class="text-variant default-variant">Melden Sie sich bei Dropbox an, um fortzufahren.</div></div></div><div class="bright-modal-content"><div class="register-form-component form-component"><div class="compact-form compact-register-form"><div data-js-component-id="component17343" class="login-form-container small form_shown register"><form action="/ajax_register" class="clearfix credentials-form register-form"><input type="hidden" name="cont" /><input type="hidden" name="signup_sd" value="" id="pyxl17342" /> <input type="hidden" name="signup_tag" value="comments_shmodel_modal_register" /><div class="credentials-form__fields"><div class="register-form__name-fields"><div data-js-component-id="component17346" tabindex="-1" id="pyxl17344" class="input-fname text-input__margin-right text-input small first"><div class="text-input-error-wrapper"><form:error name="fname" /><div data-error-field-name="fname"></div></div><div class="text-input-wrapper"><input name="fname" id="pyxl17345" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17345">Vorname</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17349" tabindex="-1" id="pyxl17347" class="input-lname second text-input small"><div class="text-input-error-wrapper"><form:error name="lname" /><div data-error-field-name="lname"></div></div><div class="text-input-wrapper"><input name="lname" id="pyxl17348" type="text" class="text-input-input autofocus" /> <label style="" for="pyxl17348">Nachname</label><small class="secondary-label"></small></div></div></div><div class="register-form__credential-fields"><div data-js-component-id="component17352" tabindex="-1" id="pyxl17350" class="input-email small text-input__margin-right text-input"><div class="text-input-error-wrapper"><form:error name="email" /><div data-error-field-name="email"></div></div><div class="text-input-wrapper"><input class="text-input-input" type="email" name="email" id="pyxl17351" /> <label style="" for="pyxl17351">E-Mail</label><small class="secondary-label"></small></div></div><div class="email-suggestion"></div><div data-js-component-id="component17355" tabindex="-1" id="pyxl17353" class="input-password small text-input"><div class="text-input-error-wrapper"><form:error name="password" /><div data-error-field-name="password"></div></div><div class="text-input-wrapper"><input autocomplete="off" class="password-input text-input-input" type="password" name="password" id="pyxl17354" /> <label style="" for="pyxl17354">Kennwort</label><small class="secondary-label"></small><div data-js-component-id="component17356" class="bubble-dropdown-container"><div aria-label="Kennwortstärke" class="password-input-meter small bubble-dropdown-target bubble-dropdown-target" tabindex="-1"><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div><div class="password-input-dot"></div></div><div class="bubble-dropdown left"><div class="password-bubble-title"></div><div class="password-bubble-desc">Ein gutes Kennwort ist schwer zu erraten. Verwenden Sie deswegen ungewöhnliche Wörter, Insider-Witze, ungewöhnliche groSSSchreibung, kreative Rächtschraibunk und getarnte Zahlen und $ymbo1e.</div><div class="bubble-arrow-border"></div><div class="bubble-arrow"></div></div></div><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div></div><div id="react-signup-recaptcha-challenge-div"></div><div class="small checkbox checkbox-inline agree"><div class="text-input-error-wrapper"><form:error name="tos_agree" /><div data-error-field-name="tos_agree"></div></div><input type="checkbox" id="pyxl17357" name="tos_agree" /><label for="pyxl17357"><span>Ich stimme den <a href="/terms" target="_blank">AGB für Dropbox</a> zu</span></label></div><button disabled="True" type="submit" class="login-button button-primary">Konto erstellen</button></form></div></div></div><div class="login-form-component form-component"><div class="compact-form compact-login-form"><div data-js-component-id="component17360" id="pyxl17359" class="login-form-container  small"><div id="regular-login-forms"><div><form action="/ajax_login" novalidate="" style="" method="POST" class="clearfix credentials-form login-form"><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="refresh_token" value="" /><input type="hidden" name="email_sig" value="" /><input type="hidden" name="login_sd" value="" id="pyxl17358" /> <div class="credentials-form__fields"><div data-js-component-id="component17363" tabindex="-1" id="pyxl17361" class="small login-email text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="login_email" /><div data-error-field-name="login_email"></div></div><div class="text-input-wrapper"><input class="text-input-input autofocus" type="email" name="login_email" id="pyxl17362" /> <label style="" for="pyxl17362">E-Mail</label><small class="secondary-label"></small></div></div><div data-js-component-id="component17366" tabindex="-1" id="pyxl17364" class="small text-input login-password login-text-input"><div class="text-input-error-wrapper"><form:error name="login_password" /><div data-error-field-name="login_password"></div></div><div class="text-input-wrapper"><input class="password-input text-input-input" type="password" id="pyxl17365" name="login_password" /> <label style="" for="pyxl17365">Kennwort</label><small class="secondary-label"></small><div class="password-caps-indicator">Caps lock is currently on</div></div></div></div><div id="react-login-recaptcha-challenge-div"></div><div class="clearfix"><div class="sso-description"><div class="sprite-div"><div class="sprite-frame small icon-left"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_lock" /></div><div class="sprite-text"><div class="sprite-text-inner">Einmaliges Anmelden aktiviert</div></div></div></div><div class="small checkbox checkbox-inline remember-me"><div class="text-input-error-wrapper"><form:error name="remember_me" /><div data-error-field-name="remember_me"></div></div><input checked="checked" type="checkbox" id="pyxl17367" name="remember_me" /><label for="pyxl17367">Angemeldet bleiben</label></div><button disabled="True" type="submit" class="login-button button-primary"><div class="sign-in-text">Anmelden</div><div class="sso-text">Weiter</div></button><span class="login-loading-indicator"><img data-js-component-id="component17368" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" /></span></div><div class="sso-optout"><div>oder <a href="#">Mit Dropbox-Anmeldeinformationen anmelden</a></div></div><div class="login-need-help"><a href="/forgot">Kennwort vergessen?</a></div></form></div> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-phone-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><div class="login-info two-factor-uses-sms">Wir haben einen Code an die Telefonnummer gesendet, die mit den folgenden Ziffern endet: <span class="last-four-digits"></span>.</div><div class="login-info two-factor-uses-authenticator">Geben Sie den von der Authentifikator-App generierten Sicherheitscode ein.</div><div data-js-component-id="component17371" tabindex="-1" id="pyxl17369" class="small text-input login-text-input"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input name="code" class="text-input-input autofocus" autocomplete="off" type="text" id="pyxl17370" /> <label style="" for="pyxl17370">6-stelliger Code</label><small class="secondary-label"></small></div></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17372" name="trusted" /><label for="pyxl17372"><div data-js-component-id="component17373" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><button type="submit" class="login-button button-primary">Senden</button><div class="two-factor-need-help"><a href="" class="resend-two-factor-code two-factor-uses-sms">Sie haben keinen Code erhalten?</a><a href="/lost_phone"><span class="two-factor-uses-sms">Ich habe mein Smartphone verloren</span><span class="two-factor-uses-authenticator">Ich kann meine Authentifikator-App nicht benutzen.</span></a></div></form> <form action="/ajax_verify_code" style="display:none;" method="POST" class="two-factor-form clearfix 2fa-seckey-form "><input type="hidden" name="cont" /><input type="hidden" name="require_role" /><input type="hidden" name="remember_me" /><input type="hidden" name="u2f_challenge" value="" /><div class="login-info two-factor-uses-u2f"><img data-js-component-id="component17374" src="https://cfl.dropboxstatic.com/static/images/security_keys/insert-vflkCfC4_.png" data-hi-res="https://cfl.dropboxstatic.com/static/images/security_keys/insert@2x-vflTxG2RJ.png" class="seckey-insert" /><div class="two-factor-seckey-instructions"><p><span style="font-weight:bold">Stecken Sie Ihren Sicherheitsschlüssel ein.</span> <img data-js-component-id="component17375" src="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small-vfl3Wt7C_.gif" data-hi-res="https://cfl.dropboxstatic.com/static/images/icons/ajax-loading-small@2x-vflAxdZTP.gif" class="seckey-loading-status" /><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" style="display:none" class="seckey-loading-status sprite sprite_web s_web_bulletpoint-check" /></p>Falls Ihr Sicherheitsschlüssel eine Taste oder goldenen Platte hat, tippen Sie nach dem Einstecken darauf.</div></div><div data-js-component-id="component17378" tabindex="-1" id="pyxl17376" class="text-input login-text-input standard"><div class="text-input-error-wrapper"><form:error name="code" /><div data-error-field-name="code"></div></div><div class="text-input-wrapper"><input class="text-input-input" style="display:none" type="text" id="pyxl17377" name="code" /> <label style="" for="pyxl17377"></label><small class="secondary-label"></small></div></div><div style="display:none;" class="two-factor-seckey-instructions"><div style="color:red"><span class="error-msg">Schlüssel nicht gefunden.</span></div><button class="two-factor-seckey-retry button-tertiary">Retry</button></div><div class="checkbox checkbox-inline standard remember-me"><div class="text-input-error-wrapper"><form:error name="trusted" /><div data-error-field-name="trusted"></div></div><input type="checkbox" id="pyxl17379" name="trusted" /><label for="pyxl17379"><div data-js-component-id="component17380" class="tooltip-wrapper info-icon"><div class="tooltip-bubble tooltip-tooltip"><div class="tooltip-inner"><div class="two-factor-trusted-info">Da vertrauenswürdige Computer Sie nie zweimal nach einem Sicherheitscode fragen, sollten Sie diesem Computer nur dann vertrauen, wenn Sie auch allen seinen Nutzern vertrauen.</div></div></div> <div class="tooltip-prompt sprite-div"><div class="sprite-text"><div class="sprite-text-inner">Diesem Computer vertrauen</div></div><div class="sprite-frame small icon-right"><img src="https://cfl.dropboxstatic.com/static/images/icons/icon_spacer-vflN3BYt2.gif" alt="" class=" sprite sprite_web s_web_info" /></div></div></div></label></div><div class="two-factor-use-phone-instead"><a href="" class="two-factor-uses-sms">SMS senden</a><a href="" class="two-factor-uses-authenticator">Mobile Authentifikator-App verwenden</a></div></form></div><div style="display:none" id="web-destiny-container" class="web-destiny-container-class"><div class="hr-label"><span class="hr-label__text">oder</span></div><button disabled="True" id="continue-as-button" class="continue-as-button-class button-primary"><div class="continue-as-user-name"></div></button></div></div></div></div></div><div class="bright-modal-footer"><span class="register-form-component form-component"><a class="toggle-form-link">Sie haben bereits ein Dropbox-Konto? Dann melden Sie sich einfach an.</a></span><span class="login-form-component form-component"><a class="toggle-form-link">Neu bei Dropbox? Erstellen Sie ein kostenloses Konto!</a></span></div></div></div></div></div><script nonce="w5FdpkJXsJE+3kvMZEoe">require(["modules/clean/components/bubble_dropdown", "modules/core/controller_registry", "modules/dirty/growth/shared_link_signup_modals", "modules/clean/hi_res", "modules/clean/components/input", "modules/clean/react/file_comments/shared_link_signup_modals", "modules/clean/web_timing_logger", "external/react", "modules/dirty/react/file_viewer/container", "modules/clean/components/login_form", "modules/clean/components/tabbable", "modules/clean/components/tooltip", "modules/clean/register_form", "modules/clean/flux/base_store", "modules/clean/react/file_action_button", "modules/clean/react/copy_to_dropbox/actions", "modules/clean/unity/flash_config", "modules/clean/react/flag", "modules/clean/avatar/contact_avatar", "modules/clean/react/account_menu/logout_link", "modules/clean/captcha", "modules/clean/react/browse/store", "modules/dirty/sharing/share_modal", "modules/clean/file_events", "modules/clean/previews/preview_actions_helper", "modules/clean/react/file_viewer/mounted_file_actions", "modules/clean/react/select", "modules/constants/debug", "modules/clean/unity/check_file_cache", "modules/clean/contacts/tokenizer", "modules/clean/components/bubble_picker", "modules/clean/uirequest", "modules/clean/react/user_notifications/models", "modules/clean/comments/logging", "external/rsvp", "modules/clean/sharing/content_info", "modules/clean/react/bubble", "modules/clean/flux/store_listener", "external/typeahead.bundle", "modules/clean/react/account_menu/account_menu", "modules/clean/react/previews/audio/preview_audio_visuals", "modules/clean/job_progress", "modules/clean/react/file_viewer/flippable_controls", "modules/clean/react/user_notifications/dispatcher", "modules/core/accessible_announce", "modules/core/types", "modules/clean/growth/experiments/logger", "modules/clean/sharing/actions/share_modal", "modules/clean/unity/connection", "modules/clean/contacts/facebook_oauth", "modules/clean/dbmodal", "modules/clean/api_v2/error", "modules/clean/react/browse/constants", "modules/clean/react/previews/audio/preview_audio_details", "modules/clean/display_format", "modules/clean/event_load", "modules/clean/css", "external/web_socket", "modules/clean/sharing/views/modal_content", "modules/clean/components/role_picker", "modules/clean/activity/activity_user", "external/plupload_dev", "modules/clean/react/button", "modules/clean/image_size", "external/videojs/videojs_media_sources", "modules/constants/python", "modules/clean/react/calendar", "modules/clean/react/account_menu/account_switcher", "jquery", "modules/clean/comments/events", "modules/clean/sharing/views/sharing_bubble_menu", "modules/clean/accessibility/utils", "modules/clean/comments/revisions", "modules/clean/react/recaptcha_challenge", "modules/clean/teams/limited_team_invite_form", "modules/clean/react/pass/actions", "modules/clean/react/title_bubble", "modules/clean/notserver", "modules/clean/react/user_notifications/dropdown_bluenote_row", "modules/clean/unity/features", "modules/clean/avatar/initials_avatar_with_color", "modules/clean/react/previews/audio/utils", "modules/clean/react/file_viewer/version_history_file_actions", "modules/clean/previews/file_view_rams_common", "modules/clean/annotations/annotation_region", "modules/clean/uuid", "modules/clean/contacts/types", "modules/clean/revisions/file_revisions_iterator", "modules/clean/keycode", "modules/clean/react/file_viewer/file_viewer", "modules/clean/react/previews/audio/preview_audio", "modules/clean/api_v2/types", "modules/core/visibility", "modules/clean/sharing/link_settings_modal", "modules/dirty/react/file_viewer/controller", "modules/clean/react/tooltip", "modules/clean/components/loading_indicator", "modules/clean/tokenizer", "modules/clean/react/teams/modals/limited_team_folder_settings_modal", "modules/clean/comments/models/comment", "modules/clean/teams/team_folder_modal", "modules/clean/react/file_comments/onboarding", "modules/clean/react/pass/event_bus_queue", "external/lru", "modules/clean/referrer_cleansing_redirect", "modules/clean/sharing/ui_util", "modules/clean/hi_res", "modules/clean/react/bubble_dropdown", "modules/clean/annotations/annotation_highlight", "modules/clean/sharing/views/comments_help", "modules/constants/request", "modules/clean/react/file_viewer/more_dropdown/models", "modules/clean/sharing/views/hover_close_button", "external/deep-freeze", "modules/clean/react/previews/preview_image", "modules/core/cookies", "modules/clean/annotations/annotation_marker_ui", "modules/constants/contacts", "modules/clean/teams/team_assume_user_personal_locked_modal", "modules/constants/comments_panel", "external/videojs/videojs_hls", "modules/clean/search/search_type", "modules/clean/file_activity/api", "modules/clean/react/pass/dispatcher", "modules/clean/analytics", "modules/clean/react/previews/preview_blank", "external/classnames", "modules/clean/react/browse/sort_helpers", "modules/clean/teams/modals/suggest_team_invite_modal", "modules/clean/browse_interface", "modules/clean/devtools/perf_hub_action_types", "modules/clean/react/previews/preview_linkfile", "modules/clean/zendesk_feedback", "modules/clean/activity/like", "modules/clean/form_util/name_parser", "modules/clean/avatar/stacked_avatars", "modules/clean/react/previews/preview_zoom_container", "modules/clean/react/previews/audio/preview_audio_volume", "modules/clean/comments/constants", "modules/clean/components/bubble_dropdown", "modules/clean/activity/activity", "modules/clean/file_activity/clients/file_activity_bolt_client", "modules/clean/react/share_download/models", "modules/clean/em_string", "modules/constants/page_load", "modules/constants/legacy", "modules/clean/comments/store", "modules/clean/history", "modules/clean/sharing/link_description", "modules/clean/pagination_manager", "modules/clean/react/file_uploader/store", "modules/clean/image_viewer_annotation_interface", "external/swfobject", "modules/clean/search/search_helpers", "modules/clean/annotations/annotation", "modules/clean/beacon", "modules/clean/event_emitter", "modules/clean/react/input", "modules/constants/static", "modules/clean/react/helpers", "modules/clean/account/verify_email_modals", "modules/clean/react/account_menu/avatar", "modules/clean/sharing/constants", "modules/clean/avatar/initials_avatar", "modules/clean/react/previews/preview_image_zoom", "modules/core/type", "modules/clean/react/copy_to_dropbox/modal", "modules/clean/sso_login_checks", "modules/clean/photos/thumb_loading/utils", "modules/clean/react/previews/preview_video", "modules/clean/viewer", "modules/clean/components/tooltip", "modules/clean/sharing/shared_content_link_sync_modal", "modules/clean/react/css", "modules/clean/notifications/updated_file_notification", "external/react-0.12.0-prod", "modules/clean/avatar/photo_avatar", "modules/clean/react/file_comments/logger", "modules/clean/sprite", "modules/clean/dbmodal_loading", "modules/clean/loggers/file_viewer_logger", "modules/clean/undo", "modules/dirty/growth/shared_link_signup_modals", "modules/clean/react/pass/constants", "external/immutable", "modules/clean/react/previews/preview_html", "modules/clean/sharing/api/types/metadata", "modules/clean/js_environment", "modules/clean/datetime", "modules/clean/comments/components/ui_constants", "modules/clean/video_util", "modules/clean/flux/action_type", "modules/clean/react/file_viewer/seen_state_facepile", "modules/clean/comments/logged_out_utils", "external/flash_detect", "modules/clean/comments/models/immutable_file_activity", "modules/clean/react/file_viewer/title_bar", "modules/clean/payments/cash", "external/u2f-api", "modules/clean/contacts/util", "__real_jquery", "modules/clean/react/user_notifications/generic_icon", "require", "modules/clean/react/columnheader", "modules/clean/react/user_notifications/dropdown_row", "modules/clean/image_annotations", "modules/clean/sharing/wizard/share_new_folder_wizard_modal", "modules/clean/contacts/typeahead", "modules/clean/unity/web_socket", "modules/clean/react/overlay", "modules/constants/gandalf", "modules/core/i18n", "modules/clean/react/previews/preview_pdf", "modules/clean/sharing/link_info", "modules/core/dom", "modules/clean/downloads", "modules/clean/validators/validators", "modules/clean/sharing/stores/sharing_info", "external/flux", "modules/clean/avatar/viewer_avatar", "modules/clean/react/user_notifications/constants", "modules/clean/components/tabbable", "external/jquery.mousewheel", "modules/clean/loggers/folder_invite_impression_logger", "modules/clean/contacts/cache", "modules/clean/photos/legacy_thumb_loader", "modules/dirty/react/file_viewer/container", "modules/clean/react/previews/preview_toolbar", "modules/clean/sharing/signup_modal_proxy", "modules/clean/filepath", "modules/clean/react/file_viewer/actions", "modules/clean/react/user_notifications/legacy_thumb_loader", "modules/clean/static_urls", "external/underscore", "modules/clean/react/account_menu/install_link", "modules/core/controller_registry", "modules/clean/activity/constants", "modules/clean/comments/models/loading_spinner", "modules/clean/react/copy_to_dropbox/api", "modules/clean/react/hidden", "modules/clean/avatar/style", "modules/clean/image_preview_util", "modules/clean/comments/actions", "modules/clean/react/user_notifications/dropdown_body", "modules/clean/payments/validation", "modules/clean/react/form_error_mixin", "modules/clean/react/previews/preview_toolbar_container", "modules/clean/sharing/api/client", "modules/core/uri", "modules/clean/react/previews/preview_quality_popup", "exports", "modules/clean/devtools/perf_hub_actions", "modules/clean/comments/utils", "modules/clean/react/file_viewer/toggle_comments", "modules/clean/react/file_viewer/models", "modules/clean/react/util", "modules/clean/react/file_viewer/full_screen_helpers", "modules/clean/react/previews/constants", "modules/clean/react/file_viewer/store", "modules/core/notify", "module", "modules/clean/notifications/file_watcher", "modules/clean/photos/thumbnail_url_util", "modules/constants/file_viewer", "modules/clean/beacon_nodeps", "modules/clean/react/user_notifications/dropdown_bell", "modules/constants/viewer", "modules/clean/account/change_email_modals", "modules/clean/sharing/keep_a_copy_modal", "modules/clean/account/email", "modules/clean/photos/batch_thumb_loader", "modules/clean/react/selectable_list", "modules/clean/react/teams/modals/limited_team_upsell_modal_banner", "modules/clean/contacts/facebook_modal", "modules/clean/average_counter", "modules/clean/bolt", "__real_external/tracekit", "modules/core/controller_helpers", "modules/clean/sharing/views/member_list_item", "modules/clean/react/user_notifications/avatar_icon", "modules/clean/react/sprite_div", "external/cyfd", "modules/clean/annotations/annotation_region_ui", "modules/clean/annotations/annotation_highlight_ui", "modules/clean/react/user_notifications/event_emitter", "modules/constants/sharing", "modules/clean/open_with", "langpack", "modules/clean/profile_services/third_party_signup", "modules/clean/react/previews/responsive_image", "modules/clean/annotations/annotation_marker", "modules/clean/sharing/notifications", "modules/clean/react/teams/modals/limited_team_share_folder_modal", "modules/clean/multiaccount_login", "modules/dirty/sharing/wizard_modals", "modules/clean/react/file_comments/shared_link_signup_modals", "modules/clean/contacts/data", "modules/clean/react/account_menu/pro_gifting_link", "modules/clean/loggers/file_preview_logger", "external/reflux", "modules/clean/react/previews/preview_password_protected", "modules/clean/comments/models/pending_comment_activity", "external/purify", "modules/clean/react/user_notifications/dropdown", "modules/clean/react/file_viewer/open_button_coachmark", "modules/constants/env", "modules/clean/react/image", "modules/clean/react/previews/preview_error", "modules/core/exception", "modules/clean/components/input", "modules/clean/sharing/views/modal_link_info", "modules/clean/web_module_timing", "external/react-dom", "modules/clean/annotations/annotation_controller", "modules/clean/react/account_menu/settings_link", "modules/clean/profile_services/profile_services_link", "modules/clean/sharing/views/constants", "modules/clean/react/previews/preview_image_with_annotations", "modules/clean/annotations/preview_image_annotations_toolbar", "modules/clean/react/file_viewer/file_preview", "modules/clean/previews/file_viewer_utils", "modules/clean/unity/logger", "modules/clean/unity/connection_error", "modules/clean/react/file_viewer/more_dropdown/views", "modules/clean/contacts/bloodhound_contacts", "modules/clean/react/user_notifications/store", "modules/clean/browse/browse_drag_utils", "modules/clean/immutability_helper", "modules/clean/react/tree_view", "modules/clean/payments/dfb_util", "modules/clean/react/file_viewer/file_preview_event_emitter", "modules/clean/sharing/strings", "modules/clean/sharing/folder_convert_gg_modal", "modules/core/user_i18n", "modules/clean/react/account_menu/pro_upgrade_link", "modules/clean/react/file_viewer/utils", "external/eventemitter3", "modules/constants/webtiming", "modules/clean/react/portal", "modules/clean/typeahead", "external/react-0.13", "modules/clean/annotations/annotation_renderer_utils", "modules/clean/react/previews/preview_toolbar_region_creation", "external/sjcl", "modules/clean/components/login_form", "modules/clean/avatar/avatar_with_default", "modules/clean/react/free_positioned", "modules/clean/base64", "modules/clean/react/slider", "modules/clean/react/radio", "modules/clean/sharing/views/member_list", "modules/clean/react/user_notifications/actions", "modules/clean/flux/flux_store", "modules/clean/react/previews/password_component", "modules/clean/sharing/share_modal", "libs", "modules/clean/react/file_viewer/file_preview_update_watcher", "modules/clean/previews/preview_status_watcher", "modules/clean/ajax", "modules/clean/react/share_download/actions", "modules/clean/react/previews/audio/preview_audio_play_button", "modules/clean/react/file_viewer/copyright_flag", "modules/clean/avatar/size", "modules/core/exception_tag_registry", "modules/clean/storage", "modules/clean/react/pass/store", "modules/clean/photos/thumb_loading/generic_thumb_store", "modules/clean/react/onboarding_modal", "modules/clean/comments/models/preview_types", "modules/clean/previews/pdf_loader", "modules/clean/react/file_viewer/shared_file_actions", "modules/clean/react/file_viewer/open_button", "modules/clean/react/browse/models", "external/videojs/video", "modules/clean/register_form", "modules/clean/bolt_nodeps", "modules/clean/events/rollback", "modules/clean/react/file_viewer/more_dropdown/more_option_registry", "modules/clean/components/scooter/badge", "modules/clean/page_role_observer", "modules/clean/sharing/action_types", "modules/clean/sharing/api", "modules/clean/image_viewer_annotation_renderer", "modules/clean/api_v2/client", "external/keymaster", "modules/clean/react/file_viewer/more_dropdown", "modules/clean/comments/lib/type_check", "external/sha1", "external/jquery.fs.zoomer", "modules/clean/crypto", "modules/clean/clipboard", "modules/clean/fuzzy", "modules/clean/react/previews/preview_flippable", "modules/clean/sharing/parent_folder_access_modal", "modules/clean/user", "modules/clean/avatar/faceholder", "modules/clean/react/account_menu/account_info", "modules/dirty/sharing/browse_ui_util", "modules/clean/gandalf_util", "modules/clean/react/file_viewer/constants", "modules/clean/react/file_viewer/dispatcher", "external/tracekit", "modules/clean/frame_messenger", "modules/clean/file_activity/clients/file_activity_data_source", "modules/clean/mailcheck", "modules/clean/profile_services/profile_services_constants", "modules/clean/loggers/notification_logger", "modules/clean/react/file_viewer/coach_mark", "modules/clean/react/paging_list", "modules/clean/top_notif", "modules/clean/sharing/wizard/share_a_folder_wizard_modal", "modules/clean/sharing/folder_settings_modal", "modules/clean/react/bubble_menu", "modules/clean/react/previews/image_helpers", "external/rsvp-3.2.1", "modules/clean/groups/api", "modules/clean/react/account_menu/account_menu_contents", "modules/clean/react/modal", "modules/clean/flux/dispatcher", "modules/clean/react/pass/utils", "modules/clean/components/ajax_form", "modules/clean/comments/models/immutable_comment_activity", "modules/clean/browse_events", "modules/clean/react/sprite", "modules/clean/contacts/list", "modules/clean/teams/prop_types", "modules/clean/react/user_notifications/api", "modules/clean/unity/versions", "modules/clean/react/share_download/button", "modules/clean/react/outside_event", "modules/dirty/react/file_viewer/share_helpers", "modules/clean/react/account_menu/business_upgrade_link", "modules/clean/form", "modules/clean/sharing/api/util/types", "external/moxie", "modules/clean/account/email_verify_reasons", "modules/clean/previews/util", "modules/clean/comments/flux", "external/jquery_ui", "dropbox", "modules/clean/react/react_i18n", "modules/clean/photos/thumb_loading/http2_thumb_loader", "modules/clean/comments/action_creators", "modules/clean/sharing/wizard/share_existing_folder_wizard_modal", "external/modernizr", "modules/core/browser", "modules/clean/web_timing_logger", "modules/clean/account/email_verify", "modules/core/html", "modules/clean/clipboard_v2"], function(modules__clean__components__bubble_dropdown, modules__core__controller_registry, modules__dirty__growth__shared_link_signup_modals, modules__clean__hi_res, modules__clean__components__input, modules__clean__react__file_comments__shared_link_signup_modals, modules__clean__web_timing_logger, external__react, modules__dirty__react__file_viewer__container, modules__clean__components__login_form, modules__clean__components__tabbable, modules__clean__components__tooltip, modules__clean__register_form) { (function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17380", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17378", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17375", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17374", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17373", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17371", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17368", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17366", modules__clean__components__input.PasswordInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17363", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__login_form, ControllerRegistry) { ControllerRegistry.register_controller("component17360", modules__clean__components__login_form, [false, "small", false, true]); }(modules__clean__components__login_form, modules__core__controller_registry));
-(function (modules__clean__components__bubble_dropdown, ControllerRegistry) { ControllerRegistry.register_controller("component17356", modules__clean__components__bubble_dropdown, ["left", false, null, null, null, null]); }(modules__clean__components__bubble_dropdown, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17355", modules__clean__components__input.PasswordWatchInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17352", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17349", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17346", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (ControllerRegistry, modules__clean__register_form) { ControllerRegistry.register_controller("component17343", modules__clean__register_form.RegisterForm, ["small", false, true, true, "None", false, false]); }(modules__core__controller_registry, modules__clean__register_form));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17341", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17340", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__bubble_dropdown, ControllerRegistry) { ControllerRegistry.register_controller("component17338", modules__clean__components__bubble_dropdown, ["left", false, null, null, null, null]); }(modules__clean__components__bubble_dropdown, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17337", modules__clean__components__input.PasswordWatchInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17334", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17331", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17328", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (ControllerRegistry, modules__clean__register_form) { ControllerRegistry.register_controller("component17325", modules__clean__register_form.RegisterForm, ["small", false, true, true, "None", false, false]); }(modules__core__controller_registry, modules__clean__register_form));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17323", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17322", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17320", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17317", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17316", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17315", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17313", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17310", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17308", modules__clean__components__input.PasswordInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17305", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__login_form, ControllerRegistry) { ControllerRegistry.register_controller("component17302", modules__clean__components__login_form, [false, "small", false, true]); }(modules__clean__components__login_form, modules__core__controller_registry));
-(function (modules__clean__components__bubble_dropdown, ControllerRegistry) { ControllerRegistry.register_controller("component17298", modules__clean__components__bubble_dropdown, ["left", false, null, null, null, null]); }(modules__clean__components__bubble_dropdown, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17297", modules__clean__components__input.PasswordWatchInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17294", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17291", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17288", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (ControllerRegistry, modules__clean__register_form) { ControllerRegistry.register_controller("component17285", modules__clean__register_form.RegisterForm, ["small", false, true, true, "None", false, false]); }(modules__core__controller_registry, modules__clean__register_form));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17283", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17282", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17280", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17277", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17276", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17275", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17273", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17270", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17268", modules__clean__components__input.PasswordInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17265", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__login_form, ControllerRegistry) { ControllerRegistry.register_controller("component17262", modules__clean__components__login_form, [false, "small", false, true]); }(modules__clean__components__login_form, modules__core__controller_registry));
-(function (modules__clean__components__bubble_dropdown, ControllerRegistry) { ControllerRegistry.register_controller("component17258", modules__clean__components__bubble_dropdown, ["left", false, null, null, null, null]); }(modules__clean__components__bubble_dropdown, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17257", modules__clean__components__input.PasswordWatchInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17254", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17251", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17248", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (ControllerRegistry, modules__clean__register_form) { ControllerRegistry.register_controller("component17245", modules__clean__register_form.RegisterForm, ["small", false, true, true, "None", false, false]); }(modules__core__controller_registry, modules__clean__register_form));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17243", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17241", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17239", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17236", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17235", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__tooltip, ControllerRegistry) { ControllerRegistry.register_controller("component17234", modules__clean__components__tooltip.InfoTooltip, [null, "right"]); }(modules__clean__components__tooltip, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17232", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__hi_res, ControllerRegistry) { ControllerRegistry.register_controller("component17229", modules__clean__hi_res, []); }(modules__clean__hi_res, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17227", modules__clean__components__input.PasswordInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__input, ControllerRegistry) { ControllerRegistry.register_controller("component17224", modules__clean__components__input.TextInput, []); }(modules__clean__components__input, modules__core__controller_registry));
-(function (modules__clean__components__login_form, ControllerRegistry) { ControllerRegistry.register_controller("component17221", modules__clean__components__login_form, [true, "standard", false, true]); }(modules__clean__components__login_form, modules__core__controller_registry));
-(function (WebTimingLogger) { 
-            WebTimingLogger.init({"log_time_to_interactive": true, "tti_at_dom_interactive": false, "log_time_to_view": true, "ttv_at_dom_interactive": false, "subtypes": {"previewformat": "unknown"}});
-         }(modules__clean__web_timing_logger));
-(function (Tabbable) { new Tabbable() }(modules__clean__components__tabbable));
-(function (React) { window.React = React; }(external__react));
-(function (react_component, React) { 
-        (function () {
-           var elt = document.getElementById("component17242");
-           var component = React.render(React.createElement(react_component, {"files": [{"size": "95,45 KB", "sjid": 114016, "beacon_context": "AAD8oDr-UiW67O5_-w3WV7sV-kuTwRNZ_f0", "icon": "page_white_32", "preview_type": null, "bytes": 97743, "ts": 1399990774, "ns_id": 5282397, "filename": "Gdip_All.ahk"}], "shareToken": {"linkType": "s", "itemId": null, "linkKey": "0e9gdfetbfa8v0o", "displayName": "Gdip_All.ahk", "isPackage": false, "subPath": "/Gdip_All.ahk", "secureHash": ""}, "areCommentsOpen": false, "user": null, "fileViewerProps": {"fileViewTarget": 1, "fileViewAction": 0, "activityContext": 1, "hideComments": false, "disableRouting": true, "hidePageChrome": false, "onCloseViewer": null, "fileViewOrigin": 0}, "sharePermissions": {"canDownloadRoles": ["anonymous"], "canViewContextMenuRoles": ["anonymous"], "canRemoveLinkUids": [], "canCopyToDropboxRoles": ["anonymous"], "canPrintRoles": ["anonymous"]}, "sharedLinkInfo": {"accountPhotoUrl": null, "showProUpgradeLink": false, "showBusinessUpgradeLink": false, "ownerName": null, "showProGiftingLink": false, "url": "https://www.dropbox.com/s/0e9gdfetbfa8v0o/Gdip_All.ahk", "ownerTeamName": null, "ownerEmail": null, "ownerTeamLogo": null}, "currentIndex": 0}), elt);
-           elt.reactComponent = component;
-        })()
-         }(modules__dirty__react__file_viewer__container, external__react));
-(function (GrowthSharedLinkSignupModals) { new GrowthSharedLinkSignupModals("download") }(modules__dirty__growth__shared_link_signup_modals));
-(function (CommentsSharedLinkSignupModals) {  }(modules__clean__react__file_comments__shared_link_signup_modals)); });</script><img src="https://dropbox.com/hstsping" alt="" style="display:none;" /><script type="text/javascript" nonce="w5FdpkJXsJE+3kvMZEoe">
-document.addEventListener('DOMContentLoaded', function () {
-        var metaTag = document.createElement('meta');
-            metaTag.setAttribute('http-equiv', 'Content-Security-Policy');
-            metaTag.setAttribute('content', "script-src https: 'unsafe-eval';");
-            document.head.appendChild(metaTag);
-});</script><div id="accessible-announce" class="ax-visually-hidden" aria-live="assertive"></div></body>
-</html><!--status=200-->
+; Function				SetSysColorToControl
+; Description			Sets a solid colour to a control
+;
+; hwnd					handle of the control to update
+; SysColor				A system colour to set to the control
+;
+; return				If the function succeeds, the return value is zero
+;
+; notes					A control must have the 0xE style set to it so it is recognised as a bitmap
+;						By default SysColor=15 is used which is COLOR_3DFACE. This is the standard background for a control
+;
+; COLOR_3DDKSHADOW				= 21
+; COLOR_3DFACE					= 15
+; COLOR_3DHIGHLIGHT				= 20
+; COLOR_3DHILIGHT				= 20
+; COLOR_3DLIGHT					= 22
+; COLOR_3DSHADOW				= 16
+; COLOR_ACTIVEBORDER			= 10
+; COLOR_ACTIVECAPTION			= 2
+; COLOR_APPWORKSPACE			= 12
+; COLOR_BACKGROUND				= 1
+; COLOR_BTNFACE					= 15
+; COLOR_BTNHIGHLIGHT			= 20
+; COLOR_BTNHILIGHT				= 20
+; COLOR_BTNSHADOW				= 16
+; COLOR_BTNTEXT					= 18
+; COLOR_CAPTIONTEXT				= 9
+; COLOR_DESKTOP					= 1
+; COLOR_GRADIENTACTIVECAPTION	= 27
+; COLOR_GRADIENTINACTIVECAPTION	= 28
+; COLOR_GRAYTEXT				= 17
+; COLOR_HIGHLIGHT				= 13
+; COLOR_HIGHLIGHTTEXT			= 14
+; COLOR_HOTLIGHT				= 26
+; COLOR_INACTIVEBORDER			= 11
+; COLOR_INACTIVECAPTION			= 3
+; COLOR_INACTIVECAPTIONTEXT		= 19
+; COLOR_INFOBK					= 24
+; COLOR_INFOTEXT				= 23
+; COLOR_MENU					= 4
+; COLOR_MENUHILIGHT				= 29
+; COLOR_MENUBAR					= 30
+; COLOR_MENUTEXT				= 7
+; COLOR_SCROLLBAR				= 0
+; COLOR_WINDOW					= 5
+; COLOR_WINDOWFRAME				= 6
+; COLOR_WINDOWTEXT				= 8
+
+SetSysColorToControl(hwnd, SysColor=15)
+{
+   WinGetPos,,, w, h, ahk_id %hwnd%
+   bc := DllCall("GetSysColor", "Int", SysColor, "UInt")
+   pBrushClear := Gdip_BrushCreateSolid(0xff000000 | (bc >> 16 | bc & 0xff00 | (bc & 0xff) << 16))
+   pBitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(pBitmap)
+   Gdip_FillRectangle(G, pBrushClear, 0, 0, w, h)
+   hBitmap := Gdip_CreateHBITMAPFromBitmap(pBitmap)
+   SetImage(hwnd, hBitmap)
+   Gdip_DeleteBrush(pBrushClear)
+   Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmap), DeleteObject(hBitmap)
+   return 0
+}
+
+;#####################################################################################
+
+; Function				Gdip_BitmapFromScreen
+; Description			Gets a gdi+ bitmap from the screen
+;
+; Screen				0 = All screens
+;						Any numerical value = Just that screen
+;						x|y|w|h = Take specific coordinates with a width and height
+; Raster				raster operation code
+;
+; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
+;						-1:		one or more of x,y,w,h not passed properly
+;
+; notes					If no raster operation is specified, then SRCCOPY is used to the returned bitmap
+
+Gdip_BitmapFromScreen(Screen=0, Raster="")
+{
+	if (Screen = 0)
+	{
+		Sysget, x, 76
+		Sysget, y, 77	
+		Sysget, w, 78
+		Sysget, h, 79
+	}
+	else if (SubStr(Screen, 1, 5) = "hwnd:")
+	{
+		Screen := SubStr(Screen, 6)
+		if !WinExist( "ahk_id " Screen)
+			return -2
+		WinGetPos,,, w, h, ahk_id %Screen%
+		x := y := 0
+		hhdc := GetDCEx(Screen, 3)
+	}
+	else if (Screen&1 != "")
+	{
+		Sysget, M, Monitor, %Screen%
+		x := MLeft, y := MTop, w := MRight-MLeft, h := MBottom-MTop
+	}
+	else
+	{
+		StringSplit, S, Screen, |
+		x := S1, y := S2, w := S3, h := S4
+	}
+
+	if (x = "") || (y = "") || (w = "") || (h = "")
+		return -1
+
+	chdc := CreateCompatibleDC(), hbm := CreateDIBSection(w, h, chdc), obm := SelectObject(chdc, hbm), hhdc := hhdc ? hhdc : GetDC()
+	BitBlt(chdc, 0, 0, w, h, hhdc, x, y, Raster)
+	ReleaseDC(hhdc)
+	
+	pBitmap := Gdip_CreateBitmapFromHBITMAP(hbm)
+	SelectObject(chdc, obm), DeleteObject(hbm), DeleteDC(hhdc), DeleteDC(chdc)
+	return pBitmap
+}
+
+;#####################################################################################
+
+; Function				Gdip_BitmapFromHWND
+; Description			Uses PrintWindow to get a handle to the specified window and return a bitmap from it
+;
+; hwnd					handle to the window to get a bitmap from
+;
+; return				If the function succeeds, the return value is a pointer to a gdi+ bitmap
+;
+; notes					Window must not be not minimised in order to get a handle to it's client area
+
+Gdip_BitmapFromHWND(hwnd)
+{
+	WinGetPos,,, Width, Height, ahk_id %hwnd%
+	hbm := CreateDIBSection(Width, Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
+	PrintWindow(hwnd, hdc)
+	pBitmap := Gdip_CreateBitmapFromHBITMAP(hbm)
+	SelectObject(hdc, obm), DeleteObject(hbm), DeleteDC(hdc)
+	return pBitmap
+}
+
+;#####################################################################################
+
+; Function    			CreateRectF
+; Description			Creates a RectF object, containing a the coordinates and dimensions of a rectangle
+;
+; RectF       			Name to call the RectF object
+; x            			x-coordinate of the upper left corner of the rectangle
+; y            			y-coordinate of the upper left corner of the rectangle
+; w            			Width of the rectangle
+; h            			Height of the rectangle
+;
+; return      			No return value
+
+CreateRectF(ByRef RectF, x, y, w, h)
+{
+   VarSetCapacity(RectF, 16)
+   NumPut(x, RectF, 0, "float"), NumPut(y, RectF, 4, "float"), NumPut(w, RectF, 8, "float"), NumPut(h, RectF, 12, "float")
+}
+
+;#####################################################################################
+
+; Function    			CreateRect
+; Description			Creates a Rect object, containing a the coordinates and dimensions of a rectangle
+;
+; RectF       			Name to call the RectF object
+; x            			x-coordinate of the upper left corner of the rectangle
+; y            			y-coordinate of the upper left corner of the rectangle
+; w            			Width of the rectangle
+; h            			Height of the rectangle
+;
+; return      			No return value
+
+CreateRect(ByRef Rect, x, y, w, h)
+{
+	VarSetCapacity(Rect, 16)
+	NumPut(x, Rect, 0, "uint"), NumPut(y, Rect, 4, "uint"), NumPut(w, Rect, 8, "uint"), NumPut(h, Rect, 12, "uint")
+}
+;#####################################################################################
+
+; Function		    	CreateSizeF
+; Description			Creates a SizeF object, containing an 2 values
+;
+; SizeF         		Name to call the SizeF object
+; w            			w-value for the SizeF object
+; h            			h-value for the SizeF object
+;
+; return      			No Return value
+
+CreateSizeF(ByRef SizeF, w, h)
+{
+   VarSetCapacity(SizeF, 8)
+   NumPut(w, SizeF, 0, "float"), NumPut(h, SizeF, 4, "float")     
+}
+;#####################################################################################
+
+; Function		    	CreatePointF
+; Description			Creates a SizeF object, containing an 2 values
+;
+; SizeF         		Name to call the SizeF object
+; w            			w-value for the SizeF object
+; h            			h-value for the SizeF object
+;
+; return      			No Return value
+
+CreatePointF(ByRef PointF, x, y)
+{
+   VarSetCapacity(PointF, 8)
+   NumPut(x, PointF, 0, "float"), NumPut(y, PointF, 4, "float")     
+}
+;#####################################################################################
+
+; Function				CreateDIBSection
+; Description			The CreateDIBSection function creates a DIB (Device Independent Bitmap) that applications can write to directly
+;
+; w						width of the bitmap to create
+; h						height of the bitmap to create
+; hdc					a handle to the device context to use the palette from
+; bpp					bits per pixel (32 = ARGB)
+; ppvBits				A pointer to a variable that receives a pointer to the location of the DIB bit values
+;
+; return				returns a DIB. A gdi bitmap
+;
+; notes					ppvBits will receive the location of the pixels in the DIB
+
+CreateDIBSection(w, h, hdc="", bpp=32, ByRef ppvBits=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	hdc2 := hdc ? hdc : GetDC()
+	VarSetCapacity(bi, 40, 0)
+	
+	NumPut(w, bi, 4, "uint")
+	, NumPut(h, bi, 8, "uint")
+	, NumPut(40, bi, 0, "uint")
+	, NumPut(1, bi, 12, "ushort")
+	, NumPut(0, bi, 16, "uInt")
+	, NumPut(bpp, bi, 14, "ushort")
+	
+	hbm := DllCall("CreateDIBSection"
+					, Ptr, hdc2
+					, Ptr, &bi
+					, "uint", 0
+					, A_PtrSize ? "UPtr*" : "uint*", ppvBits
+					, Ptr, 0
+					, "uint", 0, Ptr)
+
+	if !hdc
+		ReleaseDC(hdc2)
+	return hbm
+}
+
+;#####################################################################################
+
+; Function				PrintWindow
+; Description			The PrintWindow function copies a visual window into the specified device context (DC), typically a printer DC
+;
+; hwnd					A handle to the window that will be copied
+; hdc					A handle to the device context
+; Flags					Drawing options
+;
+; return				If the function succeeds, it returns a nonzero value
+;
+; PW_CLIENTONLY			= 1
+
+PrintWindow(hwnd, hdc, Flags=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("PrintWindow", Ptr, hwnd, Ptr, hdc, "uint", Flags)
+}
+
+;#####################################################################################
+
+; Function				DestroyIcon
+; Description			Destroys an icon and frees any memory the icon occupied
+;
+; hIcon					Handle to the icon to be destroyed. The icon must not be in use
+;
+; return				If the function succeeds, the return value is nonzero
+
+DestroyIcon(hIcon)
+{
+	return DllCall("DestroyIcon", A_PtrSize ? "UPtr" : "UInt", hIcon)
+}
+
+;#####################################################################################
+
+PaintDesktop(hdc)
+{
+	return DllCall("PaintDesktop", A_PtrSize ? "UPtr" : "UInt", hdc)
+}
+
+;#####################################################################################
+
+CreateCompatibleBitmap(hdc, w, h)
+{
+	return DllCall("gdi32\CreateCompatibleBitmap", A_PtrSize ? "UPtr" : "UInt", hdc, "int", w, "int", h)
+}
+
+;#####################################################################################
+
+; Function				CreateCompatibleDC
+; Description			This function creates a memory device context (DC) compatible with the specified device
+;
+; hdc					Handle to an existing device context					
+;
+; return				returns the handle to a device context or 0 on failure
+;
+; notes					If this handle is 0 (by default), the function creates a memory device context compatible with the application's current screen
+
+CreateCompatibleDC(hdc=0)
+{
+   return DllCall("CreateCompatibleDC", A_PtrSize ? "UPtr" : "UInt", hdc)
+}
+
+;#####################################################################################
+
+; Function				SelectObject
+; Description			The SelectObject function selects an object into the specified device context (DC). The new object replaces the previous object of the same type
+;
+; hdc					Handle to a DC
+; hgdiobj				A handle to the object to be selected into the DC
+;
+; return				If the selected object is not a region and the function succeeds, the return value is a handle to the object being replaced
+;
+; notes					The specified object must have been created by using one of the following functions
+;						Bitmap - CreateBitmap, CreateBitmapIndirect, CreateCompatibleBitmap, CreateDIBitmap, CreateDIBSection (A single bitmap cannot be selected into more than one DC at the same time)
+;						Brush - CreateBrushIndirect, CreateDIBPatternBrush, CreateDIBPatternBrushPt, CreateHatchBrush, CreatePatternBrush, CreateSolidBrush
+;						Font - CreateFont, CreateFontIndirect
+;						Pen - CreatePen, CreatePenIndirect
+;						Region - CombineRgn, CreateEllipticRgn, CreateEllipticRgnIndirect, CreatePolygonRgn, CreateRectRgn, CreateRectRgnIndirect
+;
+; notes					If the selected object is a region and the function succeeds, the return value is one of the following value
+;
+; SIMPLEREGION			= 2 Region consists of a single rectangle
+; COMPLEXREGION			= 3 Region consists of more than one rectangle
+; NULLREGION			= 1 Region is empty
+
+SelectObject(hdc, hgdiobj)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("SelectObject", Ptr, hdc, Ptr, hgdiobj)
+}
+
+;#####################################################################################
+
+; Function				DeleteObject
+; Description			This function deletes a logical pen, brush, font, bitmap, region, or palette, freeing all system resources associated with the object
+;						After the object is deleted, the specified handle is no longer valid
+;
+; hObject				Handle to a logical pen, brush, font, bitmap, region, or palette to delete
+;
+; return				Nonzero indicates success. Zero indicates that the specified handle is not valid or that the handle is currently selected into a device context
+
+DeleteObject(hObject)
+{
+   return DllCall("DeleteObject", A_PtrSize ? "UPtr" : "UInt", hObject)
+}
+
+;#####################################################################################
+
+; Function				GetDC
+; Description			This function retrieves a handle to a display device context (DC) for the client area of the specified window.
+;						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window. 
+;
+; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen					
+;
+; return				The handle the device context for the specified window's client area indicates success. NULL indicates failure
+
+GetDC(hwnd=0)
+{
+	return DllCall("GetDC", A_PtrSize ? "UPtr" : "UInt", hwnd)
+}
+
+;#####################################################################################
+
+; DCX_CACHE = 0x2
+; DCX_CLIPCHILDREN = 0x8
+; DCX_CLIPSIBLINGS = 0x10
+; DCX_EXCLUDERGN = 0x40
+; DCX_EXCLUDEUPDATE = 0x100
+; DCX_INTERSECTRGN = 0x80
+; DCX_INTERSECTUPDATE = 0x200
+; DCX_LOCKWINDOWUPDATE = 0x400
+; DCX_NORECOMPUTE = 0x100000
+; DCX_NORESETATTRS = 0x4
+; DCX_PARENTCLIP = 0x20
+; DCX_VALIDATE = 0x200000
+; DCX_WINDOW = 0x1
+
+GetDCEx(hwnd, flags=0, hrgnClip=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+    return DllCall("GetDCEx", Ptr, hwnd, Ptr, hrgnClip, "int", flags)
+}
+
+;#####################################################################################
+
+; Function				ReleaseDC
+; Description			This function releases a device context (DC), freeing it for use by other applications. The effect of ReleaseDC depends on the type of device context
+;
+; hdc					Handle to the device context to be released
+; hwnd					Handle to the window whose device context is to be released
+;
+; return				1 = released
+;						0 = not released
+;
+; notes					The application must call the ReleaseDC function for each call to the GetWindowDC function and for each call to the GetDC function that retrieves a common device context
+;						An application cannot use the ReleaseDC function to release a device context that was created by calling the CreateDC function; instead, it must use the DeleteDC function. 
+
+ReleaseDC(hdc, hwnd=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("ReleaseDC", Ptr, hwnd, Ptr, hdc)
+}
+
+;#####################################################################################
+
+; Function				DeleteDC
+; Description			The DeleteDC function deletes the specified device context (DC)
+;
+; hdc					A handle to the device context
+;
+; return				If the function succeeds, the return value is nonzero
+;
+; notes					An application must not delete a DC whose handle was obtained by calling the GetDC function. Instead, it must call the ReleaseDC function to free the DC
+
+DeleteDC(hdc)
+{
+   return DllCall("DeleteDC", A_PtrSize ? "UPtr" : "UInt", hdc)
+}
+;#####################################################################################
+
+; Function				Gdip_LibraryVersion
+; Description			Get the current library version
+;
+; return				the library version
+;
+; notes					This is useful for non compiled programs to ensure that a person doesn't run an old version when testing your scripts
+
+Gdip_LibraryVersion()
+{
+	return 1.45
+}
+
+;#####################################################################################
+
+; Function				Gdip_LibrarySubVersion
+; Description			Get the current library sub version
+;
+; return				the library sub version
+;
+; notes					This is the sub-version currently maintained by Rseding91
+Gdip_LibrarySubVersion()
+{
+	return 1.46
+}
+
+;#####################################################################################
+
+; Function:    			Gdip_BitmapFromBRA
+; Description: 			Gets a pointer to a gdi+ bitmap from a BRA file
+;
+; BRAFromMemIn			The variable for a BRA file read to memory
+; File					The name of the file, or its number that you would like (This depends on alternate parameter)
+; Alternate				Changes whether the File parameter is the file name or its number
+;
+; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
+;						-1 = The BRA variable is empty
+;						-2 = The BRA has an incorrect header
+;						-3 = The BRA has information missing
+;						-4 = Could not find file inside the BRA
+
+Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
+{
+	Static FName = "ObjRelease"
+	
+	if !BRAFromMemIn
+		return -1
+	Loop, Parse, BRAFromMemIn, `n
+	{
+		if (A_Index = 1)
+		{
+			StringSplit, Header, A_LoopField, |
+			if (Header0 != 4 || Header2 != "BRA!")
+				return -2
+		}
+		else if (A_Index = 2)
+		{
+			StringSplit, Info, A_LoopField, |
+			if (Info0 != 3)
+				return -3
+		}
+		else
+			break
+	}
+	if !Alternate
+		StringReplace, File, File, \, \\, All
+	RegExMatch(BRAFromMemIn, "mi`n)^" (Alternate ? File "\|.+?\|(\d+)\|(\d+)" : "\d+\|" File "\|(\d+)\|(\d+)") "$", FileInfo)
+	if !FileInfo
+		return -4
+	
+	hData := DllCall("GlobalAlloc", "uint", 2, Ptr, FileInfo2, Ptr)
+	pData := DllCall("GlobalLock", Ptr, hData, Ptr)
+	DllCall("RtlMoveMemory", Ptr, pData, Ptr, &BRAFromMemIn+Info2+FileInfo1, Ptr, FileInfo2)
+	DllCall("GlobalUnlock", Ptr, hData)
+	DllCall("ole32\CreateStreamOnHGlobal", Ptr, hData, "int", 1, A_PtrSize ? "UPtr*" : "UInt*", pStream)
+	DllCall("gdiplus\GdipCreateBitmapFromStream", Ptr, pStream, A_PtrSize ? "UPtr*" : "UInt*", pBitmap)
+	If (A_PtrSize)
+		%FName%(pStream)
+	Else
+		DllCall(NumGet(NumGet(1*pStream)+8), "uint", pStream)
+	return pBitmap
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawRectangle
+; Description			This function uses a pen to draw the outline of a rectangle into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rectangle
+; y						y-coordinate of the top left of the rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawRectangle", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawRoundedRectangle
+; Description			This function uses a pen to draw the outline of a rounded rectangle into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rounded rectangle
+; y						y-coordinate of the top left of the rounded rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+; r						radius of the rounded corners
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawRoundedRectangle(pGraphics, pPen, x, y, w, h, r)
+{
+	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
+	E := Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
+	Gdip_ResetClip(pGraphics)
+	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
+	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
+	Gdip_DrawEllipse(pGraphics, pPen, x, y, 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y, 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x, y+h-(2*r), 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
+	Gdip_ResetClip(pGraphics)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawEllipse
+; Description			This function uses a pen to draw the outline of an ellipse into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rectangle the ellipse will be drawn into
+; y						y-coordinate of the top left of the rectangle the ellipse will be drawn into
+; w						width of the ellipse
+; h						height of the ellipse
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawEllipse(pGraphics, pPen, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawEllipse", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawBezier
+; Description			This function uses a pen to draw the outline of a bezier (a weighted curve) into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x1					x-coordinate of the start of the bezier
+; y1					y-coordinate of the start of the bezier
+; x2					x-coordinate of the first arc of the bezier
+; y2					y-coordinate of the first arc of the bezier
+; x3					x-coordinate of the second arc of the bezier
+; y3					y-coordinate of the second arc of the bezier
+; x4					x-coordinate of the end of the bezier
+; y4					y-coordinate of the end of the bezier
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawBezier(pGraphics, pPen, x1, y1, x2, y2, x3, y3, x4, y4)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawBezier"
+					, Ptr, pgraphics
+					, Ptr, pPen
+					, "float", x1
+					, "float", y1
+					, "float", x2
+					, "float", y2
+					, "float", x3
+					, "float", y3
+					, "float", x4
+					, "float", y4)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawArc
+; Description			This function uses a pen to draw the outline of an arc into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the start of the arc
+; y						y-coordinate of the start of the arc
+; w						width of the arc
+; h						height of the arc
+; StartAngle			specifies the angle between the x-axis and the starting point of the arc
+; SweepAngle			specifies the angle between the starting and ending points of the arc
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawArc(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawArc"
+					, Ptr, pGraphics
+					, Ptr, pPen
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h
+					, "float", StartAngle
+					, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawPie
+; Description			This function uses a pen to draw the outline of a pie into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the start of the pie
+; y						y-coordinate of the start of the pie
+; w						width of the pie
+; h						height of the pie
+; StartAngle			specifies the angle between the x-axis and the starting point of the pie
+; SweepAngle			specifies the angle between the starting and ending points of the pie
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawPie(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawPie", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h, "float", StartAngle, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawLine
+; Description			This function uses a pen to draw a line into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x1					x-coordinate of the start of the line
+; y1					y-coordinate of the start of the line
+; x2					x-coordinate of the end of the line
+; y2					y-coordinate of the end of the line
+;
+; return				status enumeration. 0 = success		
+
+Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawLine"
+					, Ptr, pGraphics
+					, Ptr, pPen
+					, "float", x1
+					, "float", y1
+					, "float", x2
+					, "float", y2)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawLines
+; Description			This function uses a pen to draw a series of joined lines into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
+;
+; return				status enumeration. 0 = success				
+
+Gdip_DrawLines(pGraphics, pPen, Points)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}
+	return DllCall("gdiplus\GdipDrawLines", Ptr, pGraphics, Ptr, pPen, Ptr, &PointF, "int", Points0)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRectangle
+; Description			This function uses a brush to fill a rectangle in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the rectangle
+; y						y-coordinate of the top left of the rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillRectangle"
+					, Ptr, pGraphics
+					, Ptr, pBrush
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRoundedRectangle
+; Description			This function uses a brush to fill a rounded rectangle in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the rounded rectangle
+; y						y-coordinate of the top left of the rounded rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+; r						radius of the rounded corners
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillRoundedRectangle(pGraphics, pBrush, x, y, w, h, r)
+{
+	Region := Gdip_GetClipRegion(pGraphics)
+	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
+	E := Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
+	Gdip_SetClipRegion(pGraphics, Region, 0)
+	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
+	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
+	Gdip_FillEllipse(pGraphics, pBrush, x, y, 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y, 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x, y+h-(2*r), 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
+	Gdip_SetClipRegion(pGraphics, Region, 0)
+	Gdip_DeleteRegion(Region)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPolygon
+; Description			This function uses a brush to fill a polygon in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
+;
+; return				status enumeration. 0 = success
+;
+; notes					Alternate will fill the polygon as a whole, wheras winding will fill each new "segment"
+; Alternate 			= 0
+; Winding 				= 1
+
+Gdip_FillPolygon(pGraphics, pBrush, Points, FillMode=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}   
+	return DllCall("gdiplus\GdipFillPolygon", Ptr, pGraphics, Ptr, pBrush, Ptr, &PointF, "int", Points0, "int", FillMode)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPie
+; Description			This function uses a brush to fill a pie in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the pie
+; y						y-coordinate of the top left of the pie
+; w						width of the pie
+; h						height of the pie
+; StartAngle			specifies the angle between the x-axis and the starting point of the pie
+; SweepAngle			specifies the angle between the starting and ending points of the pie
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillPie(pGraphics, pBrush, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillPie"
+					, Ptr, pGraphics
+					, Ptr, pBrush
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h
+					, "float", StartAngle
+					, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillEllipse
+; Description			This function uses a brush to fill an ellipse in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the ellipse
+; y						y-coordinate of the top left of the ellipse
+; w						width of the ellipse
+; h						height of the ellipse
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillEllipse(pGraphics, pBrush, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillEllipse", Ptr, pGraphics, Ptr, pBrush, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRegion
+; Description			This function uses a brush to fill a region in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Region				Pointer to a Region
+;
+; return				status enumeration. 0 = success
+;
+; notes					You can create a region Gdip_CreateRegion() and then add to this
+
+Gdip_FillRegion(pGraphics, pBrush, Region)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillRegion", Ptr, pGraphics, Ptr, pBrush, Ptr, Region)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPath
+; Description			This function uses a brush to fill a path in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Region				Pointer to a Path
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillPath(pGraphics, pBrush, Path)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillPath", Ptr, pGraphics, Ptr, pBrush, Ptr, Path)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawImagePointsRect
+; Description			This function draws a bitmap into the Graphics of another bitmap and skews it
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBitmap				Pointer to a bitmap to be drawn
+; Points				Points passed as x1,y1|x2,y2|x3,y3 (3 points: top left, top right, bottom left) describing the drawing of the bitmap
+; sx					x-coordinate of source upper-left corner
+; sy					y-coordinate of source upper-left corner
+; sw					width of source rectangle
+; sh					height of source rectangle
+; Matrix				a matrix used to alter image attributes when drawing
+;
+; return				status enumeration. 0 = success
+;
+; notes					if sx,sy,sw,sh are missed then the entire source bitmap will be used
+;						Matrix can be omitted to just draw with no alteration to ARGB
+;						Matrix may be passed as a digit from 0 - 1 to change just transparency
+;						Matrix can be passed as a matrix with any delimiter
+
+Gdip_DrawImagePointsRect(pGraphics, pBitmap, Points, sx="", sy="", sw="", sh="", Matrix=1)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}
+
+	if (Matrix&1 = "")
+		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
+	else if (Matrix != 1)
+		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
+		
+	if (sx = "" && sy = "" && sw = "" && sh = "")
+	{
+		sx := 0, sy := 0
+		sw := Gdip_GetImageWidth(pBitmap)
+		sh := Gdip_GetImageHeight(pBitmap)
+	}
+
+	E := DllCall("gdiplus\GdipDrawImagePointsRect"
+				, Ptr, pGraphics
+				, Ptr, pBitmap
+				, Ptr, &PointF
+				, "int", Points0
+				, "float", sx
+				, "float", sy
+				, "float", sw
+				, "float", sh
+				, "int", 2
+				, Ptr, ImageAttr
+				, Ptr, 0
+				, Ptr, 0)
+	if ImageAttr
+		Gdip_DisposeImageAttributes(ImageAttr)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawImage
+; Description			This function draws a bitmap into the Graphics of another bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBitmap				Pointer to a bitmap to be drawn
+; dx					x-coord of destination upper-left corner
+; dy					y-coord of destination upper-left corner
+; dw					width of destination image
+; dh					height of destination image
+; sx					x-coordinate of source upper-left corner
+; sy					y-coordinate of source upper-left corner
+; sw					width of source image
+; sh					height of source image
+; Matrix				a matrix used to alter image attributes when drawing
+;
+; return				status enumeration. 0 = success
+;
+; notes					if sx,sy,sw,sh are missed then the entire source bitmap will be used
+;						Gdip_DrawImage performs faster
+;						Matrix can be omitted to just draw with no alteration to ARGB
+;						Matrix may be passed as a digit from 0 - 1 to change just transparency
+;						Matrix can be passed as a matrix with any delimiter. For example:
+;						MatrixBright=
+;						(
+;						1.5		|0		|0		|0		|0
+;						0		|1.5	|0		|0		|0
+;						0		|0		|1.5	|0		|0
+;						0		|0		|0		|1		|0
+;						0.05	|0.05	|0.05	|0		|1
+;						)
+;
+; notes					MatrixBright = 1.5|0|0|0|0|0|1.5|0|0|0|0|0|1.5|0|0|0|0|0|1|0|0.05|0.05|0.05|0|1
+;						MatrixGreyScale = 0.299|0.299|0.299|0|0|0.587|0.587|0.587|0|0|0.114|0.114|0.114|0|0|0|0|0|1|0|0|0|0|0|1
+;						MatrixNegative = -1|0|0|0|0|0|-1|0|0|0|0|0|-1|0|0|0|0|0|1|0|0|0|0|0|1
+
+Gdip_DrawImage(pGraphics, pBitmap, dx="", dy="", dw="", dh="", sx="", sy="", sw="", sh="", Matrix=1)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (Matrix&1 = "")
+		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
+	else if (Matrix != 1)
+		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
+
+	if (sx = "" && sy = "" && sw = "" && sh = "")
+	{
+		if (dx = "" && dy = "" && dw = "" && dh = "")
+		{
+			sx := dx := 0, sy := dy := 0
+			sw := dw := Gdip_GetImageWidth(pBitmap)
+			sh := dh := Gdip_GetImageHeight(pBitmap)
+		}
+		else
+		{
+			sx := sy := 0
+			sw := Gdip_GetImageWidth(pBitmap)
+			sh := Gdip_GetImageHeight(pBitmap)
+		}
+	}
+
+	E := DllCall("gdiplus\GdipDrawImageRectRect"
+				, Ptr, pGraphics
+				, Ptr, pBitmap
+				, "float", dx
+				, "float", dy
+				, "float", dw
+				, "float", dh
+				, "float", sx
+				, "float", sy
+				, "float", sw
+				, "float", sh
+				, "int", 2
+				, Ptr, ImageAttr
+				, Ptr, 0
+				, Ptr, 0)
+	if ImageAttr
+		Gdip_DisposeImageAttributes(ImageAttr)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_SetImageAttributesColorMatrix
+; Description			This function creates an image matrix ready for drawing
+;
+; Matrix				a matrix used to alter image attributes when drawing
+;						passed with any delimeter
+;
+; return				returns an image matrix on sucess or 0 if it fails
+;
+; notes					MatrixBright = 1.5|0|0|0|0|0|1.5|0|0|0|0|0|1.5|0|0|0|0|0|1|0|0.05|0.05|0.05|0|1
+;						MatrixGreyScale = 0.299|0.299|0.299|0|0|0.587|0.587|0.587|0|0|0.114|0.114|0.114|0|0|0|0|0|1|0|0|0|0|0|1
+;						MatrixNegative = -1|0|0|0|0|0|-1|0|0|0|0|0|-1|0|0|0|0|0|1|0|0|0|0|0|1
+
+Gdip_SetImageAttributesColorMatrix(Matrix)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	VarSetCapacity(ColourMatrix, 100, 0)
+	Matrix := RegExReplace(RegExReplace(Matrix, "^[^\d-\.]+([\d\.])", "$1", "", 1), "[^\d-\.]+", "|")
+	StringSplit, Matrix, Matrix, |
+	Loop, 25
+	{
+		Matrix := (Matrix%A_Index% != "") ? Matrix%A_Index% : Mod(A_Index-1, 6) ? 0 : 1
+		NumPut(Matrix, ColourMatrix, (A_Index-1)*4, "float")
+	}
+	DllCall("gdiplus\GdipCreateImageAttributes", A_PtrSize ? "UPtr*" : "uint*", ImageAttr)
+	DllCall("gdiplus\GdipSetImageAttributesColorMatrix", Ptr, ImageAttr, "int", 1, "int", 1, Ptr, &ColourMatrix, Ptr, 0, "int", 0)
+	return ImageAttr
+}
+
+;#####################################################################################
+
+; Function				Gdip_GraphicsFromImage
+; Description			This function gets the graphics for a bitmap used for drawing functions
+;
+; pBitmap				Pointer to a bitmap to get the pointer to its graphics
+;
+; return				returns a pointer to the graphics of a bitmap
+;
+; notes					a bitmap can be drawn into the graphics of another bitmap
+
+Gdip_GraphicsFromImage(pBitmap)
+{
+	DllCall("gdiplus\GdipGetImageGraphicsContext", A_PtrSize ? "UPtr" : "UInt", pBitmap, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
+	return pGraphics
+}
+
+;#####################################################################################
+
+; Function				Gdip_GraphicsFromHDC
+; Description			This function gets the graphics from the handle to a device context
+;
+; hdc					This is the handle to the device context
+;
+; return				returns a pointer to the graphics of a bitmap
+;
+; notes					You can draw a bitmap into the graphics of another bitmap
+
+Gdip_GraphicsFromHDC(hdc)
+{
+    DllCall("gdiplus\GdipCreateFromHDC", A_PtrSize ? "UPtr" : "UInt", hdc, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
+    return pGraphics
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetDC
+; Description			This function gets the device context of the passed Graphics
+;
+; hdc					This is the handle to the device context
+;
+; return				returns the device context for the graphics of a bitmap
+
+Gdip_GetDC(pGraphics)
+{
+	DllCall("gdiplus\GdipGetDC", A_PtrSize ? "UPtr" : "UInt", pGraphics, A_PtrSize ? "UPtr*" : "UInt*", hdc)
+	return hdc
+}
+
+;#####################################################################################
+
+; Function				Gdip_ReleaseDC
+; Description			This function releases a device context from use for further use
+;
+; pGraphics				Pointer to the graphics of a bitmap
+; hdc					This is the handle to the device context
+;
+; return				status enumeration. 0 = success
+
+Gdip_ReleaseDC(pGraphics, hdc)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipReleaseDC", Ptr, pGraphics, Ptr, hdc)
+}
+
+;#####################################################################################
+
+; Function				Gdip_GraphicsClear
+; Description			Clears the graphics of a bitmap ready for further drawing
+;
+; pGraphics				Pointer to the graphics of a bitmap
+; ARGB					The colour to clear the graphics to
+;
+; return				status enumeration. 0 = success
+;
+; notes					By default this will make the background invisible
+;						Using clipping regions you can clear a particular area on the graphics rather than clearing the entire graphics
+
+Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
+{
+    return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
+}
+
+;#####################################################################################
+
+; Function				Gdip_BlurBitmap
+; Description			Gives a pointer to a blurred bitmap from a pointer to a bitmap
+;
+; pBitmap				Pointer to a bitmap to be blurred
+; Blur					The Amount to blur a bitmap by from 1 (least blur) to 100 (most blur)
+;
+; return				If the function succeeds, the return value is a pointer to the new blurred bitmap
+;						-1 = The blur parameter is outside the range 1-100
+;
+; notes					This function will not dispose of the original bitmap
+
+Gdip_BlurBitmap(pBitmap, Blur)
+{
+	if (Blur > 100) || (Blur < 1)
+		return -1	
+	
+	sWidth := Gdip_GetImageWidth(pBitmap), sHeight := Gdip_GetImageHeight(pBitmap)
+	dWidth := sWidth//Blur, dHeight := sHeight//Blur
+
+	pBitmap1 := Gdip_CreateBitmap(dWidth, dHeight)
+	G1 := Gdip_GraphicsFromImage(pBitmap1)
+	Gdip_SetInterpolationMode(G1, 7)
+	Gdip_DrawImage(G1, pBitmap, 0, 0, dWidth, dHeight, 0, 0, sWidth, sHeight)
+
+	Gdip_DeleteGraphics(G1)
+
+	pBitmap2 := Gdip_CreateBitmap(sWidth, sHeight)
+	G2 := Gdip_GraphicsFromImage(pBitmap2)
+	Gdip_SetInterpolationMode(G2, 7)
+	Gdip_DrawImage(G2, pBitmap1, 0, 0, sWidth, sHeight, 0, 0, dWidth, dHeight)
+
+	Gdip_DeleteGraphics(G2)
+	Gdip_DisposeImage(pBitmap1)
+	return pBitmap2
+}
+
+;#####################################################################################
+
+; Function:     		Gdip_SaveBitmapToFile
+; Description:  		Saves a bitmap to a file in any supported format onto disk
+;   
+; pBitmap				Pointer to a bitmap
+; sOutput      			The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
+; Quality      			If saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
+;
+; return      			If the function succeeds, the return value is zero, otherwise:
+;						-1 = Extension supplied is not a supported file format
+;						-2 = Could not get a list of encoders on system
+;						-3 = Could not find matching encoder for specified file format
+;						-4 = Could not get WideChar name of output file
+;						-5 = Could not save file to disk
+;
+; notes					This function will use the extension supplied from the sOutput parameter to determine the output format
+
+Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	SplitPath, sOutput,,, Extension
+	if Extension not in BMP,DIB,RLE,JPG,JPEG,JPE,JFIF,GIF,TIF,TIFF,PNG
+		return -1
+	Extension := "." Extension
+
+	DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", nCount, "uint*", nSize)
+	VarSetCapacity(ci, nSize)
+	DllCall("gdiplus\GdipGetImageEncoders", "uint", nCount, "uint", nSize, Ptr, &ci)
+	if !(nCount && nSize)
+		return -2
+	
+	If (A_IsUnicode){
+		StrGet_Name := "StrGet"
+		Loop, %nCount%
+		{
+			sString := %StrGet_Name%(NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize), "UTF-16")
+			if !InStr(sString, "*" Extension)
+				continue
+			
+			pCodec := &ci+idx
+			break
+		}
+	} else {
+		Loop, %nCount%
+		{
+			Location := NumGet(ci, 76*(A_Index-1)+44)
+			nSize := DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "uint", 0, "int",  0, "uint", 0, "uint", 0)
+			VarSetCapacity(sString, nSize)
+			DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "str", sString, "int", nSize, "uint", 0, "uint", 0)
+			if !InStr(sString, "*" Extension)
+				continue
+			
+			pCodec := &ci+76*(A_Index-1)
+			break
+		}
+	}
+	
+	if !pCodec
+		return -3
+
+	if (Quality != 75)
+	{
+		Quality := (Quality < 0) ? 0 : (Quality > 100) ? 100 : Quality
+		if Extension in .JPG,.JPEG,.JPE,.JFIF
+		{
+			DllCall("gdiplus\GdipGetEncoderParameterListSize", Ptr, pBitmap, Ptr, pCodec, "uint*", nSize)
+			VarSetCapacity(EncoderParameters, nSize, 0)
+			DllCall("gdiplus\GdipGetEncoderParameterList", Ptr, pBitmap, Ptr, pCodec, "uint", nSize, Ptr, &EncoderParameters)
+			Loop, % NumGet(EncoderParameters, "UInt")      ;%
+			{
+				elem := (24+(A_PtrSize ? A_PtrSize : 4))*(A_Index-1) + 4 + (pad := A_PtrSize = 8 ? 4 : 0)
+				if (NumGet(EncoderParameters, elem+16, "UInt") = 1) && (NumGet(EncoderParameters, elem+20, "UInt") = 6)
+				{
+					p := elem+&EncoderParameters-pad-4
+					NumPut(Quality, NumGet(NumPut(4, NumPut(1, p+0)+20, "UInt")), "UInt")
+					break
+				}
+			}      
+		}
+	}
+
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, 0, "int", 0)
+		VarSetCapacity(wOutput, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, &wOutput, "int", nSize)
+		VarSetCapacity(wOutput, -1)
+		if !VarSetCapacity(wOutput)
+			return -4
+		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &wOutput, Ptr, pCodec, "uint", p ? p : 0)
+	}
+	else
+		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &sOutput, Ptr, pCodec, "uint", p ? p : 0)
+	return E ? -5 : 0
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetPixel
+; Description			Gets the ARGB of a pixel in a bitmap
+;
+; pBitmap				Pointer to a bitmap
+; x						x-coordinate of the pixel
+; y						y-coordinate of the pixel
+;
+; return				Returns the ARGB value of the pixel
+
+Gdip_GetPixel(pBitmap, x, y)
+{
+	DllCall("gdiplus\GdipBitmapGetPixel", A_PtrSize ? "UPtr" : "UInt", pBitmap, "int", x, "int", y, "uint*", ARGB)
+	return ARGB
+}
+
+;#####################################################################################
+
+; Function				Gdip_SetPixel
+; Description			Sets the ARGB of a pixel in a bitmap
+;
+; pBitmap				Pointer to a bitmap
+; x						x-coordinate of the pixel
+; y						y-coordinate of the pixel
+;
+; return				status enumeration. 0 = success
+
+Gdip_SetPixel(pBitmap, x, y, ARGB)
+{
+   return DllCall("gdiplus\GdipBitmapSetPixel", A_PtrSize ? "UPtr" : "UInt", pBitmap, "int", x, "int", y, "int", ARGB)
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetImageWidth
+; Description			Gives the width of a bitmap
+;
+; pBitmap				Pointer to a bitmap
+;
+; return				Returns the width in pixels of the supplied bitmap
+
+Gdip_GetImageWidth(pBitmap)
+{
+   DllCall("gdiplus\GdipGetImageWidth", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Width)
+   return Width
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetImageHeight
+; Description			Gives the height of a bitmap
+;
+; pBitmap				Pointer to a bitmap
+;
+; return				Returns the height in pixels of the supplied bitmap
+
+Gdip_GetImageHeight(pBitmap)
+{
+   DllCall("gdiplus\GdipGetImageHeight", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Height)
+   return Height
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetDimensions
+; Description			Gives the width and height of a bitmap
+;
+; pBitmap				Pointer to a bitmap
+; Width					ByRef variable. This variable will be set to the width of the bitmap
+; Height				ByRef variable. This variable will be set to the height of the bitmap
+;
+; return				No return value
+;						Gdip_GetDimensions(pBitmap, ThisWidth, ThisHeight) will set ThisWidth to the width and ThisHeight to the height
+
+Gdip_GetImageDimensions(pBitmap, ByRef Width, ByRef Height)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	DllCall("gdiplus\GdipGetImageWidth", Ptr, pBitmap, "uint*", Width)
+	DllCall("gdiplus\GdipGetImageHeight", Ptr, pBitmap, "uint*", Height)
+}
+
+;#####################################################################################
+
+Gdip_GetDimensions(pBitmap, ByRef Width, ByRef Height)
+{
+	Gdip_GetImageDimensions(pBitmap, Width, Height)
+}
+
+;#####################################################################################
+
+Gdip_GetImagePixelFormat(pBitmap)
+{
+	DllCall("gdiplus\GdipGetImagePixelFormat", A_PtrSize ? "UPtr" : "UInt", pBitmap, A_PtrSize ? "UPtr*" : "UInt*", Format)
+	return Format
+}
+
+;#####################################################################################
+
+; Function				Gdip_GetDpiX
+; Description			Gives the horizontal dots per inch of the graphics of a bitmap
+;
+; pBitmap				Pointer to a bitmap
+; Width					ByRef variable. This variable will be set to the width of the bitmap
+; Height				ByRef variable. This variable will be set to the height of the bitmap
+;
+; return				No return value
+;						Gdip_GetDimensions(pBitmap, ThisWidth, ThisHeight) will set ThisWidth to the width and ThisHeight to the height
+
+Gdip_GetDpiX(pGraphics)
+{
+	DllCall("gdiplus\GdipGetDpiX", A_PtrSize ? "UPtr" : "uint", pGraphics, "float*", dpix)
+	return Round(dpix)
+}
+
+;#####################################################################################
+
+Gdip_GetDpiY(pGraphics)
+{
+	DllCall("gdiplus\GdipGetDpiY", A_PtrSize ? "UPtr" : "uint", pGraphics, "float*", dpiy)
+	return Round(dpiy)
+}
+
+;#####################################################################################
+
+Gdip_GetImageHorizontalResolution(pBitmap)
+{
+	DllCall("gdiplus\GdipGetImageHorizontalResolution", A_PtrSize ? "UPtr" : "uint", pBitmap, "float*", dpix)
+	return Round(dpix)
+}
+
+;#####################################################################################
+
+Gdip_GetImageVerticalResolution(pBitmap)
+{
+	DllCall("gdiplus\GdipGetImageVerticalResolution", A_PtrSize ? "UPtr" : "uint", pBitmap, "float*", dpiy)
+	return Round(dpiy)
+}
+
+;#####################################################################################
+
+Gdip_BitmapSetResolution(pBitmap, dpix, dpiy)
+{
+	return DllCall("gdiplus\GdipBitmapSetResolution", A_PtrSize ? "UPtr" : "uint", pBitmap, "float", dpix, "float", dpiy)
+}
+
+;#####################################################################################
+
+Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	, PtrA := A_PtrSize ? "UPtr*" : "UInt*"
+	
+	SplitPath, sFile,,, ext
+	if ext in exe,dll
+	{
+		Sizes := IconSize ? IconSize : 256 "|" 128 "|" 64 "|" 48 "|" 32 "|" 16
+		BufSize := 16 + (2*(A_PtrSize ? A_PtrSize : 4))
+		
+		VarSetCapacity(buf, BufSize, 0)
+		Loop, Parse, Sizes, |
+		{
+			DllCall("PrivateExtractIcons", "str", sFile, "int", IconNumber-1, "int", A_LoopField, "int", A_LoopField, PtrA, hIcon, PtrA, 0, "uint", 1, "uint", 0)
+			
+			if !hIcon
+				continue
+
+			if !DllCall("GetIconInfo", Ptr, hIcon, Ptr, &buf)
+			{
+				DestroyIcon(hIcon)
+				continue
+			}
+			
+			hbmMask  := NumGet(buf, 12 + ((A_PtrSize ? A_PtrSize : 4) - 4))
+			hbmColor := NumGet(buf, 12 + ((A_PtrSize ? A_PtrSize : 4) - 4) + (A_PtrSize ? A_PtrSize : 4))
+			if !(hbmColor && DllCall("GetObject", Ptr, hbmColor, "int", BufSize, Ptr, &buf))
+			{
+				DestroyIcon(hIcon)
+				continue
+			}
+			break
+		}
+		if !hIcon
+			return -1
+
+		Width := NumGet(buf, 4, "int"), Height := NumGet(buf, 8, "int")
+		hbm := CreateDIBSection(Width, -Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
+		if !DllCall("DrawIconEx", Ptr, hdc, "int", 0, "int", 0, Ptr, hIcon, "uint", Width, "uint", Height, "uint", 0, Ptr, 0, "uint", 3)
+		{
+			DestroyIcon(hIcon)
+			return -2
+		}
+		
+		VarSetCapacity(dib, 104)
+		DllCall("GetObject", Ptr, hbm, "int", A_PtrSize = 8 ? 104 : 84, Ptr, &dib) ; sizeof(DIBSECTION) = 76+2*(A_PtrSize=8?4:0)+2*A_PtrSize
+		Stride := NumGet(dib, 12, "Int"), Bits := NumGet(dib, 20 + (A_PtrSize = 8 ? 4 : 0)) ; padding
+		DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", Stride, "int", 0x26200A, Ptr, Bits, PtrA, pBitmapOld)
+		pBitmap := Gdip_CreateBitmap(Width, Height)
+		G := Gdip_GraphicsFromImage(pBitmap)
+		, Gdip_DrawImage(G, pBitmapOld, 0, 0, Width, Height, 0, 0, Width, Height)
+		SelectObject(hdc, obm), DeleteObject(hbm), DeleteDC(hdc)
+		Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmapOld)
+		DestroyIcon(hIcon)
+	}
+	else
+	{
+		if (!A_IsUnicode)
+		{
+			VarSetCapacity(wFile, 1024)
+			DllCall("kernel32\MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sFile, "int", -1, Ptr, &wFile, "int", 512)
+			DllCall("gdiplus\GdipCreateBitmapFromFile", Ptr, &wFile, PtrA, pBitmap)
+		}
+		else
+			DllCall("gdiplus\GdipCreateBitmapFromFile", Ptr, &sFile, PtrA, pBitmap)
+	}
+	
+	return pBitmap
+}
+
+;#####################################################################################
+
+Gdip_CreateBitmapFromHBITMAP(hBitmap, Palette=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	DllCall("gdiplus\GdipCreateBitmapFromHBITMAP", Ptr, hBitmap, Ptr, Palette, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
+	return pBitmap
+}
+
+;#####################################################################################
+
+Gdip_CreateHBITMAPFromBitmap(pBitmap, Background=0xffffffff)
+{
+	DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", A_PtrSize ? "UPtr" : "UInt", pBitmap, A_PtrSize ? "UPtr*" : "uint*", hbm, "int", Background)
+	return hbm
+}
+
+;#####################################################################################
+
+Gdip_CreateBitmapFromHICON(hIcon)
+{
+	DllCall("gdiplus\GdipCreateBitmapFromHICON", A_PtrSize ? "UPtr" : "UInt", hIcon, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
+	return pBitmap
+}
+
+;#####################################################################################
+
+Gdip_CreateHICONFromBitmap(pBitmap)
+{
+	DllCall("gdiplus\GdipCreateHICONFromBitmap", A_PtrSize ? "UPtr" : "UInt", pBitmap, A_PtrSize ? "UPtr*" : "uint*", hIcon)
+	return hIcon
+}
+
+;#####################################################################################
+
+Gdip_CreateBitmap(Width, Height, Format=0x26200A)
+{
+    DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", 0, "int", Format, A_PtrSize ? "UPtr" : "UInt", 0, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
+    Return pBitmap
+}
+
+;#####################################################################################
+
+Gdip_CreateBitmapFromClipboard()
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if !DllCall("OpenClipboard", Ptr, 0)
+		return -1
+	if !DllCall("IsClipboardFormatAvailable", "uint", 8)
+		return -2
+	if !hBitmap := DllCall("GetClipboardData", "uint", 2, Ptr)
+		return -3
+	if !pBitmap := Gdip_CreateBitmapFromHBITMAP(hBitmap)
+		return -4
+	if !DllCall("CloseClipboard")
+		return -5
+	DeleteObject(hBitmap)
+	return pBitmap
+}
+
+;#####################################################################################
+
+Gdip_SetBitmapToClipboard(pBitmap)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	off1 := A_PtrSize = 8 ? 52 : 44, off2 := A_PtrSize = 8 ? 32 : 24
+	
+	hBitmap := Gdip_CreateHBITMAPFromBitmap(pBitmap)
+	DllCall("GetObject", Ptr, hBitmap, "int", VarSetCapacity(oi, A_PtrSize = 8 ? 96 : 84, 0), Ptr, &oi)
+	hdib := DllCall("GlobalAlloc", "uint", 2, Ptr, off1+NumGet(oi, off1, "UInt")-4, Ptr)
+	pdib := DllCall("GlobalLock", Ptr, hdib, Ptr)
+	DllCall("RtlMoveMemory", Ptr, pdib, "uint", &oi+off2, Ptr, 40)
+	DllCall("RtlMoveMemory", Ptr, pdib+40, Ptr, NumGet(oi, off2 - (A_PtrSize ? A_PtrSize : 4)), Ptr, NumGet(oi, off1, "UInt"))
+	DllCall("GlobalUnlock", Ptr, hdib)
+	DllCall("DeleteObject", Ptr, hBitmap)
+	DllCall("OpenClipboard", Ptr, 0)
+	DllCall("EmptyClipboard")
+	DllCall("SetClipboardData", "uint", 8, Ptr, hdib)
+	DllCall("CloseClipboard")
+}
+
+;#####################################################################################
+
+Gdip_CloneBitmapArea(pBitmap, x, y, w, h, Format=0x26200A)
+{
+	DllCall("gdiplus\GdipCloneBitmapArea"
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h
+					, "int", Format
+					, A_PtrSize ? "UPtr" : "UInt", pBitmap
+					, A_PtrSize ? "UPtr*" : "UInt*", pBitmapDest)
+	return pBitmapDest
+}
+
+;#####################################################################################
+; Create resources
+;#####################################################################################
+
+Gdip_CreatePen(ARGB, w)
+{
+   DllCall("gdiplus\GdipCreatePen1", "UInt", ARGB, "float", w, "int", 2, A_PtrSize ? "UPtr*" : "UInt*", pPen)
+   return pPen
+}
+
+;#####################################################################################
+
+Gdip_CreatePenFromBrush(pBrush, w)
+{
+	DllCall("gdiplus\GdipCreatePen2", A_PtrSize ? "UPtr" : "UInt", pBrush, "float", w, "int", 2, A_PtrSize ? "UPtr*" : "UInt*", pPen)
+	return pPen
+}
+
+;#####################################################################################
+
+Gdip_BrushCreateSolid(ARGB=0xff000000)
+{
+	DllCall("gdiplus\GdipCreateSolidFill", "UInt", ARGB, A_PtrSize ? "UPtr*" : "UInt*", pBrush)
+	return pBrush
+}
+
+;#####################################################################################
+
+; HatchStyleHorizontal = 0
+; HatchStyleVertical = 1
+; HatchStyleForwardDiagonal = 2
+; HatchStyleBackwardDiagonal = 3
+; HatchStyleCross = 4
+; HatchStyleDiagonalCross = 5
+; HatchStyle05Percent = 6
+; HatchStyle10Percent = 7
+; HatchStyle20Percent = 8
+; HatchStyle25Percent = 9
+; HatchStyle30Percent = 10
+; HatchStyle40Percent = 11
+; HatchStyle50Percent = 12
+; HatchStyle60Percent = 13
+; HatchStyle70Percent = 14
+; HatchStyle75Percent = 15
+; HatchStyle80Percent = 16
+; HatchStyle90Percent = 17
+; HatchStyleLightDownwardDiagonal = 18
+; HatchStyleLightUpwardDiagonal = 19
+; HatchStyleDarkDownwardDiagonal = 20
+; HatchStyleDarkUpwardDiagonal = 21
+; HatchStyleWideDownwardDiagonal = 22
+; HatchStyleWideUpwardDiagonal = 23
+; HatchStyleLightVertical = 24
+; HatchStyleLightHorizontal = 25
+; HatchStyleNarrowVertical = 26
+; HatchStyleNarrowHorizontal = 27
+; HatchStyleDarkVertical = 28
+; HatchStyleDarkHorizontal = 29
+; HatchStyleDashedDownwardDiagonal = 30
+; HatchStyleDashedUpwardDiagonal = 31
+; HatchStyleDashedHorizontal = 32
+; HatchStyleDashedVertical = 33
+; HatchStyleSmallConfetti = 34
+; HatchStyleLargeConfetti = 35
+; HatchStyleZigZag = 36
+; HatchStyleWave = 37
+; HatchStyleDiagonalBrick = 38
+; HatchStyleHorizontalBrick = 39
+; HatchStyleWeave = 40
+; HatchStylePlaid = 41
+; HatchStyleDivot = 42
+; HatchStyleDottedGrid = 43
+; HatchStyleDottedDiamond = 44
+; HatchStyleShingle = 45
+; HatchStyleTrellis = 46
+; HatchStyleSphere = 47
+; HatchStyleSmallGrid = 48
+; HatchStyleSmallCheckerBoard = 49
+; HatchStyleLargeCheckerBoard = 50
+; HatchStyleOutlinedDiamond = 51
+; HatchStyleSolidDiamond = 52
+; HatchStyleTotal = 53
+Gdip_BrushCreateHatch(ARGBfront, ARGBback, HatchStyle=0)
+{
+	DllCall("gdiplus\GdipCreateHatchBrush", "int", HatchStyle, "UInt", ARGBfront, "UInt", ARGBback, A_PtrSize ? "UPtr*" : "UInt*", pBrush)
+	return pBrush
+}
+
+;#####################################################################################
+
+Gdip_CreateTextureBrush(pBitmap, WrapMode=1, x=0, y=0, w="", h="")
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	, PtrA := A_PtrSize ? "UPtr*" : "UInt*"
+	
+	if !(w && h)
+		DllCall("gdiplus\GdipCreateTexture", Ptr, pBitmap, "int", WrapMode, PtrA, pBrush)
+	else
+		DllCall("gdiplus\GdipCreateTexture2", Ptr, pBitmap, "int", WrapMode, "float", x, "float", y, "float", w, "float", h, PtrA, pBrush)
+	return pBrush
+}
+
+;#####################################################################################
+
+; WrapModeTile = 0
+; WrapModeTileFlipX = 1
+; WrapModeTileFlipY = 2
+; WrapModeTileFlipXY = 3
+; WrapModeClamp = 4
+Gdip_CreateLineBrush(x1, y1, x2, y2, ARGB1, ARGB2, WrapMode=1)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	CreatePointF(PointF1, x1, y1), CreatePointF(PointF2, x2, y2)
+	DllCall("gdiplus\GdipCreateLineBrush", Ptr, &PointF1, Ptr, &PointF2, "Uint", ARGB1, "Uint", ARGB2, "int", WrapMode, A_PtrSize ? "UPtr*" : "UInt*", LGpBrush)
+	return LGpBrush
+}
+
+;#####################################################################################
+
+; LinearGradientModeHorizontal = 0
+; LinearGradientModeVertical = 1
+; LinearGradientModeForwardDiagonal = 2
+; LinearGradientModeBackwardDiagonal = 3
+Gdip_CreateLineBrushFromRect(x, y, w, h, ARGB1, ARGB2, LinearGradientMode=1, WrapMode=1)
+{
+	CreateRectF(RectF, x, y, w, h)
+	DllCall("gdiplus\GdipCreateLineBrushFromRect", A_PtrSize ? "UPtr" : "UInt", &RectF, "int", ARGB1, "int", ARGB2, "int", LinearGradientMode, "int", WrapMode, A_PtrSize ? "UPtr*" : "UInt*", LGpBrush)
+	return LGpBrush
+}
+
+;#####################################################################################
+
+Gdip_CloneBrush(pBrush)
+{
+	DllCall("gdiplus\GdipCloneBrush", A_PtrSize ? "UPtr" : "UInt", pBrush, A_PtrSize ? "UPtr*" : "UInt*", pBrushClone)
+	return pBrushClone
+}
+
+;#####################################################################################
+; Delete resources
+;#####################################################################################
+
+Gdip_DeletePen(pPen)
+{
+   return DllCall("gdiplus\GdipDeletePen", A_PtrSize ? "UPtr" : "UInt", pPen)
+}
+
+;#####################################################################################
+
+Gdip_DeleteBrush(pBrush)
+{
+   return DllCall("gdiplus\GdipDeleteBrush", A_PtrSize ? "UPtr" : "UInt", pBrush)
+}
+
+;#####################################################################################
+
+Gdip_DisposeImage(pBitmap)
+{
+   return DllCall("gdiplus\GdipDisposeImage", A_PtrSize ? "UPtr" : "UInt", pBitmap)
+}
+
+;#####################################################################################
+
+Gdip_DeleteGraphics(pGraphics)
+{
+   return DllCall("gdiplus\GdipDeleteGraphics", A_PtrSize ? "UPtr" : "UInt", pGraphics)
+}
+
+;#####################################################################################
+
+Gdip_DisposeImageAttributes(ImageAttr)
+{
+	return DllCall("gdiplus\GdipDisposeImageAttributes", A_PtrSize ? "UPtr" : "UInt", ImageAttr)
+}
+
+;#####################################################################################
+
+Gdip_DeleteFont(hFont)
+{
+   return DllCall("gdiplus\GdipDeleteFont", A_PtrSize ? "UPtr" : "UInt", hFont)
+}
+
+;#####################################################################################
+
+Gdip_DeleteStringFormat(hFormat)
+{
+   return DllCall("gdiplus\GdipDeleteStringFormat", A_PtrSize ? "UPtr" : "UInt", hFormat)
+}
+
+;#####################################################################################
+
+Gdip_DeleteFontFamily(hFamily)
+{
+   return DllCall("gdiplus\GdipDeleteFontFamily", A_PtrSize ? "UPtr" : "UInt", hFamily)
+}
+
+;#####################################################################################
+
+Gdip_DeleteMatrix(Matrix)
+{
+   return DllCall("gdiplus\GdipDeleteMatrix", A_PtrSize ? "UPtr" : "UInt", Matrix)
+}
+
+;#####################################################################################
+; Text functions
+;#####################################################################################
+
+Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="", Measure=0)
+{
+	IWidth := Width, IHeight:= Height
+	
+	RegExMatch(Options, "i)X([\-\d\.]+)(p*)", xpos)
+	RegExMatch(Options, "i)Y([\-\d\.]+)(p*)", ypos)
+	RegExMatch(Options, "i)W([\-\d\.]+)(p*)", Width)
+	RegExMatch(Options, "i)H([\-\d\.]+)(p*)", Height)
+	RegExMatch(Options, "i)C(?!(entre|enter))([a-f\d]+)", Colour)
+	RegExMatch(Options, "i)Top|Up|Bottom|Down|vCentre|vCenter", vPos)
+	RegExMatch(Options, "i)NoWrap", NoWrap)
+	RegExMatch(Options, "i)R(\d)", Rendering)
+	RegExMatch(Options, "i)S(\d+)(p*)", Size)
+
+	if !Gdip_DeleteBrush(Gdip_CloneBrush(Colour2))
+		PassBrush := 1, pBrush := Colour2
+	
+	if !(IWidth && IHeight) && (xpos2 || ypos2 || Width2 || Height2 || Size2)
+		return -1
+
+	Style := 0, Styles := "Regular|Bold|Italic|BoldItalic|Underline|Strikeout"
+	Loop, Parse, Styles, |
+	{
+		if RegExMatch(Options, "\b" A_loopField)
+		Style |= (A_LoopField != "StrikeOut") ? (A_Index-1) : 8
+	}
+  
+	Align := 0, Alignments := "Near|Left|Centre|Center|Far|Right"
+	Loop, Parse, Alignments, |
+	{
+		if RegExMatch(Options, "\b" A_loopField)
+			Align |= A_Index//2.1      ; 0|0|1|1|2|2
+	}
+
+	xpos := (xpos1 != "") ? xpos2 ? IWidth*(xpos1/100) : xpos1 : 0
+	ypos := (ypos1 != "") ? ypos2 ? IHeight*(ypos1/100) : ypos1 : 0
+	Width := Width1 ? Width2 ? IWidth*(Width1/100) : Width1 : IWidth
+	Height := Height1 ? Height2 ? IHeight*(Height1/100) : Height1 : IHeight
+	if !PassBrush
+		Colour := "0x" (Colour2 ? Colour2 : "ff000000")
+	Rendering := ((Rendering1 >= 0) && (Rendering1 <= 5)) ? Rendering1 : 4
+	Size := (Size1 > 0) ? Size2 ? IHeight*(Size1/100) : Size1 : 12
+
+	hFamily := Gdip_FontFamilyCreate(Font)
+	hFont := Gdip_FontCreate(hFamily, Size, Style)
+	FormatStyle := NoWrap ? 0x4000 | 0x1000 : 0x4000
+	hFormat := Gdip_StringFormatCreate(FormatStyle)
+	pBrush := PassBrush ? pBrush : Gdip_BrushCreateSolid(Colour)
+	if !(hFamily && hFont && hFormat && pBrush && pGraphics)
+		return !pGraphics ? -2 : !hFamily ? -3 : !hFont ? -4 : !hFormat ? -5 : !pBrush ? -6 : 0
+   
+	CreateRectF(RC, xpos, ypos, Width, Height)
+	Gdip_SetStringFormatAlign(hFormat, Align)
+	Gdip_SetTextRenderingHint(pGraphics, Rendering)
+	ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
+
+	if vPos
+	{
+		StringSplit, ReturnRC, ReturnRC, |
+		
+		if (vPos = "vCentre") || (vPos = "vCenter")
+			ypos += (Height-ReturnRC4)//2
+		else if (vPos = "Top") || (vPos = "Up")
+			ypos := 0
+		else if (vPos = "Bottom") || (vPos = "Down")
+			ypos := Height-ReturnRC4
+		
+		CreateRectF(RC, xpos, ypos, Width, ReturnRC4)
+		ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
+	}
+
+	if !Measure
+		E := Gdip_DrawString(pGraphics, Text, hFont, hFormat, pBrush, RC)
+
+	if !PassBrush
+		Gdip_DeleteBrush(pBrush)
+	Gdip_DeleteStringFormat(hFormat)   
+	Gdip_DeleteFont(hFont)
+	Gdip_DeleteFontFamily(hFamily)
+	return E ? E : ReturnRC
+}
+
+;#####################################################################################
+
+Gdip_DrawString(pGraphics, sString, hFont, hFormat, pBrush, ByRef RectF)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, 0, "int", 0)
+		VarSetCapacity(wString, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
+	}
+	
+	return DllCall("gdiplus\GdipDrawString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, "int", -1
+					, Ptr, hFont
+					, Ptr, &RectF
+					, Ptr, hFormat
+					, Ptr, pBrush)
+}
+
+;#####################################################################################
+
+Gdip_MeasureString(pGraphics, sString, hFont, hFormat, ByRef RectF)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	VarSetCapacity(RC, 16)
+	if !A_IsUnicode
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, "uint", 0, "int", 0)
+		VarSetCapacity(wString, nSize*2)   
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
+	}
+	
+	DllCall("gdiplus\GdipMeasureString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, "int", -1
+					, Ptr, hFont
+					, Ptr, &RectF
+					, Ptr, hFormat
+					, Ptr, &RC
+					, "uint*", Chars
+					, "uint*", Lines)
+	
+	return &RC ? NumGet(RC, 0, "float") "|" NumGet(RC, 4, "float") "|" NumGet(RC, 8, "float") "|" NumGet(RC, 12, "float") "|" Chars "|" Lines : 0
+}
+
+; Near = 0
+; Center = 1
+; Far = 2
+Gdip_SetStringFormatAlign(hFormat, Align)
+{
+   return DllCall("gdiplus\GdipSetStringFormatAlign", A_PtrSize ? "UPtr" : "UInt", hFormat, "int", Align)
+}
+
+; StringFormatFlagsDirectionRightToLeft    = 0x00000001
+; StringFormatFlagsDirectionVertical       = 0x00000002
+; StringFormatFlagsNoFitBlackBox           = 0x00000004
+; StringFormatFlagsDisplayFormatControl    = 0x00000020
+; StringFormatFlagsNoFontFallback          = 0x00000400
+; StringFormatFlagsMeasureTrailingSpaces   = 0x00000800
+; StringFormatFlagsNoWrap                  = 0x00001000
+; StringFormatFlagsLineLimit               = 0x00002000
+; StringFormatFlagsNoClip                  = 0x00004000 
+Gdip_StringFormatCreate(Format=0, Lang=0)
+{
+   DllCall("gdiplus\GdipCreateStringFormat", "int", Format, "int", Lang, A_PtrSize ? "UPtr*" : "UInt*", hFormat)
+   return hFormat
+}
+
+; Regular = 0
+; Bold = 1
+; Italic = 2
+; BoldItalic = 3
+; Underline = 4
+; Strikeout = 8
+Gdip_FontCreate(hFamily, Size, Style=0)
+{
+   DllCall("gdiplus\GdipCreateFont", A_PtrSize ? "UPtr" : "UInt", hFamily, "float", Size, "int", Style, "int", 0, A_PtrSize ? "UPtr*" : "UInt*", hFont)
+   return hFont
+}
+
+Gdip_FontFamilyCreate(Font)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, "uint", 0, "int", 0)
+		VarSetCapacity(wFont, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, Ptr, &wFont, "int", nSize)
+	}
+	
+	DllCall("gdiplus\GdipCreateFontFamilyFromName"
+					, Ptr, A_IsUnicode ? &Font : &wFont
+					, "uint", 0
+					, A_PtrSize ? "UPtr*" : "UInt*", hFamily)
+	
+	return hFamily
+}
+
+;#####################################################################################
+; Matrix functions
+;#####################################################################################
+
+Gdip_CreateAffineMatrix(m11, m12, m21, m22, x, y)
+{
+   DllCall("gdiplus\GdipCreateMatrix2", "float", m11, "float", m12, "float", m21, "float", m22, "float", x, "float", y, A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+   return Matrix
+}
+
+Gdip_CreateMatrix()
+{
+   DllCall("gdiplus\GdipCreateMatrix", A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+   return Matrix
+}
+
+;#####################################################################################
+; GraphicsPath functions
+;#####################################################################################
+
+; Alternate = 0
+; Winding = 1
+Gdip_CreatePath(BrushMode=0)
+{
+	DllCall("gdiplus\GdipCreatePath", "int", BrushMode, A_PtrSize ? "UPtr*" : "UInt*", Path)
+	return Path
+}
+
+Gdip_AddPathEllipse(Path, x, y, w, h)
+{
+	return DllCall("gdiplus\GdipAddPathEllipse", A_PtrSize ? "UPtr" : "UInt", Path, "float", x, "float", y, "float", w, "float", h)
+}
+
+Gdip_AddPathPolygon(Path, Points)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}   
+
+	return DllCall("gdiplus\GdipAddPathPolygon", Ptr, Path, Ptr, &PointF, "int", Points0)
+}
+
+Gdip_DeletePath(Path)
+{
+	return DllCall("gdiplus\GdipDeletePath", A_PtrSize ? "UPtr" : "UInt", Path)
+}
+
+;#####################################################################################
+; Quality functions
+;#####################################################################################
+
+; SystemDefault = 0
+; SingleBitPerPixelGridFit = 1
+; SingleBitPerPixel = 2
+; AntiAliasGridFit = 3
+; AntiAlias = 4
+Gdip_SetTextRenderingHint(pGraphics, RenderingHint)
+{
+	return DllCall("gdiplus\GdipSetTextRenderingHint", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", RenderingHint)
+}
+
+; Default = 0
+; LowQuality = 1
+; HighQuality = 2
+; Bilinear = 3
+; Bicubic = 4
+; NearestNeighbor = 5
+; HighQualityBilinear = 6
+; HighQualityBicubic = 7
+Gdip_SetInterpolationMode(pGraphics, InterpolationMode)
+{
+   return DllCall("gdiplus\GdipSetInterpolationMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", InterpolationMode)
+}
+
+; Default = 0
+; HighSpeed = 1
+; HighQuality = 2
+; None = 3
+; AntiAlias = 4
+Gdip_SetSmoothingMode(pGraphics, SmoothingMode)
+{
+   return DllCall("gdiplus\GdipSetSmoothingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", SmoothingMode)
+}
+
+; CompositingModeSourceOver = 0 (blended)
+; CompositingModeSourceCopy = 1 (overwrite)
+Gdip_SetCompositingMode(pGraphics, CompositingMode=0)
+{
+   return DllCall("gdiplus\GdipSetCompositingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", CompositingMode)
+}
+
+;#####################################################################################
+; Extra functions
+;#####################################################################################
+
+Gdip_Startup()
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if !DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
+		DllCall("LoadLibrary", "str", "gdiplus")
+	VarSetCapacity(si, A_PtrSize = 8 ? 24 : 16, 0), si := Chr(1)
+	DllCall("gdiplus\GdiplusStartup", A_PtrSize ? "UPtr*" : "uint*", pToken, Ptr, &si, Ptr, 0)
+	return pToken
+}
+
+Gdip_Shutdown(pToken)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	DllCall("gdiplus\GdiplusShutdown", Ptr, pToken)
+	if hModule := DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
+		DllCall("FreeLibrary", Ptr, hModule)
+	return 0
+}
+
+; Prepend = 0; The new operation is applied before the old operation.
+; Append = 1; The new operation is applied after the old operation.
+Gdip_RotateWorldTransform(pGraphics, Angle, MatrixOrder=0)
+{
+	return DllCall("gdiplus\GdipRotateWorldTransform", A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", Angle, "int", MatrixOrder)
+}
+
+Gdip_ScaleWorldTransform(pGraphics, x, y, MatrixOrder=0)
+{
+	return DllCall("gdiplus\GdipScaleWorldTransform", A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", x, "float", y, "int", MatrixOrder)
+}
+
+Gdip_TranslateWorldTransform(pGraphics, x, y, MatrixOrder=0)
+{
+	return DllCall("gdiplus\GdipTranslateWorldTransform", A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", x, "float", y, "int", MatrixOrder)
+}
+
+Gdip_ResetWorldTransform(pGraphics)
+{
+	return DllCall("gdiplus\GdipResetWorldTransform", A_PtrSize ? "UPtr" : "UInt", pGraphics)
+}
+
+Gdip_GetRotatedTranslation(Width, Height, Angle, ByRef xTranslation, ByRef yTranslation)
+{
+	pi := 3.14159, TAngle := Angle*(pi/180)	
+
+	Bound := (Angle >= 0) ? Mod(Angle, 360) : 360-Mod(-Angle, -360)
+	if ((Bound >= 0) && (Bound <= 90))
+		xTranslation := Height*Sin(TAngle), yTranslation := 0
+	else if ((Bound > 90) && (Bound <= 180))
+		xTranslation := (Height*Sin(TAngle))-(Width*Cos(TAngle)), yTranslation := -Height*Cos(TAngle)
+	else if ((Bound > 180) && (Bound <= 270))
+		xTranslation := -(Width*Cos(TAngle)), yTranslation := -(Height*Cos(TAngle))-(Width*Sin(TAngle))
+	else if ((Bound > 270) && (Bound <= 360))
+		xTranslation := 0, yTranslation := -Width*Sin(TAngle)
+}
+
+Gdip_GetRotatedDimensions(Width, Height, Angle, ByRef RWidth, ByRef RHeight)
+{
+	pi := 3.14159, TAngle := Angle*(pi/180)
+	if !(Width && Height)
+		return -1
+	RWidth := Ceil(Abs(Width*Cos(TAngle))+Abs(Height*Sin(TAngle)))
+	RHeight := Ceil(Abs(Width*Sin(TAngle))+Abs(Height*Cos(Tangle)))
+}
+
+; RotateNoneFlipNone   = 0
+; Rotate90FlipNone     = 1
+; Rotate180FlipNone    = 2
+; Rotate270FlipNone    = 3
+; RotateNoneFlipX      = 4
+; Rotate90FlipX        = 5
+; Rotate180FlipX       = 6
+; Rotate270FlipX       = 7
+; RotateNoneFlipY      = Rotate180FlipX
+; Rotate90FlipY        = Rotate270FlipX
+; Rotate180FlipY       = RotateNoneFlipX
+; Rotate270FlipY       = Rotate90FlipX
+; RotateNoneFlipXY     = Rotate180FlipNone
+; Rotate90FlipXY       = Rotate270FlipNone
+; Rotate180FlipXY      = RotateNoneFlipNone
+; Rotate270FlipXY      = Rotate90FlipNone 
+
+Gdip_ImageRotateFlip(pBitmap, RotateFlipType=1)
+{
+	return DllCall("gdiplus\GdipImageRotateFlip", A_PtrSize ? "UPtr" : "UInt", pBitmap, "int", RotateFlipType)
+}
+
+; Replace = 0
+; Intersect = 1
+; Union = 2
+; Xor = 3
+; Exclude = 4
+; Complement = 5
+Gdip_SetClipRect(pGraphics, x, y, w, h, CombineMode=0)
+{
+   return DllCall("gdiplus\GdipSetClipRect",  A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", x, "float", y, "float", w, "float", h, "int", CombineMode)
+}
+
+Gdip_SetClipPath(pGraphics, Path, CombineMode=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	return DllCall("gdiplus\GdipSetClipPath", Ptr, pGraphics, Ptr, Path, "int", CombineMode)
+}
+
+Gdip_ResetClip(pGraphics)
+{
+   return DllCall("gdiplus\GdipResetClip", A_PtrSize ? "UPtr" : "UInt", pGraphics)
+}
+
+Gdip_GetClipRegion(pGraphics)
+{
+	Region := Gdip_CreateRegion()
+	DllCall("gdiplus\GdipGetClip", A_PtrSize ? "UPtr" : "UInt", pGraphics, "UInt*", Region)
+	return Region
+}
+
+Gdip_SetClipRegion(pGraphics, Region, CombineMode=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipSetClipRegion", Ptr, pGraphics, Ptr, Region, "int", CombineMode)
+}
+
+Gdip_CreateRegion()
+{
+	DllCall("gdiplus\GdipCreateRegion", "UInt*", Region)
+	return Region
+}
+
+Gdip_DeleteRegion(Region)
+{
+	return DllCall("gdiplus\GdipDeleteRegion", A_PtrSize ? "UPtr" : "UInt", Region)
+}
+
+;#####################################################################################
+; BitmapLockBits
+;#####################################################################################
+
+Gdip_LockBits(pBitmap, x, y, w, h, ByRef Stride, ByRef Scan0, ByRef BitmapData, LockMode = 3, PixelFormat = 0x26200a)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	CreateRect(Rect, x, y, w, h)
+	VarSetCapacity(BitmapData, 16+2*(A_PtrSize ? A_PtrSize : 4), 0)
+	E := DllCall("Gdiplus\GdipBitmapLockBits", Ptr, pBitmap, Ptr, &Rect, "uint", LockMode, "int", PixelFormat, Ptr, &BitmapData)
+	Stride := NumGet(BitmapData, 8, "Int")
+	Scan0 := NumGet(BitmapData, 16, Ptr)
+	return E
+}
+
+;#####################################################################################
+
+Gdip_UnlockBits(pBitmap, ByRef BitmapData)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("Gdiplus\GdipBitmapUnlockBits", Ptr, pBitmap, Ptr, &BitmapData)
+}
+
+;#####################################################################################
+
+Gdip_SetLockBitPixel(ARGB, Scan0, x, y, Stride)
+{
+	Numput(ARGB, Scan0+0, (x*4)+(y*Stride), "UInt")
+}
+
+;#####################################################################################
+
+Gdip_GetLockBitPixel(Scan0, x, y, Stride)
+{
+	return NumGet(Scan0+0, (x*4)+(y*Stride), "UInt")
+}
+
+;#####################################################################################
+
+Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
+{
+	static PixelateBitmap
+	
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (!PixelateBitmap)
+	{
+		if A_PtrSize != 8 ; x86 machine code
+		MCode_PixelateBitmap =
+		(LTrim Join
+		558BEC83EC3C8B4514538B5D1C99F7FB56578BC88955EC894DD885C90F8E830200008B451099F7FB8365DC008365E000894DC88955F08945E833FF897DD4
+		397DE80F8E160100008BCB0FAFCB894DCC33C08945F88945FC89451C8945143BD87E608B45088D50028BC82BCA8BF02BF2418945F48B45E02955F4894DC4
+		8D0CB80FAFCB03CA895DD08BD1895DE40FB64416030145140FB60201451C8B45C40FB604100145FC8B45F40FB604020145F883C204FF4DE475D6034D18FF
+		4DD075C98B4DCC8B451499F7F98945148B451C99F7F989451C8B45FC99F7F98945FC8B45F899F7F98945F885DB7E648B450C8D50028BC82BCA83C103894D
+		C48BC82BCA41894DF48B4DD48945E48B45E02955E48D0C880FAFCB03CA895DD08BD18BF38A45148B7DC48804178A451C8B7DF488028A45FC8804178A45F8
+		8B7DE488043A83C2044E75DA034D18FF4DD075CE8B4DCC8B7DD447897DD43B7DE80F8CF2FEFFFF837DF0000F842C01000033C08945F88945FC89451C8945
+		148945E43BD87E65837DF0007E578B4DDC034DE48B75E80FAF4D180FAFF38B45088D500203CA8D0CB18BF08BF88945F48B45F02BF22BFA2955F48945CC0F
+		B6440E030145140FB60101451C0FB6440F010145FC8B45F40FB604010145F883C104FF4DCC75D8FF45E4395DE47C9B8B4DF00FAFCB85C9740B8B451499F7
+		F9894514EB048365140033F63BCE740B8B451C99F7F989451CEB0389751C3BCE740B8B45FC99F7F98945FCEB038975FC3BCE740B8B45F899F7F98945F8EB
+		038975F88975E43BDE7E5A837DF0007E4C8B4DDC034DE48B75E80FAF4D180FAFF38B450C8D500203CA8D0CB18BF08BF82BF22BFA2BC28B55F08955CC8A55
+		1488540E038A551C88118A55FC88540F018A55F888140183C104FF4DCC75DFFF45E4395DE47CA68B45180145E0015DDCFF4DC80F8594FDFFFF8B451099F7
+		FB8955F08945E885C00F8E450100008B45EC0FAFC38365DC008945D48B45E88945CC33C08945F88945FC89451C8945148945103945EC7E6085DB7E518B4D
+		D88B45080FAFCB034D108D50020FAF4D18034DDC8BF08BF88945F403CA2BF22BFA2955F4895DC80FB6440E030145140FB60101451C0FB6440F010145FC8B
+		45F40FB604080145F883C104FF4DC875D8FF45108B45103B45EC7CA08B4DD485C9740B8B451499F7F9894514EB048365140033F63BCE740B8B451C99F7F9
+		89451CEB0389751C3BCE740B8B45FC99F7F98945FCEB038975FC3BCE740B8B45F899F7F98945F8EB038975F88975103975EC7E5585DB7E468B4DD88B450C
+		0FAFCB034D108D50020FAF4D18034DDC8BF08BF803CA2BF22BFA2BC2895DC88A551488540E038A551C88118A55FC88540F018A55F888140183C104FF4DC8
+		75DFFF45108B45103B45EC7CAB8BC3C1E0020145DCFF4DCC0F85CEFEFFFF8B4DEC33C08945F88945FC89451C8945148945103BC87E6C3945F07E5C8B4DD8
+		8B75E80FAFCB034D100FAFF30FAF4D188B45088D500203CA8D0CB18BF08BF88945F48B45F02BF22BFA2955F48945C80FB6440E030145140FB60101451C0F
+		B6440F010145FC8B45F40FB604010145F883C104FF4DC875D833C0FF45108B4DEC394D107C940FAF4DF03BC874068B451499F7F933F68945143BCE740B8B
+		451C99F7F989451CEB0389751C3BCE740B8B45FC99F7F98945FCEB038975FC3BCE740B8B45F899F7F98945F8EB038975F88975083975EC7E63EB0233F639
+		75F07E4F8B4DD88B75E80FAFCB034D080FAFF30FAF4D188B450C8D500203CA8D0CB18BF08BF82BF22BFA2BC28B55F08955108A551488540E038A551C8811
+		8A55FC88540F018A55F888140883C104FF4D1075DFFF45088B45083B45EC7C9F5F5E33C05BC9C21800
+		)
+		else ; x64 machine code
+		MCode_PixelateBitmap =
+		(LTrim Join
+		4489442418488954241048894C24085355565741544155415641574883EC28418BC1448B8C24980000004C8BDA99488BD941F7F9448BD0448BFA8954240C
+		448994248800000085C00F8E9D020000418BC04533E4458BF299448924244C8954241041F7F933C9898C24980000008BEA89542404448BE889442408EB05
+		4C8B5C24784585ED0F8E1A010000458BF1418BFD48897C2418450FAFF14533D233F633ED4533E44533ED4585C97E5B4C63BC2490000000418D040A410FAF
+		C148984C8D441802498BD9498BD04D8BD90FB642010FB64AFF4403E80FB60203E90FB64AFE4883C2044403E003F149FFCB75DE4D03C748FFCB75D0488B7C
+		24188B8C24980000004C8B5C2478418BC59941F7FE448BE8418BC49941F7FE448BE08BC59941F7FE8BE88BC69941F7FE8BF04585C97E4048639C24900000
+		004103CA4D8BC1410FAFC94863C94A8D541902488BCA498BC144886901448821408869FF408871FE4883C10448FFC875E84803D349FFC875DA8B8C249800
+		0000488B5C24704C8B5C24784183C20448FFCF48897C24180F850AFFFFFF8B6C2404448B2424448B6C24084C8B74241085ED0F840A01000033FF33DB4533
+		DB4533D24533C04585C97E53488B74247085ED7E42438D0C04418BC50FAF8C2490000000410FAFC18D04814863C8488D5431028BCD0FB642014403D00FB6
+		024883C2044403D80FB642FB03D80FB642FA03F848FFC975DE41FFC0453BC17CB28BCD410FAFC985C9740A418BC299F7F98BF0EB0233F685C9740B418BC3
+		99F7F9448BD8EB034533DB85C9740A8BC399F7F9448BD0EB034533D285C9740A8BC799F7F9448BC0EB034533C033D24585C97E4D4C8B74247885ED7E3841
+		8D0C14418BC50FAF8C2490000000410FAFC18D04814863C84A8D4431028BCD40887001448818448850FF448840FE4883C00448FFC975E8FFC2413BD17CBD
+		4C8B7424108B8C2498000000038C2490000000488B5C24704503E149FFCE44892424898C24980000004C897424100F859EFDFFFF448B7C240C448B842480
+		000000418BC09941F7F98BE8448BEA89942498000000896C240C85C00F8E3B010000448BAC2488000000418BCF448BF5410FAFC9898C248000000033FF33
+		ED33F64533DB4533D24533C04585FF7E524585C97E40418BC5410FAFC14103C00FAF84249000000003C74898488D541802498BD90FB642014403D00FB602
+		4883C2044403D80FB642FB03F00FB642FA03E848FFCB75DE488B5C247041FFC0453BC77CAE85C9740B418BC299F7F9448BE0EB034533E485C9740A418BC3
+		99F7F98BD8EB0233DB85C9740A8BC699F7F9448BD8EB034533DB85C9740A8BC599F7F9448BD0EB034533D24533C04585FF7E4E488B4C24784585C97E3541
+		8BC5410FAFC14103C00FAF84249000000003C74898488D540802498BC144886201881A44885AFF448852FE4883C20448FFC875E941FFC0453BC77CBE8B8C
+		2480000000488B5C2470418BC1C1E00203F849FFCE0F85ECFEFFFF448BAC24980000008B6C240C448BA4248800000033FF33DB4533DB4533D24533C04585
+		FF7E5A488B7424704585ED7E48418BCC8BC5410FAFC94103C80FAF8C2490000000410FAFC18D04814863C8488D543102418BCD0FB642014403D00FB60248
+		83C2044403D80FB642FB03D80FB642FA03F848FFC975DE41FFC0453BC77CAB418BCF410FAFCD85C9740A418BC299F7F98BF0EB0233F685C9740B418BC399
+		F7F9448BD8EB034533DB85C9740A8BC399F7F9448BD0EB034533D285C9740A8BC799F7F9448BC0EB034533C033D24585FF7E4E4585ED7E42418BCC8BC541
+		0FAFC903CA0FAF8C2490000000410FAFC18D04814863C8488B442478488D440102418BCD40887001448818448850FF448840FE4883C00448FFC975E8FFC2
+		413BD77CB233C04883C428415F415E415D415C5F5E5D5BC3
+		)
+		
+		VarSetCapacity(PixelateBitmap, StrLen(MCode_PixelateBitmap)//2)
+		Loop % StrLen(MCode_PixelateBitmap)//2		;%
+			NumPut("0x" SubStr(MCode_PixelateBitmap, (2*A_Index)-1, 2), PixelateBitmap, A_Index-1, "UChar")
+		DllCall("VirtualProtect", Ptr, &PixelateBitmap, Ptr, VarSetCapacity(PixelateBitmap), "uint", 0x40, A_PtrSize ? "UPtr*" : "UInt*", 0)
+	}
+
+	Gdip_GetImageDimensions(pBitmap, Width, Height)
+	
+	if (Width != Gdip_GetImageWidth(pBitmapOut) || Height != Gdip_GetImageHeight(pBitmapOut))
+		return -1
+	if (BlockSize > Width || BlockSize > Height)
+		return -2
+
+	E1 := Gdip_LockBits(pBitmap, 0, 0, Width, Height, Stride1, Scan01, BitmapData1)
+	E2 := Gdip_LockBits(pBitmapOut, 0, 0, Width, Height, Stride2, Scan02, BitmapData2)
+	if (E1 || E2)
+		return -3
+
+	E := DllCall(&PixelateBitmap, Ptr, Scan01, Ptr, Scan02, "int", Width, "int", Height, "int", Stride1, "int", BlockSize)
+	
+	Gdip_UnlockBits(pBitmap, BitmapData1), Gdip_UnlockBits(pBitmapOut, BitmapData2)
+	return 0
+}
+
+;#####################################################################################
+
+Gdip_ToARGB(A, R, G, B)
+{
+	return (A << 24) | (R << 16) | (G << 8) | B
+}
+
+;#####################################################################################
+
+Gdip_FromARGB(ARGB, ByRef A, ByRef R, ByRef G, ByRef B)
+{
+	A := (0xff000000 & ARGB) >> 24
+	R := (0x00ff0000 & ARGB) >> 16
+	G := (0x0000ff00 & ARGB) >> 8
+	B := 0x000000ff & ARGB
+}
+
+;#####################################################################################
+
+Gdip_AFromARGB(ARGB)
+{
+	return (0xff000000 & ARGB) >> 24
+}
+
+;#####################################################################################
+
+Gdip_RFromARGB(ARGB)
+{
+	return (0x00ff0000 & ARGB) >> 16
+}
+
+;#####################################################################################
+
+Gdip_GFromARGB(ARGB)
+{
+	return (0x0000ff00 & ARGB) >> 8
+}
+
+;#####################################################################################
+
+Gdip_BFromARGB(ARGB)
+{
+	return 0x000000ff & ARGB
+}
+
+;#####################################################################################
+
+StrGetB(Address, Length=-1, Encoding=0)
+{
+	; Flexible parameter handling:
+	if Length is not integer
+	Encoding := Length,  Length := -1
+
+	; Check for obvious errors.
+	if (Address+0 < 1024)
+		return
+
+	; Ensure 'Encoding' contains a numeric identifier.
+	if Encoding = UTF-16
+		Encoding = 1200
+	else if Encoding = UTF-8
+		Encoding = 65001
+	else if SubStr(Encoding,1,2)="CP"
+		Encoding := SubStr(Encoding,3)
+
+	if !Encoding ; "" or 0
+	{
+		; No conversion necessary, but we might not want the whole string.
+		if (Length == -1)
+			Length := DllCall("lstrlen", "uint", Address)
+		VarSetCapacity(String, Length)
+		DllCall("lstrcpyn", "str", String, "uint", Address, "int", Length + 1)
+	}
+	else if Encoding = 1200 ; UTF-16
+	{
+		char_count := DllCall("WideCharToMultiByte", "uint", 0, "uint", 0x400, "uint", Address, "int", Length, "uint", 0, "uint", 0, "uint", 0, "uint", 0)
+		VarSetCapacity(String, char_count)
+		DllCall("WideCharToMultiByte", "uint", 0, "uint", 0x400, "uint", Address, "int", Length, "str", String, "int", char_count, "uint", 0, "uint", 0)
+	}
+	else if Encoding is integer
+	{
+		; Convert from target encoding to UTF-16 then to the active code page.
+		char_count := DllCall("MultiByteToWideChar", "uint", Encoding, "uint", 0, "uint", Address, "int", Length, "uint", 0, "int", 0)
+		VarSetCapacity(String, char_count * 2)
+		char_count := DllCall("MultiByteToWideChar", "uint", Encoding, "uint", 0, "uint", Address, "int", Length, "uint", &String, "int", char_count * 2)
+		String := StrGetB(&String, char_count, 1200)
+	}
+	
+	return String
+}

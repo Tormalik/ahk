@@ -28,7 +28,7 @@ SetUpGDIP(iWidth=-1, iHeight=-1) {
 		Width := A_ScreenWidth
 	}
 	if (iHeight < 0) {
-		height := A_ScreenHeight
+		Height := A_ScreenHeight
 	}
 	
 	
