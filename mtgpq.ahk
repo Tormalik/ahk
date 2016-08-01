@@ -49,15 +49,24 @@ PQ_W=831
 PQ_H=1380
 ;window width & height
 COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
+; colors ok for margin <= 25
 c2 := {}
-arr := []
 #IfWinActive Clipboard03.png - IrfanView
 	F2::searchArea()
-	F3::readState(arr)
+	F3::readState()
 	F4::compareColor(0x4C9112)
+	F5::getMoves()
+	F6::
+	readState()
+	;r:=iscol(arr,"r",2,4)
+	;r:=checkmove(arr,"g",5,3)
+	;i:=4
+	;r:= arr[i+1,3]
+	msgbox r %r%
+	return
 	
 #IfWinActive Nox
-	F3::readState(arr)
+	F3::readState()
 
 compareColor(col)
 
@@ -70,7 +79,7 @@ getCoords(x_num, y_num, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_e
 	global OFFSET_X
 	global OFFSET_Y
 	WinGetPos, wX, wY, , , %WINDOW_NAME%
-	margin := 30
+	margin := 25
 	w := SIZE_X - 2 * margin
 	h := SIZE_Y - 2 * margin
 
@@ -117,25 +126,22 @@ global
 	EndDrawGDIP()
 }
 
-readState(ByRef arr){
+readState(){
 global
 	t1:= A_now
 
 	arr	:= []
-	Loop, 7
-	{
-		j := A_Index
-		Loop, 7
-		{
-			i := A_Index
-			
-			getCoords(i, j, x, y, a, b, w, h)
-			col := regionGetColor(x, y, w, h)
-			col := compareColor(col)
-			;msgbox % col
-			arr[i, j] := col
-			;drawRect(col, x_start, y_start, w, h)
-		}
+	Loop, 7 {
+	j := A_Index
+	Loop, 7	{
+	i := A_Index
+		getCoords(i, j, x, y, a, b, w, h)
+		col := regionGetColor(x, y, w, h)
+		col := compareColor(col)
+		;msgbox % col
+		arr[i, j] := col
+		;drawRect(col, x_start, y_start, w, h)
+	}
 	}
 
 	t2 := A_now
@@ -146,10 +152,93 @@ global
 }
 
 
-getMoves(arr){
-
+getMoves(){
+global
+	msgbox start
+	mesh := readState()
+	moves := {}
+	;main
+	Loop, 7
+	{
+	j := A_Index
+	Loop, 7
+	{
+	i := A_Index
+		if (i<7) { ; horizontal swaps
+			cnt:=checkright(arr,i,j)
+			if (cnt>0) {
+				key := i "," j "-r"
+				msgbox % key ": " cnt
+				moves[key] := cnt
+			}
+		} 
+		if (j<7) { ; horizontal swaps
+			cnt:=checkdown(arr,i,j)
+			if (cnt>0) {
+				key := i "," j "-d"
+				msgbox % key ": " cnt
+				moves[key] := cnt
+			}
+		} 
+	}
+	}
+	result =
+	For key, value in moves
+		result .= key ": " value "`n"
+	msgbox result
+	return moves
 }
 
+;all calls must be safe
+checkright(mesh,i,j){
+	ret := 0
+	
+	;switch
+	tmp := mesh[i+1, j]
+	mesh[i+1, j] = mesh[i, j]
+	mesh[i, j] = tmp
+	;check
+	ret += checkmove(mesh, i+1 , j)
+	ret += checkmove(mesh, i , j)
+	;switch back
+	mesh[i, j] = mesh[i+1, j]
+	mesh[i+1, j] = tmp
+
+	return ret
+}
+
+checkdown(ByRef mesh,i,j){
+	ret := 0
+	
+	;switch geht net :(
+	tmp := mesh[i, j+1]
+	mesh[i, j+1] = mesh[i, j]
+	mesh[i, j] = tmp
+	;check
+	ret += checkmove(mesh, i , j)
+	ret += checkmove(mesh, i , j+1)
+	;switchback
+	mesh[i, j] := mesh[i, j+1]
+	mesh[i, j+1] = tmp
+	
+	return ret
+}
+
+checkmove(mesh,i,j){
+	col := mesh[i,j]
+	lr := ( iscol(mesh,col,i-1,j) ? (iscol(mesh,col,i-2,j) ? 2 : 1) : 0)
+	lr += ( iscol(mesh,col,i+1,j) ? (iscol(mesh,col,i+2,j) ? 2 : 1) : 0)
+	ud := ( iscol(mesh,col,i,j-1) ? (iscol(mesh,col,i,j-2) ? 2 : 1) : 0)
+	ud += ( iscol(mesh,col,i,j+1) ? (iscol(mesh,col,i,j+2) ? 2 : 1) : 0)
+	ret := (lr>1 ? lr : 0)
+	ret += (ud>1 ? ud : 0)
+	msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%
+	return ret
+}
+
+iscol(ByRef mesh,col,i,j){ ;secure get shortcircuit
+	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=mesh[i,j]))
+}
 
 ;===== SUPPORT =====
 ;Displays a 2 dimensional grid according to data in array arr
