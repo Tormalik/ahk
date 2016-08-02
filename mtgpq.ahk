@@ -8,93 +8,137 @@ CoordMode, Pixel, Screen
 ;WINDOW_NAME=Nox
 WINDOW_NAME=Clipboard03.png - IrfanView
 ; Coords within the window for the top left of the board.
-ORIGIN_X=63
-ORIGIN_Y=711
+ORIGIN_X:=63
+ORIGIN_Y:=711
 ;Size of a single square.
-SIZE_X=71
-SIZE_Y=71
+SIZE_X:=71
+SIZE_Y:=71
 ;Margin between bubbles
-OFFSET_X=20
-OFFSET_Y=20
+OFFSET_X:=20
+OFFSET_Y:=20
 ; Number of squares on board.
-SQUARES_X=7
-SQUARES_Y=7
-; Game Mode we are in
-PQ_MODE=1
-;0 = default
-;1 = Battle
-;2 = Train Mounts
-;3 = Research Spells
-;4 = Forge Items
-PQ_PRIORITY_1=w ;Skulls
-PQ_PRIORITY_2=w ;Skulls
-PQ_PRIORITY_3=s ;Scrolls
-PQ_PRIORITY_4=a ;Anvils
-; Show moves only? or actually move?
-PQ_SHOW=1
-
-SetBatchLines, -1
-Process, Priority,, High
-
+SQUARES_X:=7
+SQUARES_Y:=7
+;window width
+PQ_W:=724+6 ; client + border
+PQ_H:=1336+115 ; client + border
+;gemcolors and their median colors
+COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
+;client width
+init := false
+colorvalue := {b: 0, g: 2, p: 0, r: 0, u: 2, w: 2}
+;; INIT CMDS
 ;#Include Lib/GDIP.ahk
 #Include Lib/GDIP_All.ahk
 #Include Lib/GDIpHelper.ahk
 ;#Include Lib/Gdip_ImageSearch.ahk
 #Include Lib/regionGetColor.ahk ;Import color funktionen
 #Include Lib/GetColor.ahk ;eigene color funktionen
-
+SetBatchLines, -1
+Process, Priority,, High
 SetUpGDIP(2 * A_ScreenWidth)
-;you should also do a search and replace for the above name
-PQ_W=831
-PQ_H=1380
+
+
 ;window width & height
-COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
 ; colors ok for margin <= 25
 c2 := {}
 #IfWinActive Clipboard03.png - IrfanView
+	F1::getMoves()
 	F2::searchArea()
 	F3::readState()
 	F4::compareColor(0x4C9112)
-	F5::getMoves()
+	F5::Reload
 	F6::
-	readState()
-	;r:=iscol(arr,"r",2,4)
-	;r:=checkmove(arr,"g",5,3)
-	;i:=4
-	;r:= arr[i+1,3]
-	msgbox r %r%
-	return
-	
+		readState()
+		;r:=iscol(arr,"r",2,4)
+		;r:=checkmove(arr,"g",5,3)
+		;i:=4
+		;r:= arr[i+1,3]
+		msgbox r %r%
+		return
+	F7::initSettings(true)
 #IfWinActive Nox
 	F3::readState()
+#IfWinActive mtgpq.ahk
+	F5::Reload
 
-compareColor(col)
+initSettings(debg=false){
+global
+	if(!init || debg){
+		init := true
+	if(A_UserName = "jan"){
+		border_left := 3
+		border_top := 89 + 7
+		; total border should be 115 
+		border_bottom := 26
+		add_left := 0
 
-getCoords(x_num, y_num, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0)
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+		;WinGetTitle, title, %WINDOW_NAME%
+		client_height := h-border_top-border_bottom ;h is 7 to big, maybe due to dropshadow
+		scale:=(client_height)/(PQ_H-border_top-border_bottom)
+		
+		if (InStr(WINDOW_NAME,"Clipboard03") && scale < 1)
+			add_left := 24
+		;msgbox work %A_UserName%
+		; Coords within the window for the top left of the board.
+		; assume window borders are not scaled#
+		ORIGIN_X:=(63 - border_left) * scale + border_left + add_left
+		ORIGIN_Y:=(711 - border_top) * scale + border_top  + 23
+		
+		;Size of a single square.
+		SIZE_X:=71*scale
+		SIZE_Y:=71*scale
+		;Margin between bubbles
+		OFFSET_X:=20*scale
+		OFFSET_Y:=20*scale
+		if debg {
+			msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
+			getCoords(1,1,x,y,x2,y2,w,h)
+			drawRect(0xC0FF0000, x, y, w, h)
+			msgbox start %x%x%y%
+			getCoords(7,7,x,y,x2,y2,w,h)
+			drawRect(0xC0FF0000, x, y, w, h)
+			msgbox end %x%x%y%
+			clear()
+		}
+	} else {
+		;msgbox home %A_UserName%
+	}
+	}
+}
+
+
+
+
+getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0)
 {
-	global ORIGIN_X
-	global ORIGIN_Y
-	global SIZE_X
-	global SIZE_Y
-	global OFFSET_X
-	global OFFSET_Y
+global
+	initSettings()
 	WinGetPos, wX, wY, , , %WINDOW_NAME%
-	margin := 25
-	w := SIZE_X - 2 * margin
-	h := SIZE_Y - 2 * margin
+	margin := 15 ; current colormedians reliable up to margin 25
+	w := SIZE_X - (2 * margin)
+	h := SIZE_Y - (2 * margin)
 
-	x_start := wX + ORIGIN_X + (x_num - 1) * (SIZE_X+OFFSET_X) + margin
+	x_start := wX + ORIGIN_X + (i - 1) * (SIZE_X+OFFSET_X) + margin
 	x_end   := x_start + w
 	
-	y_start := wY + ORIGIN_Y + (y_num - 1) * (SIZE_Y+OFFSET_Y) + margin
+	y_start := wY + ORIGIN_Y + (j - 1) * (SIZE_Y+OFFSET_Y) + margin
 	y_end   := y_start + h
 	
 	return  
 }
 
+clear(){
+	StartDrawGDIP()
+	ClearDrawGDIP()
+	EndDrawGDIP()
+	return	
+}
 
 drawRect(col, x, y, w, h){
 global
+;msgbox drawRect x%x%, y%y%, w%w%, h%h%
 	StartDrawGDIP()
 	ClearDrawGDIP()
 
@@ -108,7 +152,7 @@ global
 
 searchArea(){
 global
-	
+	initSettings()
 	Loop, 7
 	{
 	j := A_Index
@@ -116,18 +160,17 @@ global
 	{
 	i := A_Index
 		getCoords(i, j, x, y, x2, y2, w, h)
-		drawRect(0x80FF0000, x, y, w, h)
+		drawRect(0xC0FF0000, x, y, w, h)
 		;msgbox % x y
 	}
 	}
 	;msgbox pling
-	StartDrawGDIP()
-	ClearDrawGDIP()
-	EndDrawGDIP()
+	clear()
 }
 
 readState(){
 global
+	initSettings()
 	t1:= A_now
 
 	arr	:= []
@@ -165,18 +208,18 @@ global
 	{
 	i := A_Index
 		if (i<7) { ; horizontal swaps
-			cnt:=checkright(arr,i,j)
+			cnt:=check(arr,i,j,true) ;true=right
 			if (cnt>0) {
 				key := i "," j "-r"
-				msgbox % key ": " cnt
+				;msgbox % key ": " cnt
 				moves[key] := cnt
 			}
 		} 
 		if (j<7) { ; horizontal swaps
-			cnt:=checkdown(arr,i,j)
+			cnt:=check(arr,i,j,false) ;false=down
 			if (cnt>0) {
 				key := i "," j "-d"
-				msgbox % key ": " cnt
+				;msgbox % key ": " cnt
 				moves[key] := cnt
 			}
 		} 
@@ -185,46 +228,33 @@ global
 	result =
 	For key, value in moves
 		result .= key ": " value "`n"
-	msgbox result
+	msgbox % result
 	return moves
 }
 
 ;all calls must be safe
-checkright(mesh,i,j){
-	ret := 0
+check(arr,i1,j1,right){
 	
+	ret := 0
+	mesh := Array_DeepClone(arr) ;.Clone()
+	i2:= (right ? i1+1 : i1) ; check right
+	j2:= (right ? j1 : j1+1) ; check down
 	;switch
-	tmp := mesh[i+1, j]
-	mesh[i+1, j] = mesh[i, j]
-	mesh[i, j] = tmp
+	tmp := mesh[i2, j2]
+	;msgbox % 1 ": "  tmp " " mesh[i2, j2]
+	mesh[i2, j2] := mesh[i1, j1]
+	mesh[i1, j1] := tmp
+	;msgbox % 2 ": " tmp " " mesh[i2, j2]
 	;check
-	ret += checkmove(mesh, i+1 , j)
-	ret += checkmove(mesh, i , j)
-	;switch back
-	mesh[i, j] = mesh[i+1, j]
-	mesh[i+1, j] = tmp
-
+	ret += checkmove(mesh, i1, j1, h1, v1)
+	ret += checkmove(mesh, i2, j2, h2, v2)
+	;msgbox %  (right ? "r" : "d") ": " (right ? "r" : "d")i1 "x" j1  ": " mesh[i1,j1] "=h" h1 "v" v1 " <-> " i2 "x" j2 ": " mesh[i2,j2] "=h" h2 "v" v2
 	return ret
 }
 
-checkdown(ByRef mesh,i,j){
-	ret := 0
-	
-	;switch geht net :(
-	tmp := mesh[i, j+1]
-	mesh[i, j+1] = mesh[i, j]
-	mesh[i, j] = tmp
-	;check
-	ret += checkmove(mesh, i , j)
-	ret += checkmove(mesh, i , j+1)
-	;switchback
-	mesh[i, j] := mesh[i, j+1]
-	mesh[i, j+1] = tmp
-	
-	return ret
-}
 
-checkmove(mesh,i,j){
+checkmove(mesh,i,j,ByRef lr=0,ByRef ud=0){
+	global colorvalue
 	col := mesh[i,j]
 	lr := ( iscol(mesh,col,i-1,j) ? (iscol(mesh,col,i-2,j) ? 2 : 1) : 0)
 	lr += ( iscol(mesh,col,i+1,j) ? (iscol(mesh,col,i+2,j) ? 2 : 1) : 0)
@@ -232,14 +262,31 @@ checkmove(mesh,i,j){
 	ud += ( iscol(mesh,col,i,j+1) ? (iscol(mesh,col,i,j+2) ? 2 : 1) : 0)
 	ret := (lr>1 ? lr : 0)
 	ret += (ud>1 ? ud : 0)
-	msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%
-	return ret
+	if ret {
+		ret++ 
+		ret+=colorvalue[col]
+	}
+	;msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%
+	return ret ;add i,j if match
 }
 
 iscol(ByRef mesh,col,i,j){ ;secure get shortcircuit
 	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=mesh[i,j]))
 }
 
+Array_DeepClone(Array, Objs=0)
+{
+    if !Objs
+        Objs := {}
+    Obj := Array.Clone()
+    Objs[&Array] := Obj ; Save this new array
+    For Key, Val in Obj
+        if (IsObject(Val)) ; If it is a subarray
+            Obj[Key] := Objs[&Val] ; If we already know of a refrence to this array
+            ? Objs[&Val] ; Then point it to the new array
+            : Array_DeepClone(Val,Objs) ; Otherwise, clone this sub-array
+    return Obj
+}
 ;===== SUPPORT =====
 ;Displays a 2 dimensional grid according to data in array arr
 showGrid(ByRef arr, length, t)
@@ -273,10 +320,11 @@ showGrid(ByRef arr, length, t)
 		;c = %c%`r`n 
 	}
 	Gui, Add, Text,, Dauer %t%
+	Gui, Add, Button, Default, Close
 	;LV_ModifyCol()  ; Auto-size each column to fit its contents.
 	;clipboard := c
 	Gui, Show, 
-	sleep 3000
+	;sleep 3000
 	return
 }
 
@@ -309,8 +357,9 @@ timediff(st)
    return result
 }
 
-
-
+ButtonClose:
+Gui, Destroy
+return
 
 
 ExitApp
