@@ -47,6 +47,10 @@ Now simulate drops correctly and recursive
 * create gui for selecting move
 * move
 * create more elaborate data (mana, planeswalker, Landfall (color), extra move)
+* Landfall Mechanic
+* void, support, support count
+* 
+
 
 ##Done
 * simulate drop (recursive)

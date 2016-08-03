@@ -5,8 +5,8 @@ CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
 ; Window name
-;WINDOW_NAME=Nox
-WINDOW_NAME=Clipboard03.png - IrfanView
+WINDOW_NAME=Nox App Player
+;WINDOW_NAME=Clipboard03.png - IrfanView
 ; Coords within the window for the top left of the board.
 ORIGIN_X:=63
 ORIGIN_Y:=711
@@ -26,7 +26,17 @@ PQ_H:=1336+115 ; client + border
 COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
 ;client width
 init := false
-colorvalue := {b: 0, g: 2, p: 0, r: 0, u: 2, w: 2}
+;gideon
+;colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
+;kiora
+;colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
+;liliana
+;colorvalue := {w: -1, g: -1, r: 0, b: 2, u: 1, p: 0}
+;colorvalue := {b: 2, g: -1, p: 0, r: 0, u: 1, w: -1}
+;koth
+;colorvalue := {w: -1, g: 0, r: 9, b: 0, u: -1, p: 0}
+;nissa
+colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
 ;; INIT CMDS
 ;#Include Lib/GDIP.ahk
 #Include Lib/GDIP_All.ahk
@@ -58,7 +68,20 @@ c2 := {}
 		return
 	F7::initSettings(true)
 #IfWinActive Nox
+	F1::getMoves()
+	F2::searchArea()
 	F3::readState()
+	F4::compareColor(0x4C9112)
+	F5::Reload
+	F6::
+		readState()
+		;r:=iscol(arr,"r",2,4)
+		;r:=checkmove(arr,"g",5,3)
+		;i:=4
+		;r:= arr[i+1,3]
+		msgbox r %r%
+		return
+	F7::initSettings(true)
 #IfWinActive mtgpq.ahk
 	F5::Reload
 
@@ -92,19 +115,34 @@ global
 		;Margin between bubbles
 		OFFSET_X:=20*scale
 		OFFSET_Y:=20*scale
-		if debg {
-			msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
-			getCoords(1,1,x,y,x2,y2,w,h)
-			drawRect(0xC0FF0000, x, y, w, h)
-			msgbox start %x%x%y%
-			getCoords(7,7,x,y,x2,y2,w,h)
-			drawRect(0xC0FF0000, x, y, w, h)
-			msgbox end %x%x%y%
-			clear()
-		}
 	} else {
+		
+		WinGetTitle, Title, A
+		if(InStr(Title,"Nox")){
+			id := WinExist("A")
+			WINDOW_NAME := "AHK_ID "id
+			ORIGIN_X:=54
+			ORIGIN_Y:=660
+			;Margin between bubbles
+			OFFSET_X:=19.5
+			OFFSET_Y:=19
+
+		}
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+
 		;msgbox home %A_UserName%
 	}
+	if debg {
+		msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
+		getCoords(1,1,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox start %x%x%y%
+		getCoords(7,7,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox end %x%x%y%
+		clear()
+	}
+
 	}
 }
 
@@ -197,6 +235,7 @@ global
 getMoves(){
 global
 	;msgbox start
+	Gui, Moves:Destroy
 	grid := readState()
 	moves := {}
 	;main
@@ -226,8 +265,14 @@ global
 	}
 	result =
 	For key, value in moves
-		result .= key ": " value "`n"
-	msgbox % result
+		result .= key ":`t" value "`n"
+	Gui, Moves:New
+	Gui, Moves:+AlwaysOnTop +ToolWindow
+	Gui, Moves:Add, Text,, %result%
+	Gui, Moves:Add, Button, Default, Close
+	WinGetPos, wX, wY, w, h, AHK_ID %gui_hwnd%
+	y:=wY+h
+	Gui, Moves:Show, x%wX% y%y%, Moves
 	return moves
 }
 
