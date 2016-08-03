@@ -8,20 +8,20 @@ Lib is containing some Libraries, not all of them are still used.
 Some of them are from the web.
 Notably:
 
-- Gdip.ahk, Gdip_All.ahk
+* Gdip.ahk, Gdip_All.ahk
 ```
 ; Gdip standard library v1.45 by tic (Tariq Porter) 07/09/11
 ; Modifed by Rseding91 using fincs 64 bit compatible Gdip library 5/1/2013
 ; Supports: Basic, _L ANSi, _L Unicode x86 and _L Unicode x64
 ```
 
-- GDIpHelper.ahk
+* GDIpHelper.ahk
 
 only found this. not sure if it is inedeed the source
 
 [brigand/GDIpHelper.ahk](https://gist.github.com/brigand)
 
-- regionGetColor.ahk
+* regionGetColor.ahk
 
 generates median Color of a screen region
 
@@ -33,6 +33,21 @@ After some back and forth I implemented median color to compare against fix colo
 
 Distance to median seems to be the most robust and fast choice for the job
 
+Checkmoves gives now valued oprions
 
+Now simulate drops correctly and recursive
 
 ##ToDo
+
+* include estimate value of unknown dropped gems
+* create gui for color values
+    * later: hero and lvl select
+    * hero recognition
+    * level recognition not possibru :(
+* create gui for selecting move
+* move
+* create more elaborate data (mana, planeswalker, Landfall (color), extra move)
+
+##Done
+* simulate drop (recursive)
+* include values from simdrop

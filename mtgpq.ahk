@@ -62,7 +62,7 @@ c2 := {}
 #IfWinActive mtgpq.ahk
 	F5::Reload
 
-initSettings(debg=false){
+initSettings(debg=0){
 global
 	if(!init || debg){
 		init := true
@@ -111,8 +111,7 @@ global
 
 
 
-getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0)
-{
+getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0){
 global
 	initSettings()
 	WinGetPos, wX, wY, , , %WINDOW_NAME%
@@ -189,16 +188,16 @@ global
 
 	t2 := A_now
 	t2 -= t1, s
-	t:= timediff(t2)
-	showGrid(arr,SQUARES_X,t)
+	t:= "Dauer " timediff(t2)
+	showGrid(arr,t)
 	return arr
 }
 
 
 getMoves(){
 global
-	msgbox start
-	mesh := readState()
+	;msgbox start
+	grid := readState()
 	moves := {}
 	;main
 	Loop, 7
@@ -235,47 +234,144 @@ global
 ;all calls must be safe
 check(arr,i1,j1,right){
 	
-	ret := 0
-	mesh := Array_DeepClone(arr) ;.Clone()
+	grid := Array_DeepClone(arr) ;.Clone()
 	i2:= (right ? i1+1 : i1) ; check right
 	j2:= (right ? j1 : j1+1) ; check down
 	;switch
-	tmp := mesh[i2, j2]
-	;msgbox % 1 ": "  tmp " " mesh[i2, j2]
-	mesh[i2, j2] := mesh[i1, j1]
-	mesh[i1, j1] := tmp
-	;msgbox % 2 ": " tmp " " mesh[i2, j2]
+	tmp := grid[i2, j2]
+	;msgbox % 1 ": "  tmp " " grid[i2, j2]
+	grid[i2, j2] := grid[i1, j1]
+	grid[i1, j1] := tmp
+	;msgbox % 2 ": " tmp " " grid[i2, j2]
 	;check
-	ret += checkmove(mesh, i1, j1, h1, v1)
-	ret += checkmove(mesh, i2, j2, h2, v2)
-	;msgbox %  (right ? "r" : "d") ": " (right ? "r" : "d")i1 "x" j1  ": " mesh[i1,j1] "=h" h1 "v" v1 " <-> " i2 "x" j2 ": " mesh[i2,j2] "=h" h2 "v" v2
+	ret := 0
+	ret += checkmove(grid, i1, j1, h1, v1)
+	ret += checkmove(grid, i2, j2, h2, v2)
+	if ret	{
+		;msgbox % i1 "," j1 ":" (right ? "right": "down")
+		ret+=simdrop(grid,i1,j1,right)
+		;showGrid(grid,i1 "," j1 ":" (right? "right": "down") ,1)
+	}
+		
+	;msgbox %  (right ? "r" : "d") ": " (right ? "r" : "d")i1 "x" j1  ": " grid[i1,j1] "=h" h1 "v" v1 " <-> " i2 "x" j2 ": " grid[i2,j2] "=h" h2 "v" v2
 	return ret
 }
 
 
-checkmove(mesh,i,j,ByRef lr=0,ByRef ud=0){
+checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 	global colorvalue
-	col := mesh[i,j]
-	lr := ( iscol(mesh,col,i-1,j) ? (iscol(mesh,col,i-2,j) ? 2 : 1) : 0)
-	lr += ( iscol(mesh,col,i+1,j) ? (iscol(mesh,col,i+2,j) ? 2 : 1) : 0)
-	ud := ( iscol(mesh,col,i,j-1) ? (iscol(mesh,col,i,j-2) ? 2 : 1) : 0)
-	ud += ( iscol(mesh,col,i,j+1) ? (iscol(mesh,col,i,j+2) ? 2 : 1) : 0)
-	ret := (lr>1 ? lr : 0)
-	ret += (ud>1 ? ud : 0)
-	if ret {
-		ret++ 
-		ret+=colorvalue[col]
+	col := grid[i,j]
+	if (col="X" || col="Y")
+		return
+	l:=0
+	while iscol(grid,col,i-(l+1),j) {
+		l++
+	}
+	r:=0
+	while iscol(grid,col,i+(r+1),j) {
+		r++
+	}
+	u:=0
+	while iscol(grid,col,i,j-(u+1)) {
+		u++
+	}
+	d:=0
+	while iscol(grid,col,i,j+(d+1)) {
+		d++
+	}
+	;l := ( iscol(grid,col,i-1,j) ? (iscol(grid,col,i-2,j) ? 2 : 1) : 0)
+	;r := ( iscol(grid,col,i+1,j) ? (iscol(grid,col,i+2,j) ? 2 : 1) : 0)
+	lr := l+r
+	;u := ( iscol(grid,col,i,j-1) ? (iscol(grid,col,i,j-2) ? 2 : 1) : 0)
+	;d := ( iscol(grid,col,i,j+1) ? (iscol(grid,col,i,j+2) ? 2 : 1) : 0)
+	ud := u+d
+	ret:=0
+	if (lr>1) {
+		ret+=lr
+		while l>0 {
+			grid[i-l,j] := "X"
+			l--
+		}
+		while r>0 {
+			grid[i+r,j] := "X"
+			r--
+		}
+	}
+	if (ud>1) {
+		ret+=ud
+		while u>0 {
+			grid[i,j-u] := "X"
+			u--
+		}
+		while d>0 {
+			grid[i,j+d] := "X"
+			d--
+		}
+	}
+	if (ret>0) {
+		grid[i,j] := "X"
+		ret += 1 + colorvalue[col] ;add i,j if match
 	}
 	;msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%
-	return ret ;add i,j if match
+	return ret 
 }
 
-iscol(ByRef mesh,col,i,j){ ;secure get shortcircuit
-	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=mesh[i,j]))
+
+simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
+	found:=0
+	Loop, 7 {
+	j := 8-A_Index ;reverse
+	Loop, 7	{
+	i := 8-A_Index ;reverse
+		if grid[i,j]="X" {
+			drop(grid,i,j)
+			found++
+		}
+	}
+	}
+	if found<1
+		return 0
+	if i && false {
+		txt := i1 "," j1 ":" (right? "right": "down")
+		showGrid(grid, txt ,1)
+	}
+	ret += checkmatches(grid)
+	ret += simdrop(grid,i1,j1,right)
+	return ret
 }
 
-Array_DeepClone(Array, Objs=0)
-{
+drop(ByRef grid,i,j){
+	while grid[i,j]="X" {
+		j2 := j
+		while j2 > 1 {
+			grid[i,j2]:=grid[i,j2-1]
+			j2--
+		}
+		if (j2 <= 1) {
+			grid[i,j2] := "Y"
+		} 
+	}
+}
+
+checkmatches(ByRef grid){
+	ret:=0
+	Loop, 7 {
+	j := A_Index
+	Loop, 7	{
+	i := A_Index
+		ret+=checkmove(grid,i,j)
+	}
+	}
+	return ret
+}
+
+
+
+iscol(ByRef grid,col,i,j){ ;secure get shortcircuit
+	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=grid[i,j]))
+}
+
+Array_DeepClone(Array, Objs:=0){
     if !Objs
         Objs := {}
     Obj := Array.Clone()
@@ -289,41 +385,35 @@ Array_DeepClone(Array, Objs=0)
 }
 ;===== SUPPORT =====
 ;Displays a 2 dimensional grid according to data in array arr
-showGrid(ByRef arr, length, t)
+showGrid(ByRef arr, t, modal:=0)
 {
 	global
 	Gui, Destroy
 	;Prepare Title for list view
-	header =
-	Loop, %length%
-	{
-		header = %header% | %A_index%
-	}
+	header := "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n"
 	StringTrimLeft, header, header, 1 ;Remove first char
-	;clipboard = %header% ;DEBUG
+
 	;Create List to display
-	Gui, +AlwaysOnTop +ToolWindow
+	Gui, +AlwaysOnTop +ToolWindow +LastFound
 	Gui, Add, ListView, +Grid h180 w320, %header%
-	;c =
-	;c = %c% 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |`r`n
-	;msgbox %arr%, %length% ;DEBUG
-	Loop, %length%
+	gui_hwnd := WinExist()
+	Loop, 7
 	{
 		y := A_index
-		LV_Add(y,arr[1, y],arr[2, y],arr[3, y],arr[4, y],arr[5, y],arr[6, y],arr[7, y])
-		; Loop, %length%
-		; {
-			; x := A_index
-			; val := arr[x, y]
-			; ;c = %c%%val% | 
-		; }
-		;c = %c%`r`n 
+		LV_Add(y,y,arr[1, y],arr[2, y],arr[3, y],arr[4, y],arr[5, y],arr[6, y],arr[7, y])
 	}
-	Gui, Add, Text,, Dauer %t%
+	Gui, Add, Text,, %t%
 	Gui, Add, Button, Default, Close
-	;LV_ModifyCol()  ; Auto-size each column to fit its contents.
+	LV_ModifyCol()  ; Auto-size each column to fit its contents.
 	;clipboard := c
-	Gui, Show, 
+	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+	x := wX+w
+	Gui, Show, x%x% y%wY%, showGrid
+	;WinMove, showGrid, ,wY
+	if (modal>0) {
+		WinWait, AHK_ID %gui_hwnd%
+		WinWaitClose, AHK_ID %gui_hwnd%
+	}
 	;sleep 3000
 	return
 }
