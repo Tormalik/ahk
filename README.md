@@ -33,7 +33,7 @@ After some back and forth I implemented median color to compare against fix colo
 
 Distance to median seems to be the most robust and fast choice for the job
 
-Checkmoves gives now valued oprions
+getMoves gives now color valued options
 
 Now simulate drops correctly and recursive
 
@@ -41,18 +41,18 @@ Now simulate drops correctly and recursive
 
 * include estimate value of unknown dropped gems
 * create gui for color values
-    * later: hero and lvl select
-    * hero recognition
+    * later: planeswalker and lvl select
+    * planeswalker recognition
     * level recognition not possibru :(
 * create gui for selecting move
 * move
-* create more elaborate data (mana, planeswalker, Landfall (color), extra move)
+* create more elaborate move return data (mana, planeswalker, Landfall (color), extra move)
 * show moves overlay
 * bug: red support shows as p or w. Solution: multiple reference colors
-* Landfall Mechanic
-* void, support, support count
-* 
+* missing: void, support, support count
 
 ##Done
+
 * simulate drop (recursive)
 * include values from simdrop
+* Landfall Mechanic

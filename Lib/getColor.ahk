@@ -1,12 +1,23 @@
+COLORS := {  0xBFA058: "w"
+			,0x4C9112: "g"
+			,0x912C23: "r"
+			,0x453B4D: "b"
+			,0x29539C: "u"
+			,0x916E46: "p" }
+
+
+
 compareColor(col,debug=0){
 	global COLORS
 	;min   := 442
 	min := 195075 ;squared distance 
 	found =
-	For key, value in COLORS
+	For value, key in COLORS
 	{
 		change := 0
 		;dist := RGBEuclidianDistance(col,value)
+		;SetFormat, IntegerFast, hex
+		;msgbox % "col:" col "; val " value
 		dist := sqRGBEuclidianDistance(col,value)
 		if (dist < min){
 			found := key
@@ -14,46 +25,10 @@ compareColor(col,debug=0){
 			change := 1
 		}
 		if(debug > 0){
-		msgbox compare to %value%`ndist:`t%dist%`nfound:`t%found%`nmin:`t%min%`nchange:`t%change%
+			msgbox compare to %value%`ndist:`t%dist%`nfound:`t%found%`nmin:`t%min%`nchange:`t%change%
 		}
 	}
 	return found
-}
-
-getMedianColors(){
-	global
-	; StartDrawGDIP()
-	; Gdip_SetSmoothingMode(G, 3) ;none
-	; WinGetPos, X, Y, , , %WINDOW_NAME%
-	; X := X + ORIGIN_X
-	; Y := Y + ORIGIN_Y
-	; pBitmap := Gdip_CreateBitmapFromFile("IMG/allc.png")
-	; Gdip_GetImageDimensions(pBitmap,w,h)
-	; Gdip_DrawImage(G, pBitmap, X, Y, w, h)
-	; Gdip_DisposeImage(pBitmap)
-	; EndDrawGDIP()
-	; WinActivate, ahk_id %hwnd1%
-	cols:=["r","g","u","p","w","b"]
-	Gui, 1:+AlwaysOnTop +ToolWindow
-	Gui, 1:Color, col
-	Gui, 1:Add, Edit, vGUItext +ReadOnly, Color: 0x000000
-	Gui, 1:Show, , regionColor
-	Loop, 6
-	{
-		x := A_Index
-		c := cols[x]
-		col := getColor(x,1)
-		GuiControl, , GUItext, % col
-		;msgbox % col
-		c2[c] := col
-	}
-	msgbox % c2["r"] ", " c2["g"] ", " c2["u"] ", " c2["p"] ", " c2["w"] ", " c2["b"] ", "
-	; verarbeitung
-	StartDrawGDIP()
-	ClearDrawGDIP()
-	EndDrawGDIP()
-
-	return c2
 }
 
 getColor(i,j,hwnd=0){

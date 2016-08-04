@@ -5,8 +5,10 @@ CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
 ; Window name
-WINDOW_NAME=Nox App Player
-;WINDOW_NAME=Clipboard03.png - IrfanView
+;WINDOW_NAME=Nox App Player
+;WINDOW_NAME=black_support.png
+SetTitleMatchMode, RegEx
+WINDOW_NAME=i)^.*- IrfanView
 ; Coords within the window for the top left of the board.
 ORIGIN_X:=63
 ORIGIN_Y:=711
@@ -23,7 +25,6 @@ SQUARES_Y:=7
 PQ_W:=724+6 ; client + border
 PQ_H:=1336+115 ; client + border
 ;gemcolors and their median colors
-COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
 ;client width
 init := false
 ;gideon
@@ -43,14 +44,24 @@ colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
 ;#Include Lib/Gdip_ImageSearch.ahk
 #Include Lib/regionGetColor.ahk ;Import color funktionen
 #Include Lib/GetColor.ahk ;eigene color funktionen
-SetBatchLines, -1
-Process, Priority,, High
-SetUpGDIP(2 * A_ScreenWidth)
 
 
-;window width & height
-; colors ok for margin <= 25
-c2 := {}
+#If WinActive(WINDOW_NAME)
+	F1::getMoves()
+	F2::searchArea()
+	F3::readState()
+	F4::compareColor(0x4C9112)
+	F5::Reload
+	F6::
+		readState()
+		;r:=iscol(arr,"r",2,4)
+		;r:=checkmove(arr,"g",5,3)
+		;i:=4
+		;r:= arr[i+1,3]
+		msgbox r %r%
+		return
+	F7::initSettings(true)
+
 #IfWinActive Clipboard03.png - IrfanView
 	F1::getMoves()
 	F2::searchArea()
@@ -87,26 +98,46 @@ c2 := {}
 
 initSettings(debg=0){
 global
+	SetBatchLines, -1
+	Process, Priority,, High
+	SetUpGDIP(2 * A_ScreenWidth)
 	if(!init || debg){
 		init := true
 	if(A_UserName = "jan"){
 		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
- 		if (InStr(WINDOW_NAME,"Clipboard03")) {
+		WinGetTitle, Title, %WINDOW_NAME%
+ 		if (InStr(Title,"IrfanView")) {
+			;WINDOW_NAME := Title
 			border_left := 3
-			border_top := 89 + 7
+			border_top := 89
 			; total border should be 115 
 			border_bottom := 26
 			add_left := 0
-			client_height := h-border_top-border_bottom ;h is 7 to big, maybe due to dropshadow
-			scale:=(client_height)/(PQ_H-border_top-border_bottom)
-		
-			if (InStr(WINDOW_NAME,"Clipboard03") && scale < 1)
-				add_left := 24
-			;msgbox work %A_UserName%
+			scale:=1
+			if (RegExMatch(Title, "Zoom: (\d+) x (\d+)" , match)) {
+				;client 1336
+				scale:=match2/1336
+				;msgbox % "zoom " match1 " x " match2 " : " scale
+				add_left := 26
+			}
+				;msgbox work %A_UserName%
 			; Coords within the window for the top left of the board.
 			; assume window borders are not scaled#
+			ORIGIN_X:=63  * scale + add_left 
+			ORIGIN_Y:=711 * scale + 48
+
+			SIZE_X:=71*scale
+			SIZE_Y:=71*scale
+			;Margin between bubbles
+			OFFSET_X:=19.5*scale 
+			OFFSET_Y:=20*scale
 
 		} else { ;Nox
+			WinGetTitle, Title, A
+			if(InStr(Title,"Nox")){
+				wid := WinExist("A")
+				WINDOW_NAME := "AHK_ID " wid
+			}
 			; clipboard 3 screenshot includes borders
 			border_left := 0 ;3
 			border_top := 50 ;37
@@ -114,8 +145,7 @@ global
 			border_bottom := 0 ;3
 			add_left := 0
 			client_height := h 
-			ORIGIN_X:=49
-			ORIGIN_Y:=561
+
 			
 			;Size of a single square.
 			SIZE_X:=63
@@ -124,31 +154,12 @@ global
 			OFFSET_X:=15
 			OFFSET_Y:=16
 		}
-
-		;WinGetTitle, title, %WINDOW_NAME%
-		if debg {
-			txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
-			msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%`n%txt%
-			getCoords(1,1,x,y,x2,y2,w2,h2)
-			drawRect(0xC0FF0000, x, y, w2, h2)
-			msgbox start %x%x%y%
-			getCoords(7,7,x,y,x2,y2,w2,h2)
-			drawRect(0xC0FF0000, x, y, w2, h2)
-			msgbox end %x%x%y%
-			clear()
-		}
-		;Size of a single square.
-		SIZE_X:=71*scale
-		SIZE_Y:=71*scale
-		;Margin between bubbles
-		OFFSET_X:=20*scale
-		OFFSET_Y:=20*scale
 	} else {
-		
+		; home
 		WinGetTitle, Title, A
 		if(InStr(Title,"Nox")){
-			id := WinExist("A")
-			WINDOW_NAME := "AHK_ID "id
+			wid := WinExist("A")
+			WINDOW_NAME := "AHK_ID " wid
 			ORIGIN_X:=54
 			ORIGIN_Y:=660
 			;Margin between bubbles
@@ -161,8 +172,12 @@ global
 		;msgbox home %A_UserName%
 	}
 	if debg {
-		msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
+		txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
+		msgbox %txt%h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
 		getCoords(1,1,x,y,x2,y2,w,h)
+		;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
+		;msgbox % txt
+
 		drawRect(0xC0FF0000, x, y, w, h)
 		msgbox start %x%x%y%
 		getCoords(7,7,x,y,x2,y2,w,h)
@@ -174,13 +189,12 @@ global
 	}
 }
 
-
-
-
 getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0){
 global
 	initSettings()
-	WinGetPos, wX, wY, , , %WINDOW_NAME%
+	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+	;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
+	;msgbox % txt
 	margin := 10 ; current colormedians reliable up to margin 25
 	w := SIZE_X - (2 * margin)
 	h := SIZE_Y - (2 * margin)
