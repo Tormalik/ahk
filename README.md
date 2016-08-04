@@ -49,6 +49,9 @@ Now simulate drops correctly and recursive
 * create more elaborate data (mana, planeswalker, Landfall (color), extra move)
 * show moves overlay
 * bug: red support shows as p or w. Solution: multiple reference colors
+* Landfall Mechanic
+* void, support, support count
+* 
 
 ##Done
 * simulate drop (recursive)

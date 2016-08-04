@@ -26,7 +26,16 @@ PQ_H:=1336+115 ; client + border
 COLORS := {b: 0x453B4D, g: 0x4C9112, p: 0x916E46, r: 0x912C23, u: 0x29539C, w: 0xBFA058}
 ;client width
 init := false
-colorvalue := {b: 0, g: 0, p: 0, r: 9, u: -1, w: -1}
+;gideon
+colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
+;kiora
+;colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
+;liliana
+;colorvalue := {w: -1, g: -1, r: 0, b: 2, u: 1, p: 0}
+;koth
+;colorvalue := {w: -1, g: 0, r: 9, b: 0, u: -1, p: 0}
+;nissa
+;colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
 ;; INIT CMDS
 ;#Include Lib/GDIP.ahk
 #Include Lib/GDIP_All.ahk
@@ -73,7 +82,6 @@ c2 := {}
 		msgbox r %r%
 		return
 	F7::initSettings(true)
-
 #IfWinActive mtgpq.ahk
 	F5::Reload
 
@@ -129,9 +137,40 @@ global
 			msgbox end %x%x%y%
 			clear()
 		}
+		;Size of a single square.
+		SIZE_X:=71*scale
+		SIZE_Y:=71*scale
+		;Margin between bubbles
+		OFFSET_X:=20*scale
+		OFFSET_Y:=20*scale
 	} else {
+		
+		WinGetTitle, Title, A
+		if(InStr(Title,"Nox")){
+			id := WinExist("A")
+			WINDOW_NAME := "AHK_ID "id
+			ORIGIN_X:=54
+			ORIGIN_Y:=660
+			;Margin between bubbles
+			OFFSET_X:=19.5
+			OFFSET_Y:=19
+
+		}
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+
 		;msgbox home %A_UserName%
 	}
+	if debg {
+		msgbox h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
+		getCoords(1,1,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox start %x%x%y%
+		getCoords(7,7,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox end %x%x%y%
+		clear()
+	}
+
 	}
 }
 
@@ -224,6 +263,7 @@ global
 getMoves(){
 global
 	;msgbox start
+	Gui, Moves:Destroy
 	grid := readState()
 	moves := {}
 	;main
@@ -253,8 +293,16 @@ global
 	}
 	result =
 	For key, value in moves
-		result .= key ": " value "`n"
-	msgbox % result
+		result .= key ":`t" value "`n"
+	Gui, Moves:New
+	Gui, Moves:+AlwaysOnTop +ToolWindow
+	Gui, Moves:Add, Text,, %result%
+	Gui, Moves:Add, Button, Default, Close
+	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+	x:=wX+w
+	y:=wY+269
+	Gui, Moves:Show, x%x% y%y%, Moves
+	WinActivate, %WINDOW_NAME%
 	return moves
 }
 
@@ -306,40 +354,52 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 	while iscol(grid,col,i,j+(d+1)) {
 		d++
 	}
-	;l := ( iscol(grid,col,i-1,j) ? (iscol(grid,col,i-2,j) ? 2 : 1) : 0)
-	;r := ( iscol(grid,col,i+1,j) ? (iscol(grid,col,i+2,j) ? 2 : 1) : 0)
 	lr := l+r
-	;u := ( iscol(grid,col,i,j-1) ? (iscol(grid,col,i,j-2) ? 2 : 1) : 0)
-	;d := ( iscol(grid,col,i,j+1) ? (iscol(grid,col,i,j+2) ? 2 : 1) : 0)
 	ud := u+d
 	ret:=0
 	if (lr>1) {
+		if (lr>2){
+			l:=i-1 ; whole row
+			r:=7-i
+			landfall := 1
+		}
 		ret+=lr
-		while l>0 {
-			grid[i-l,j] := "X"
+		while (l>0) {
+			grid[i-l,j]:="X"
 			l--
 		}
-		while r>0 {
-			grid[i+r,j] := "X"
+		while (r>0) {
+			grid[i+r,j]:="X"
 			r--
 		}
 	}
 	if (ud>1) {
+		if (ud>2){
+			u:=j-1 ; whole col
+			d:=7-j
+			landfall := 1
+		}
 		ret+=ud
-		while u>0 {
-			grid[i,j-u] := "X"
+		while (u>0) {
+			grid[i,j-u]:="X"
 			u--
 		}
-		while d>0 {
-			grid[i,j+d] := "X"
+		while (d>0) {
+			grid[i,j+d]:="X"
 			d--
 		}
 	}
-	if (ret>0) {
-		grid[i,j] := "X"
-		ret += 1 + colorvalue[col] ;add i,j if match
+	if ((ud>1 && lr>1) || ud>3 || lr>3) {
+		extraturn:=1 
 	}
-	;msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%
+	if (ret>0) {
+		grid[i,j]:="X"
+		ret += 1 + colorvalue[col] ;add i,j if match
+		txt:=(landfall ? "`nlandfall " col : "")
+		txt.=(extraturn ? "`nextraturn " col : "")
+		;if (landfall || extraturn)
+			;msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%%txt%
+	}
 	return ret 
 }
 
@@ -350,7 +410,7 @@ simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
 	j := 8-A_Index ;reverse
 	Loop, 7	{
 	i := 8-A_Index ;reverse
-		if grid[i,j]="X" {
+		if iscol(grid, "X",i,j) {
 			drop(grid,i,j)
 			found++
 		}
@@ -368,14 +428,15 @@ simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
 }
 
 drop(ByRef grid,i,j){
-	while grid[i,j]="X" {
+	while (grid[i,j]="X")  {
 		j2 := j
 		while j2 > 1 {
-			grid[i,j2]:=grid[i,j2-1]
+			grid[i,j2] := grid[i,j2-1]
+			;setcol(grid,grid[i,j2-1],i,j2)
 			j2--
 		}
 		if (j2 <= 1) {
-			grid[i,j2] := "Y"
+			grid[i,j2]:="Y"
 		} 
 	}
 }
@@ -397,6 +458,15 @@ checkmatches(ByRef grid){
 iscol(ByRef grid,col,i,j){ ;secure get shortcircuit
 	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=grid[i,j]))
 }
+
+;setcol(ByRef grid,col,i,j){ ;secure set
+;  if(i<0 || i>7 || j<0 || j>7){
+;  	    grid[i,j]:=col
+;  	    return 1
+;    } else {
+;  	  return 0
+;    }
+;  }
 
 Array_DeepClone(Array, Objs:=0){
     if !Objs
