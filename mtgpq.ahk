@@ -3,12 +3,19 @@
 #SingleInstance force
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
+;; INIT CMDS
+;#Include Lib/GDIP.ahk
+#Include Lib/GDIP_All.ahk
+#Include Lib/GDIpHelper.ahk
+;#Include Lib/Gdip_ImageSearch.ahk
+#Include Lib/regionGetColor.ahk ;Import color funktionen
+#Include Lib/GetColor.ahk ;eigene color funktionen
 
 ; Window name
-;WINDOW_NAME=Nox App Player
+WINDOW_NAME=Nox App Player
 ;WINDOW_NAME=black_support.png
 SetTitleMatchMode, RegEx
-WINDOW_NAME=i)^.*- IrfanView
+;WINDOW_NAME=i)^.*- IrfanView
 ; Coords within the window for the top left of the board.
 ORIGIN_X:=63
 ORIGIN_Y:=711
@@ -28,22 +35,19 @@ PQ_H:=1336+115 ; client + border
 ;client width
 init := false
 ;gideon
-colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
+;colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
 ;kiora
-;colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
+colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
+;kiora 60
+;colorvalue := { w: 0, g: 3, r: 0, b: 0, u: 3, p: 0}
 ;liliana
 ;colorvalue := {w: -1, g: -1, r: 0, b: 2, u: 1, p: 0}
 ;koth
 ;colorvalue := {w: -1, g: 0, r: 9, b: 0, u: -1, p: 0}
 ;nissa
-;colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
-;; INIT CMDS
-;#Include Lib/GDIP.ahk
-#Include Lib/GDIP_All.ahk
-#Include Lib/GDIpHelper.ahk
-;#Include Lib/Gdip_ImageSearch.ahk
-#Include Lib/regionGetColor.ahk ;Import color funktionen
-#Include Lib/GetColor.ahk ;eigene color funktionen
+colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
+
+col2key := {w: "mana", g: "mana", r: "mana", b: "mana", u: "mana", p: "loyl", v: "void"}
 
 
 #If WinActive(WINDOW_NAME)
@@ -53,47 +57,14 @@ colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
 	F4::compareColor(0x4C9112)
 	F5::Reload
 	F6::
-		readState()
-		;r:=iscol(arr,"r",2,4)
-		;r:=checkmove(arr,"g",5,3)
-		;i:=4
-		;r:= arr[i+1,3]
-		msgbox r %r%
+		initSettings()
+		temp_color := getColor(5,7)
+		clipboard := temp_color
+		msgbox % "Col " temp_color
 		return
 	F7::initSettings(true)
 
-#IfWinActive Clipboard03.png - IrfanView
-	F1::getMoves()
-	F2::searchArea()
-	F3::readState()
-	F4::compareColor(0x4C9112)
-	F5::Reload
-	F6::
-		readState()
-		;r:=iscol(arr,"r",2,4)
-		;r:=checkmove(arr,"g",5,3)
-		;i:=4
-		;r:= arr[i+1,3]
-		msgbox r %r%
-		return
-	F7::initSettings(true)
-
-#IfWinActive Nox
-	F1::getMoves()
-	F2::searchArea()
-	F3::readState()
-	F4::compareColor(0x4C9112)
-	F5::Reload
-	F6::
-		readState()
-		;r:=iscol(arr,"r",2,4)
-		;r:=checkmove(arr,"g",5,3)
-		;i:=4
-		;r:= arr[i+1,3]
-		msgbox r %r%
-		return
-	F7::initSettings(true)
-#IfWinActive mtgpq.ahk
+#If WinActive("Visual Studio Code")
 	F5::Reload
 
 initSettings(debg=0){
@@ -109,7 +80,7 @@ global
  		if (InStr(Title,"IrfanView")) {
 			;WINDOW_NAME := Title
 			border_left := 3
-			border_top := 89
+			border_top := 48
 			; total border should be 115 
 			border_bottom := 26
 			add_left := 0
@@ -117,22 +88,30 @@ global
 			if (RegExMatch(Title, "Zoom: (\d+) x (\d+)" , match)) {
 				;client 1336
 				scale:=match2/1336
-				;msgbox % "zoom " match1 " x " match2 " : " scale
 				add_left := 26
+				if(InStr(Title,"Screenshot")){
+					scale:=match2/1290
+					add_left := 18
+				}
+				;msgbox % "zoom " match1 " x " match2 " : " scale
+			}
+			if(InStr(Title,"Screenshot")){
+				border_top := 5
 			}
 				;msgbox work %A_UserName%
 			; Coords within the window for the top left of the board.
 			; assume window borders are not scaled#
 			ORIGIN_X:=63  * scale + add_left 
-			ORIGIN_Y:=711 * scale + 48
+			ORIGIN_Y:=711 * scale + border_top
 
 			SIZE_X:=71*scale
 			SIZE_Y:=71*scale
 			;Margin between bubbles
 			OFFSET_X:=19.5*scale 
-			OFFSET_Y:=20*scale
+			OFFSET_Y:=19.5*scale
 
 		} else { ;Nox
+			;msgbox NOX
 			WinGetTitle, Title, A
 			if(InStr(Title,"Nox")){
 				wid := WinExist("A")
@@ -145,6 +124,9 @@ global
 			border_bottom := 0 ;3
 			add_left := 0
 			client_height := h 
+
+			ORIGIN_X:=49
+			ORIGIN_Y:=561
 
 			
 			;Size of a single square.
@@ -289,7 +271,7 @@ global
 	i := A_Index
 		if (i<7) { ; horizontal swaps
 			cnt:=check(arr,i,j,true) ;true=right
-			if (cnt>0) {
+			if (cnt["f"]) {
 				key := i "," j "-r"
 				;msgbox % key ": " cnt
 				moves[key] := cnt
@@ -297,7 +279,7 @@ global
 		} 
 		if (j<7) { ; horizontal swaps
 			cnt:=check(arr,i,j,false) ;false=down
-			if (cnt>0) {
+			if (cnt["f"]) {
 				key := i "," j "-d"
 				;msgbox % key ": " cnt
 				moves[key] := cnt
@@ -305,13 +287,15 @@ global
 		} 
 	}
 	}
-	result =
-	For key, value in moves
-		result .= key ":`t" value "`n"
+	result := ""
+	For key, value in moves {
+		;msgbox % toStr(value)
+		result .= key ":`t" toStr(value) "`n"
+	}
 	Gui, Moves:New
 	Gui, Moves:+AlwaysOnTop +ToolWindow
 	Gui, Moves:Add, Text,, %result%
-	Gui, Moves:Add, Button, Default, Close
+	Gui, Moves:Add, Button, Default, Cancel
 	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
 	x:=wX+w
 	y:=wY+269
@@ -333,13 +317,14 @@ check(arr,i1,j1,right){
 	grid[i1, j1] := tmp
 	;msgbox % 2 ": " tmp " " grid[i2, j2]
 	;check
-	ret := 0
-	ret += checkmove(grid, i1, j1, h1, v1)
-	ret += checkmove(grid, i2, j2, h2, v2)
-	if ret	{
+	ret := {}
+	ret := sumr(ret, checkmove(grid, i1, j1, h1, v1))
+	ret := sumr(ret, checkmove(grid, i2, j2, h2, v2))
+	if ret.HasKey("f") {
+
 		;msgbox % i1 "," j1 ":" (right ? "right": "down")
-		ret+=simdrop(grid,i1,j1,right)
-		;showGrid(grid,i1 "," j1 ":" (right? "right": "down") ,1)
+		ret := sumr(ret , simdrop(grid,i1,j1,right))
+		;showGrid(grid,i1 "," j1 ":" (right? "right": "down") ": " toStr(ret),1)
 	}
 		
 	;msgbox %  (right ? "r" : "d") ": " (right ? "r" : "d")i1 "x" j1  ": " grid[i1,j1] "=h" h1 "v" v1 " <-> " i2 "x" j2 ": " grid[i2,j2] "=h" h2 "v" v2
@@ -349,6 +334,7 @@ check(arr,i1,j1,right){
 
 checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 	global colorvalue
+	global col2key
 	col := grid[i,j]
 	if (col="X" || col="Y")
 		return
@@ -370,30 +356,35 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 	}
 	lr := l+r
 	ud := u+d
-	ret:=0
+	ret := {}
+	key := col2key[col]
+	;msgbox % "col-'" col "' key-'" key "'"
+	ret[key]:=0
 	if (lr>1) {
 		if (lr>2){
-			l:=i-1 ; whole row
-			r:=7-i
-			landfall := 1
+			l := i-1 ; whole row
+			r := 7-i
+			t := "lf_" col
+			inc(ret,t)
 		}
-		ret+=lr
 		while (l>0) {
-			grid[i-l,j]:="X"
+			grid[i-l,j] := "X"
 			l--
 		}
 		while (r>0) {
-			grid[i+r,j]:="X"
+			grid[i+r,j] := "X"
 			r--
 		}
+		inc(ret,key,lr)
 	}
 	if (ud>1) {
 		if (ud>2){
 			u:=j-1 ; whole col
 			d:=7-j
-			landfall := 1
+			t:="lf_" col
+			inc(ret,t)
 		}
-		ret+=ud
+		
 		while (u>0) {
 			grid[i,j-u]:="X"
 			u--
@@ -402,17 +393,22 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 			grid[i,j+d]:="X"
 			d--
 		}
+		inc(ret,key,ud)
 	}
 	if ((ud>1 && lr>1) || ud>3 || lr>3) {
-		extraturn:=1 
+		t:= "extra_" col
+		inc(ret,t)
 	}
-	if (ret>0) {
+	
+	
+	if (ud>1 || lr>1) {
+		inc(ret, "f")
 		grid[i,j]:="X"
-		ret += 1 + colorvalue[col] ;add i,j if match
-		txt:=(landfall ? "`nlandfall " col : "")
-		txt.=(extraturn ? "`nextraturn " col : "")
-		;if (landfall || extraturn)
-			;msgbox %i%,%j%: lr %lr%, ud %ud%, ret %ret%, col %col%%txt%
+		v := 1 + ( colorvalue.HasKey(col) ? colorvalue[col] : 0 ) 
+		inc(ret,key,v) ;add i,j if match
+
+		;msgbox % toStr(ret) ":" ud "x" lr
+		;msgbox % ret[key]
 	}
 	return ret 
 }
@@ -430,14 +426,16 @@ simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
 		}
 	}
 	}
-	if found<1
+	if (found<1) {
 		return 0
-	if i && false {
-		txt := i1 "," j1 ":" (right? "right": "down")
+	}
+	if (i && false) {
+		txt := "simdrop" i1 "," j1 ":" (right? "right": "down")
 		showGrid(grid, txt ,1)
 	}
-	ret += checkmatches(grid)
-	ret += simdrop(grid,i1,j1,right)
+	ret := {}
+	ret := sumr(ret, checkmatches(grid))
+	ret := sumr(ret, simdrop(grid,i1,j1,right))
 	return ret
 }
 
@@ -456,17 +454,76 @@ drop(ByRef grid,i,j){
 }
 
 checkmatches(ByRef grid){
-	ret:=0
+	ret:={}
 	Loop, 7 {
 	j := A_Index
 	Loop, 7	{
 	i := A_Index
-		ret+=checkmove(grid,i,j)
+		sumr(ret,checkmove(grid,i,j))
 	}
 	}
 	return ret
 }
 
+sumr(ByRef ret,b){
+	For key,value in b {
+		found := 0
+;		if(ret.HasKey(key) && ret[key]>0 && value>0 ) {
+;			msgbox % "ret " ret[key] " - b " value
+;			found := 1
+;		}
+		if (value>0) {
+			inc(ret, key, value)
+		}
+;		if(found) {
+;			msgbox % "ret " ret[key] 
+;		}
+
+	}
+	return ret
+}
+
+inc(byRef ret, key ,val:=1){
+	a:= (ret.HasKey(key) ? ret[key] : 0)
+	ret[key] := a + val
+	return ret
+}
+
+toStr(a){
+	b:=a.Clone()
+	txt:= ""
+;	if b.HasKey("mana") {
+;		msgbox % b["mana"]
+;		txt.= b["mana"] "m"
+;		b.delete("mana")
+;	}
+;	if b.HasKey("loyl") {
+;		txt.= ", " b["loyl"] "p"
+;		b.delete("loyl")
+;	}
+;	if b.HasKey("void") {
+;		txt.= ", " b["void"] "v"
+;		b.delete("void")
+;	}
+;	For key,value in b {
+;		if InStr(key,"lf_"){
+;			txt.= value "*" key ", "
+;			b.delete(key)
+;		}
+;	}
+	For key,value in b {
+		if (key!="f" && value>0) {
+			txt .= (txt="" ? "" : "; " ) key ":" value
+		}
+		;txt .= "; " key ":" value
+;		msgbox % key ": " value
+;		if InStr(key,"extra_"){
+;			txt.= value "*" key ", "
+;			b.delete(key)
+;		}
+	}
+	return txt
+}
 
 
 iscol(ByRef grid,col,i,j){ ;secure get shortcircuit
@@ -562,5 +619,8 @@ ButtonClose:
 Gui, Destroy
 return
 
+ButtonCancel:
+Gui, Moves:Destroy
+return
 
 ExitApp

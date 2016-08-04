@@ -1,8 +1,14 @@
 COLORS := {  0xBFA058: "w"
 			,0x4C9112: "g"
 			,0x912C23: "r"
+			,0xBC663F: "r"  ;red support
 			,0x453B4D: "b"
+			,0x7B50BC: "b"  ;black support
+			,0x8558BB: "b"  ;black support
 			,0x29539C: "u"
+			,0x38312C: "v"  ;void
+			,0x31271D: "v"
+			,0x26211B: "v"
 			,0x916E46: "p" }
 
 
@@ -12,8 +18,7 @@ compareColor(col,debug=0){
 	;min   := 442
 	min := 195075 ;squared distance 
 	found =
-	For value, key in COLORS
-	{
+	For value, key in COLORS {
 		change := 0
 		;dist := RGBEuclidianDistance(col,value)
 		;SetFormat, IntegerFast, hex
