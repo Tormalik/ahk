@@ -47,6 +47,8 @@ Now simulate drops correctly and recursive
 * create gui for selecting move
 * move
 * create more elaborate data (mana, planeswalker, Landfall (color), extra move)
+* show moves overlay
+* bug: red support shows as p or w. Solution: multiple reference colors
 
 ##Done
 * simulate drop (recursive)
