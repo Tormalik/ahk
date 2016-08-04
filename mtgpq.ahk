@@ -37,15 +37,15 @@ init := false
 ;gideon
 ;colorvalue := {w: 2, g: 2, r: 0, b: 0, u: 2, p: 0}
 ;kiora
-colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
+;colorvalue := { w: -1, g: 1, r: -1, b: -1, u: 2, p: 0}
 ;kiora 60
 ;colorvalue := { w: 0, g: 3, r: 0, b: 0, u: 3, p: 0}
 ;liliana
 ;colorvalue := {w: -1, g: -1, r: 0, b: 2, u: 1, p: 0}
 ;koth
-;colorvalue := {w: -1, g: 0, r: 9, b: 0, u: -1, p: 0}
+colorvalue := {w: -1, g: 0, r: 9, b: 0, u: -1, p: 0}
 ;nissa
-colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
+;colorvalue := {w: 1, g: 3, r: 1, b: 0, u: 0, p: -2}
 
 col2key := {w: "mana", g: "mana", r: "mana", b: "mana", u: "mana", p: "loyl", v: "void"}
 
