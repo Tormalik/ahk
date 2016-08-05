@@ -40,19 +40,22 @@ Now simulate drops correctly and recursive
 ##ToDo
 
 * include estimate value of unknown dropped gems
+* include possible remaining moves for opponent
 * create gui for color values
     * later: planeswalker and lvl select
     * planeswalker recognition
     * level recognition not possibru :(
 * create gui for selecting move
 * move
-* create more elaborate move return data (mana, planeswalker, Landfall (color), extra move)
 * show moves overlay
-* bug: red support shows as p or w. Solution: multiple reference colors
-* missing: void, support, support count
+* refactor: create mtgpqGrid Class which handles all the mechanics
 
 ##Done
 
 * simulate drop (recursive)
 * include values from simdrop
 * Landfall Mechanic
+* void, support, support count
+* fixed: red support shows as p or w. Solution: multiple reference colors
+* create more elaborate move return data (mana, planeswalker, Landfall (color), extra move)
+

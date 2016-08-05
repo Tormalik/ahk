@@ -11,7 +11,21 @@ COLORS := {  0xBFA058: "w"
 			,0x26211B: "v"
 			,0x916E46: "p" }
 
+col2key := {w: "mana", g: "mana", r: "mana", b: "mana", u: "mana", p: "loyl", v: "void"}
 
+
+iscol(ByRef grid,col,i,j){ ;secure get shortcircuit
+	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=grid[i,j]))
+}
+
+;setcol(ByRef grid,col,i,j){ ;secure set
+;  if(i<0 || i>7 || j<0 || j>7){
+;  	    grid[i,j]:=col
+;  	    return 1
+;    } else {
+;  	  return 0
+;    }
+;  }
 
 compareColor(col,debug=0){
 	global COLORS
