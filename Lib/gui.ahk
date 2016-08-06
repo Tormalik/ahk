@@ -275,20 +275,7 @@ timediff(st) {
    return result
 }
 
-drawRect(col, x, y, w, h) {
-global
-;msgbox drawRect x%x%, y%y%, w%w%, h%h%
-	StartDrawGDIP()
-	ClearDrawGDIP()
 
-	pBrush := Gdip_BrushCreateSolid(col)
-	Gdip_FillRectangle(G, pBrush, x, y, w, h)
-	Gdip_DeleteBrush(pBrush)
-
-	EndDrawGDIP()
-
-	return	
-}
 
 Array_DeepClone(Array, Objs:=0) {
     if !Objs
@@ -319,6 +306,7 @@ GridUpdate:
 
 SaveColors:    
     Gui, grid:Submit, NoHide
+    SaveColors()
     return
 
 CloseModal:
@@ -326,6 +314,7 @@ CloseModal:
 	return
 
 ChangeChar:
+    SaveColors() ;save old values
     Gui, grid:Submit, NoHide
     StringLower, CharChoice, CharChoice
     changeChar()

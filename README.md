@@ -37,14 +37,13 @@ getMoves gives now color valued options
 
 Now simulate drops correctly and recursive
 
+One Gui to rule them all
+
 ##ToDo
 
 * include estimate value of unknown dropped gems
 * include possible remaining moves for opponent
-* create gui for color values
-    * later: planeswalker and lvl select
-    * planeswalker recognition
-    * level recognition not possibru :(
+* Planeswalker recognition
 * create gui for selecting move
 * move
 * show moves overlay
@@ -58,4 +57,5 @@ Now simulate drops correctly and recursive
 * void, support, support count
 * fixed: red support shows as p or w. Solution: multiple reference colors
 * create more elaborate move return data (mana, planeswalker, Landfall (color), extra move)
-
+* create gui for color values
+    * later: planeswalker and lvl select

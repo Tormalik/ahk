@@ -39,6 +39,17 @@ LoadChar(char) {
     return ret
 }
 
+SaveColors() {
+global CharChoice
+global Col_w
+global Col_g
+global Col_r
+global Col_b
+global Col_u
+    colors:={"w":Col_w, "g":Col_g, "r":Col_r, "b":Col_b, "u":Col_u}
+    SaveChar(CharChoice,colors)
+}
+
 SaveChar(char,colors) {
     For col,val in colors {
         IniWrite, val, config.ini, char, col
