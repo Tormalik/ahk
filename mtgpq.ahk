@@ -1,5 +1,5 @@
 ; ==UserScript==
-
+;region ;AutoExec; #####################################################################
 #SingleInstance force
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
@@ -10,17 +10,31 @@ CoordMode, Pixel, Screen
 ;#Include Lib/Gdip_ImageSearch.ahk
 #Include Lib/regionGetColor.ahk 	;Import color funktionen
 #Include Lib/GetColor.ahk 			;eigene color funktionen
-#Include Lib/IO.ahk 				;eigene IO funktionen
+#Include Lib/ini.ahk 			    ;save load ini
+#Include Lib/gui.ahk 				;eigene IO funktionen
 
 init := false
-SetTitleMatchMode, RegEx
+Process, Priority,, High
+SetBatchLines, -1
+SetTitleMatchMode 2
+LoadedConfig := lastCfg()
+CharChoice := lastChar()
+initSettings()
+;OnExit, ExitSub
+;#######################################################################################
+;autoexec end
+return
+;end_region
+;#######################################################################################
 
+;region ;Labels and Hotkeys; ###########################################################
+^F1::getMoves()
 
 #If WinActive(WINDOW_NAME)
 	F1::getMoves()
 	F2::searchArea()
 	F3::readState()
-	F4::compareColor(0x4C9112)
+	F4::test()
 	F5::Reload
 	F6::
 		initSettings()
@@ -33,104 +47,73 @@ SetTitleMatchMode, RegEx
 #If WinActive("Visual Studio Code")
 	F5::Reload
 
-;#######################################################################################
-;autoexec end
-return
-;#######################################################################################
+ExitSub:
+	;savesettings()
+	ExitApp
 
-initSettings(debg=0){
+;end_region
+
+;region ;Functions; ####################################################################
+initSettings(debg:=0) {
 global
-	SetBatchLines, -1
-	Process, Priority,, High
 	SetUpGDIP(2 * A_ScreenWidth)
-	if(!init || debg){
+	if (!init || debg) {
 		init := true
-		if(A_UserName = "jan"){
-			WinGetPos, wX, wY, w, h, %WINDOW_NAME%
-			WinGetTitle, Title, %WINDOW_NAME%
-			if (InStr(Title,"IrfanView")) {
-				;WINDOW_NAME := Title
-				border_left := 3
-				border_top := 48
-				; total border should be 115 
-				border_bottom := 26
-				add_left := 0
-				scale:=1
-				if (RegExMatch(Title, "Zoom: (\d+) x (\d+)" , match)) {
-					;client 1336
-					scale:=match2/1336
-					add_left := 26
-					if(InStr(Title,"Screenshot")){
-						scale:=match2/1290
-						add_left := 18
-					}
-					;msgbox % "zoom " match1 " x " match2 " : " scale
-				}
-				if(InStr(Title,"Screenshot")){
-					border_top := 5
-				}
-					;msgbox work %A_UserName%
-				; Coords within the window for the top left of the board.
-				; assume window borders are not scaled#
-				ORIGIN_X:=63  * scale + add_left 
-				ORIGIN_Y:=711 * scale + border_top
-
-				SIZE_X:=71*scale
-				SIZE_Y:=71*scale
-				;Margin between bubbles
-				OFFSET_X:=19.5*scale 
-				OFFSET_Y:=19.5*scale
-
-			} else { ;Nox
-				;msgbox NOX
-				WinGetTitle, Title, A
-				if(InStr(Title,"Nox")){
-					wid := WinExist("A")
-					WINDOW_NAME := "AHK_ID " wid
-				}
-				; clipboard 3 screenshot includes borders
-				border_left := 0 ;3
-				border_top := 50 ;37
-				; total border should be 115 
-				border_bottom := 0 ;3
-				add_left := 0
-				client_height := h 
-
-				ORIGIN_X:=49
-				ORIGIN_Y:=561
-
-				
-				;Size of a single square.
-				SIZE_X:=63
-				SIZE_Y:=63
-				;Margin between bubbles
-				OFFSET_X:=15
-				OFFSET_Y:=16
-			}
-		} else {
-			; home
-			WinGetTitle, Title, A
-			if(InStr(Title,"Nox")){
-				wid := WinExist("A")
-				WINDOW_NAME := "AHK_ID " wid
-				ORIGIN_X:=54
-				ORIGIN_Y:=660
-				;Margin between bubbles
-				OFFSET_X:=19.5
-				OFFSET_Y:=19
-
-			}
-			WinGetPos, wX, wY, w, h, %WINDOW_NAME%
-
-			;msgbox home %A_UserName%
+		temploaded := LoadedConfig
+		LoadConfig(LoadedConfig)
+		if (StrLen(temploaded)) {
+			LoadedConfig := temploaded
+			LoadConfig(LoadedConfig)
 		}
-		if debg {
-			txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
-			msgbox %txt%h %h% s %scale%`nORIGIN_X:`t%ORIGIN_X%`nORIGIN_Y:`t%ORIGIN_Y%`nSIZE_X:`t%SIZE_X%`nSIZE_Y:`t%SIZE_Y%`nOFFSET_X:`t%OFFSET_X%`nOFFSET_Y:`t%OFFSET_Y%`ncl_height:`t%client_height%
+		if (!StrLen(CharChoice))
+			CharChoice:="gideon"
+		changeChar()
+		
+		;  if (A_UserName = "jan") {
+		;  	WinGetPos, wX, wY, w, h, A
+		;  	WinGetTitle, Title, A
+		;  	if (InStr(Title,"IrfanView")) {
+		;  		if (RegExMatch(Title, "Zoom: (\d+) x (\d+)" , match)) {
+		;  			if (InStr(Title,"Screenshot")) {
+		;  				LoadedConfig:="WorkScreenshot"
+		;  			}else {
+		;  				LoadedConfig:="WorkIrfan"
+		;  			}
+		;  			LoadConfig(LoadedConfig)
+		;  		}
+		;  	} else {
+		;  		LoadedConfig:="WorkNox"
+		;  		LoadConfig(LoadedConfig)
+		;  		WinGetTitle, Title, A
+		;  		if (InStr(Title,"Nox")) {
+		;  			wid := WinExist("A")
+		;  			WINDOW_NAME := "AHK_ID " wid
+		;  		}
+		;  	}
+		;  } else { ;home
+		;  	WinGetTitle, Title, A
+		;  	if (InStr(Title,"Nox")) {
+		;  		LoadedConfig:="HomeNox"
+		;  		LoadConfig(LoadedConfig)
+		;  		wid := WinExist("A")
+		;  		WINDOW_NAME := "AHK_ID " wid
+		;  	} else {
+		;  		LoadedConfig:="HomeIrfan"
+		;  		LoadConfig(LoadedConfig)
+		;  	}
+		;  }
+		chars:=readChars()
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+		if (debg) {
 			getCoords(1,1,x,y,x2,y2,w,h)
-			;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
-			;msgbox % txt
-
+			txt := ""
+			vars:= ["LoadedConfig","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING","WINDOW_NAME","wX","wY","w","h"]
+			for i,var in vars {
+				pad:= ("             " var)
+				StringRight, pad, pad, 12
+				txt .= pad " : " %var% "`n"
+			}
+			dialog(txt,"Consolas")
 			drawRect(0xC0FF0000, x, y, w, h)
 			msgbox start %x%x%y%
 			getCoords(7,7,x,y,x2,y2,w,h)
@@ -138,39 +121,37 @@ global
 			msgbox end %x%x%y%
 			clear()
 		}
-		readChars()
 	} ;init end
 }
 
-
-
-getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0){
+getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0) {
 global
 	initSettings()
 	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
 	;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
 	;msgbox % txt
-	margin := 10 ; current colormedians reliable up to margin 25
-	w := SIZE_X - (2 * margin)
-	h := SIZE_Y - (2 * margin)
+	 ; current colormedians reliable up to PADDING 25
+	w := SIZE_X - (2 * PADDING)
+	h := SIZE_Y - (2 * PADDING)
 
-	x_start := wX + ORIGIN_X + (i - 1) * (SIZE_X+OFFSET_X) + margin
+	x_start := wX + ORIGIN_X + (i - 1) * (SIZE_X+OFFSET_X) + PADDING
 	x_end   := x_start + w
 	
-	y_start := wY + ORIGIN_Y + (j - 1) * (SIZE_Y+OFFSET_Y) + margin
+	y_start := wY + ORIGIN_Y + (j - 1) * (SIZE_Y+OFFSET_Y) + PADDING
 	y_end   := y_start + h
 	
 	return  
 }
 
-clear(){
+clear() {
 	StartDrawGDIP()
 	ClearDrawGDIP()
 	EndDrawGDIP()
+
 	return	
 }
 
-searchArea(){
+searchArea() {
 global
 	initSettings()
 	Loop, 7
@@ -186,10 +167,11 @@ global
 	}
 	;msgbox pling
 	clear()
+
+	return
 }
 
-readState(){
-global
+readState() {
 	initSettings()
 	t1:= A_now
 
@@ -210,15 +192,14 @@ global
 	t2 := A_now
 	t2 -= t1, s
 	t:= "Dauer " timediff(t2)
-	showGrid(arr,t)
+	UpdateGrid(arr,t)
+
 	return arr
 }
 
 
-getMoves(){
-global
+getMoves() {
 	;msgbox start
-	Gui, Moves:Destroy
 	grid := readState()
 	moves := {}
 	;main
@@ -229,42 +210,27 @@ global
 	{
 	i := A_Index
 		if (i<7) { ; horizontal swaps
-			cnt:=check(arr,i,j,true) ;true=right
+			cnt:=check(grid,i,j,true) ;true=right
 			if (cnt["f"]) {
 				key := i "," j "-r"
-				;msgbox % key ": " cnt
 				moves[key] := cnt
 			}
 		} 
 		if (j<7) { ; horizontal swaps
-			cnt:=check(arr,i,j,false) ;false=down
+			cnt:=check(grid,i,j,false) ;false=down
 			if (cnt["f"]) {
 				key := i "," j "-d"
-				;msgbox % key ": " cnt
 				moves[key] := cnt
 			}
 		} 
 	}
 	}
-	result := ""
-	For key, value in moves {
-		;msgbox % toStr(value)
-		result .= key ":`t" toStr(value) "`n"
-	}
-	Gui, Moves:New
-	Gui, Moves:+AlwaysOnTop +ToolWindow
-	Gui, Moves:Add, Text,, %result%
-	Gui, Moves:Add, Button, Default, Cancel
-	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
-	x:=wX+w
-	y:=wY+269
-	Gui, Moves:Show, x%x% y%y%, Moves
-	WinActivate, %WINDOW_NAME%
+	showMoves(moves)
 	return moves
 }
 
 ;all calls must be safe
-check(arr,i1,j1,right){
+check(arr,i1,j1,right) {
 	grid := Array_DeepClone(arr) ;.Clone()
 	i2:= (right ? i1+1 : i1) ; check right
 	j2:= (right ? j1 : j1+1) ; check down
@@ -282,7 +248,7 @@ check(arr,i1,j1,right){
 
 		;msgbox % i1 "," j1 ":" (right ? "right": "down")
 		ret := sumr(ret , simdrop(grid,i1,j1,right))
-		;showGrid(grid,i1 "," j1 ":" (right? "right": "down") ": " toStr(ret),1)
+		;UpdateGrid(grid,i1 "," j1 ":" (right? "right": "down") ": " toStr(ret),1)
 	}
 		
 	;msgbox %  (right ? "r" : "d") ": " (right ? "r" : "d")i1 "x" j1  ": " grid[i1,j1] "=h" h1 "v" v1 " <-> " i2 "x" j2 ": " grid[i2,j2] "=h" h2 "v" v2
@@ -291,9 +257,14 @@ check(arr,i1,j1,right){
 
 
 checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
-	global colorvalue
-	global col2key
+global Col_w
+global Col_g
+global Col_r
+global Col_b
+global Col_u 
+global col2key
 	col := grid[i,j]
+	;msgbox % "c" col
 	if (col="X" || col="Y")
 		return
 	l:=0
@@ -314,12 +285,13 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 	}
 	lr := l+r
 	ud := u+d
+	;msgbox % "c:" col "; l:" l "; r" r "; u" u "; d" d ";" 
 	ret := {}
 	key := col2key[col]
 	;msgbox % "col-'" col "' key-'" key "'"
 	ret[key]:=0
 	if (lr>1) {
-		if (lr>2){
+		if (lr>2) {
 			l := i-1 ; whole row
 			r := 7-i
 			t := "lf_" col
@@ -336,13 +308,12 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 		inc(ret,key,lr)
 	}
 	if (ud>1) {
-		if (ud>2){
+		if (ud>2) {
 			u:=j-1 ; whole col
 			d:=7-j
 			t:="lf_" col
 			inc(ret,t)
 		}
-		
 		while (u>0) {
 			grid[i,j-u]:="X"
 			u--
@@ -357,14 +328,11 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 		t:= "extra_" col
 		inc(ret,t)
 	}
-	
-	
 	if (ud>1 || lr>1) {
 		inc(ret, "f")
-		grid[i,j]:="X"
-		v := 1 + ( colorvalue.HasKey(col) ? colorvalue[col] : 0 ) 
-		inc(ret,key,v) ;add i,j if match
-
+		grid[i,j]:="X" ;add i,j if match
+		v := 1 + ( Col_%col% ? Col_%col% : 0 ) 
+		inc(ret,key,v) 
 		;msgbox % toStr(ret) ":" ud "x" lr
 		;msgbox % ret[key]
 	}
@@ -372,7 +340,7 @@ checkmove(ByRef grid,i,j,ByRef lr:=0,ByRef ud:=0) {
 }
 
 
-simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
+simdrop(ByRef grid,i1:=0,j1:=0,right:=0) {
 	found:=0
 	Loop, 7 {
 	j := 8-A_Index ;reverse
@@ -387,9 +355,9 @@ simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
 	if (found<1) {
 		return 0
 	}
-	if (i && false) {
+	if (i && 0) {
 		txt := "simdrop" i1 "," j1 ":" (right? "right": "down")
-		showGrid(grid, txt ,1)
+		UpdateGrid(grid, txt ,1)
 	}
 	ret := {}
 	ret := sumr(ret, checkmatches(grid))
@@ -397,7 +365,7 @@ simdrop(ByRef grid,i1:=0,j1:=0,right:=0){
 	return ret
 }
 
-drop(ByRef grid,i,j){
+drop(ByRef grid,i,j) {
 	while (grid[i,j]="X")  {
 		j2 := j
 		while j2 > 1 {
@@ -411,8 +379,8 @@ drop(ByRef grid,i,j){
 	}
 }
 
-checkmatches(ByRef grid){
-	ret:={}
+checkmatches(ByRef grid) {
+	ret:= {}
 	Loop, 7 {
 	j := A_Index
 	Loop, 7	{
@@ -428,35 +396,26 @@ checkmatches(ByRef grid){
 ; result Object functions
 ;###########################################################################################
 
-sumr(ByRef ret,b){
+sumr(ByRef ret,b) {
 	For key,value in b {
 		found := 0
-;		if(ret.HasKey(key) && ret[key]>0 && value>0 ) {
-;			msgbox % "ret " ret[key] " - b " value
-;			found := 1
-;		}
 		if (value>0) {
 			inc(ret, key, value)
 		}
-;		if(found) {
-;			msgbox % "ret " ret[key] 
-;		}
-
 	}
 	return ret
 }
 
-inc(byRef ret, key ,val:=1){
+inc(byRef ret, key ,val:=1) {
 	a:= (ret.HasKey(key) ? ret[key] : 0)
 	ret[key] := a + val
 	return ret
 }
 
-toStr(a){
+toStr(a) {
 	b:=a.Clone()
 	txt:= ""
 	if b.HasKey("mana") {
-		msgbox % b["mana"]
 		txt.= b["mana"] "m"
 		b.delete("mana")
 	}
@@ -470,13 +429,13 @@ toStr(a){
 		b.delete("void")
 	}
 	For key,value in b {
-		if InStr(key,"lf_"){
+		if InStr(key,"lf_") {
 			txt.= (StrLen(txt) ? ", " : "") value "*" key
 			b.delete(key)
 		}
 	}
 	For key,value in b {
-		if InStr(key,"extra_"){
+		if InStr(key,"extra_") {
 			txt.= (StrLen(txt) ? ", " : "") value "*" key
 			b.delete(key)
 		}
@@ -485,39 +444,9 @@ toStr(a){
 		if (key!="f" && value>0) {
 			txt .= (StrLen(txt) ? ", " : "") key ":" value
 		}
-		;txt .= "; " key ":" value
-;		msgbox % key ": " value
-;		if InStr(key,"extra_"){
-;			txt.= value "*" key ", "
-;			b.delete(key)
-;		}
 	}
 	return txt
 }
 
-
-
-
-Array_DeepClone(Array, Objs:=0){
-    if !Objs
-        Objs := {}
-    Obj := Array.Clone()
-    Objs[&Array] := Obj ; Save this new array
-    For Key, Val in Obj
-        if (IsObject(Val)) ; If it is a subarray
-            Obj[Key] := Objs[&Val] ; If we already know of a refrence to this array
-            ? Objs[&Val] ; Then point it to the new array
-            : Array_DeepClone(Val,Objs) ; Otherwise, clone this sub-array
-    return Obj
-}
-
-
-ButtonClose:
-Gui, Destroy
-return
-
-ButtonCancel:
-Gui, Moves:Destroy
-return
 
 ExitApp

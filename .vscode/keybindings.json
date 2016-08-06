@@ -1,0 +1,13 @@
+// Platzieren Sie Ihre Tastenbindungen in dieser Datei, um die Standardwerte zu überschreiben.
+[
+{ "key": "ctrl+shift+q",             "command": "editor.action.removeCommentLine",
+                                     "when": "editorTextFocus" },
+{ "key": "ctrl+q",                   "command": "editor.action.commentLine",
+                                     "when": "editorTextFocus" },
+{ "key": "ctrl+d",                   "command": "editor.action.copyLinesDownAction",
+                                     "when": "editorTextFocus" },
+{ "key": "ctrl+shift+up",            "command": "editor.action.moveLinesUpAction",
+                                     "when": "editorTextFocus" },
+{ "key": "ctrl+shift+down",          "command": "editor.action.moveLinesDownAction",
+                                     "when": "editorTextFocus" }                                     
+]

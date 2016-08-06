@@ -1,0 +1,90 @@
+;region ;INI functions; ################################################################
+lastChar(){
+    char := getIniVal("lastsettings","lastChar")
+    if (char="N/A")
+        char="gideon"
+    return char
+}
+
+lastCfg(){
+    cfg := getIniVal("lastsettings","lastCfg")
+    if (cfg="N/A")
+        cfg="HomeNox"
+    return cfg
+}
+
+readChars() {
+global chars
+    chars:={}
+    i:=0
+    Loop {
+        char := getIniVal("chars",("c" ++i))
+        if(char="N/A") {
+            break
+        }
+        chars[char] := LoadChar(char)
+    }
+    return chars
+}
+
+LoadChar(char) {
+    ret:= {}
+    colors:=["w", "g", "r", "b", "u"]
+    For i,col in colors {
+        val := getIniVal(char,col)
+        if (col != "N/A") {
+            ret[col]:=val
+        }
+    }
+    return ret
+}
+
+SaveChar(char,colors) {
+    For col,val in colors {
+        IniWrite, val, config.ini, char, col
+    }
+}
+
+AvailableConfigs(){
+    cfgs:=[]
+    i:=0
+    Loop {
+        cfg := getIniVal("configs",("c" i++))
+        if(cfg="N/A") {
+            break
+        }
+        cfgs.Push(cfg)
+    }
+    return cfgs
+}
+
+LoadConfig(cfg:="Default") {
+global LoadedConfig
+    LoadedConfig := cfg
+    vars := ["WINDOW_NAME","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING"]
+    For i,var in vars {
+        val := getIniVal(cfg,var)
+        ;msgbox % var " -> " val
+        if (val != "N/A") {
+            %var%:=val
+        }
+    }
+}
+
+SaveConfig(name,config) {
+    For var,val in config {
+        setIniVal(config,var,val)
+    }
+}
+
+getIniVal(section,var) {
+    val := "N/A"
+    IniRead, val, config.ini, %section%, %var%, N/A
+    return val    
+}
+     
+setIniVal(section,var,value) {
+    IniWrite, %value%, config.ini, %section%, %var%
+}
+
+;end_region

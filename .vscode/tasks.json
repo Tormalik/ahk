@@ -2,42 +2,46 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "0.1.0",
-    "command": "msbuild",
-    "args": [
-        // Ask msbuild to generate full paths for file names.
-        "/property:GenerateFullPaths=true"
-    ],
-    "taskSelector": "/t:",
-    "showOutput": "silent",
-    "tasks": [
-        {
-            "taskName": "build",
-            // Show the output window only if unrecognized errors occur.
-            "showOutput": "silent",
-            // Use the standard MS compiler pattern to detect errors, warnings and infos
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "taskName": "Makefile",
-            // Make this the default build command.
-            "isBuildCommand": true,
-            // Show the output window only if unrecognized errors occur.
-            "showOutput": "always",
-            // No args
-            "args": ["all"],
-            // Use the standard less compilation problem matcher.
-            "problemMatcher": {
-                "owner": "cpp",
-                "fileLocation": ["relative", "${workspaceRoot}"],
-                "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "severity": 4,
-                    "message": 5
-                }
-            }            
-        }
-    ]
+    "taskName": "run",
+    "command": "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe",
+    "args": ["mtgpq.ahk"],
+    "showOutput": "silent"
+    // "taskSelector": "/t:",
+    // "tasks": [
+    //     {
+    //         "taskName": "build",
+    //         // Show the output window only if unrecognized errors occur.
+    //         "showOutput": "silent",
+    //         // Use the standard MS compiler pattern to detect errors, warnings and infos
+    //         "problemMatcher": "$msCompile"
+    //     },
+    //     {
+    //         "taskName": "Makefile",
+    //         // Make this the default build command.
+    //         "isBuildCommand": true,
+    //         // Show the output window only if unrecognized errors occur.
+    //         "showOutput": "always",
+    //         // No args
+    //         "args": ["all"],
+    //         // Use the standard less compilation problem matcher.
+    //         "problemMatcher": {
+    //             "owner": "cpp",
+    //             "fileLocation": ["relative", "${workspaceRoot}"],
+    //             "pattern": {
+    //                 "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+    //                 "file": 1,
+    //                 "line": 2,
+    //                 "column": 3,
+    //                 "severity": 4,
+    //                 "message": 5
+    //             }
+    //         }            
+    //     },
+    //     {
+    //         "taskName": "run",
+    //         "command": "ahk",
+    //         "isShellCommand": true,
+    //         "args": ["styles.less", "styles.css"]
+    //     }
+    // ]
 }

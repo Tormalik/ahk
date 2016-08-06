@@ -2,6 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run",
+            "type": "php",
+            "request": "launch",
+            "runtimeExecutable": "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe",
+            "args": [
+                "/DEBUG"
+            ],
+            "localSourceRoot":"${workspaceRoot}",
+            "serverSourceRoot":"${workspaceRoot}",
+            "stopOnEntry": false
+        },
+        {
             "name": "Extension starten",
             "type": "extensionHost",
             "request": "launch",
@@ -16,17 +28,17 @@
         },
         {
             "name": "Build",
-            "type": "miengine",
+            "type": "cppdbg",
             "request": "launch",
             "launchOptionType": "Local",
             "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
             "targetArchitecture": "x64",
-            "program": "Gdip_ImageSearch.exe",
+            "program": "${workspaceRoot}Gdip_ImageSearch.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
-            "environment": [],
-            "processId": "1500"
+            "environment": []
+            // "processId": 1500
         }
     ]
 }
