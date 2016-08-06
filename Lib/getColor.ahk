@@ -14,7 +14,7 @@ COLORS := {  0xBFA058: "w"
 col2key := {w: "mana", g: "mana", r: "mana", b: "mana", u: "mana", p: "loyl", v: "void"}
 
 
-iscol(ByRef grid,col,i,j){ ;secure get shortcircuit
+iscol(ByRef grid,col,i,j) { ;secure get shortcircuit
 	return ( (i<0 || i>7 || j<0 || j>7) ? 0 : (col=grid[i,j]))
 }
 

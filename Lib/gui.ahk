@@ -326,4 +326,7 @@ changeCfg:
     return
 
 endlabel:
+    a=1
+
+
 ;end_region

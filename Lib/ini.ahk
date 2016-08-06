@@ -52,7 +52,7 @@ global Col_u
 
 SaveChar(char,colors) {
     For col,val in colors {
-        IniWrite, val, config.ini, char, col
+        setIniVal(char,col,val)
     }
 }
 

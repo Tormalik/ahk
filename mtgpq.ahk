@@ -10,7 +10,7 @@ CoordMode, Pixel, Screen
 #Include Lib/GetColor.ahk 			;own color functions
 #Include Lib/ini.ahk 			    ;save load ini functions
 #Include Lib/gui.ahk 				;own gui functions
-#Include Lib/grid.ahk 				;provides model functions
+#Include Lib/Grid.ahk 				;provides model functions
 #Include Lib/printscreen.ahk 		;output to screen functions
 
 init := false
@@ -24,6 +24,7 @@ getMoves()
 ;OnExit, ExitSub
 ;#######################################################################################
 ;autoexec end
+
 return
 ;end_region
 ;#######################################################################################
@@ -71,12 +72,12 @@ global
 		if (!StrLen(CharChoice))
 			CharChoice:="gideon"
 		changeChar()
-		IfWinExist,  %WINDOW_NAME% {
+		IfWinExist,  %WINDOW_NAME%
+		{
 			WinActivate, %WINDOW_NAME%
-			WinWaitActive, %WINDOW_NAME%
+		  	WinWaitActive, %WINDOW_NAME%
 		}
 		;  if (A_UserName = "jan") {
-		;  	WinGetPos, wX, wY, w, h, A
 		;  	WinGetTitle, Title, A
 		;  	if (InStr(Title,"IrfanView")) {
 		;  		if (RegExMatch(Title, "Zoom: (\d+) x (\d+)" , match)) {
@@ -130,24 +131,10 @@ global
 	} ;init end
 }
 
-getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0) {
-global
-	initSettings()
-	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
-	;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
-	;msgbox % txt
-	 ; current colormedians reliable up to PADDING 25
-	w := SIZE_X - (2 * PADDING)
-	h := SIZE_Y - (2 * PADDING)
 
-	x_start := wX + ORIGIN_X + (i - 1) * (SIZE_X+OFFSET_X) + PADDING
-	x_end   := x_start + w
-	
-	y_start := wY + ORIGIN_Y + (j - 1) * (SIZE_Y+OFFSET_Y) + PADDING
-	y_end   := y_start + h
-	
-	return  
-}
+
+
+
 
 
 ExitApp
