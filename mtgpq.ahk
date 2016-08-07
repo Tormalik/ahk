@@ -12,6 +12,7 @@ CoordMode, Pixel, Screen
 #Include Lib/gui.ahk 				;own gui functions
 #Include Lib/Grid.ahk 				;provides model functions
 #Include Lib/printscreen.ahk 		;output to screen functions
+#Include Lib/Extensions.ahk 		;output to screen functions
 
 init := false
 Process, Priority,, High
@@ -105,6 +106,7 @@ global
 		;  		wid := WinExist("A")
 		;  		WINDOW_NAME := "AHK_ID " wid
 		;  	} else {
+			
 		;  		LoadedConfig:="HomeIrfan"
 		;  		LoadConfig(LoadedConfig)
 		;  	}
@@ -130,11 +132,5 @@ global
 		}
 	} ;init end
 }
-
-
-
-
-
-
 
 ExitApp

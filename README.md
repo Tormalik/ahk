@@ -44,10 +44,10 @@ One Gui to rule them all
 * include estimate value of unknown dropped gems
 * include possible remaining moves for opponent
 * Planeswalker recognition
-* create gui for selecting move
+* selecting move
 * move
-* show moves overlay
-* refactor: create mtgpqGrid Class which handles all the mechanics
+* refactor: create mtgpqGrid Class which wraps all the mechanics
+* highlight & tooltip per move
 
 ##Done
 
@@ -59,3 +59,4 @@ One Gui to rule them all
 * create more elaborate move return data (mana, planeswalker, Landfall (color), extra move)
 * create gui for color values
     * later: planeswalker and lvl select
+* show moves overlay

@@ -84,9 +84,15 @@ global Col_u
     Gui, grid:Add, Button, w100 x%txtx% y%py% gGridClose, Close
 
 ;show
-    WinGetPos, wX, wY, w, h, %WINDOW_NAME%
-	x := wX+w
-	Gui, grid:Show, x%x% y%wY%, Grid
+    para:=""
+    IfWinExist,  %WINDOW_NAME%
+    {
+        WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+        x := wX+w
+        para=x%x% y%wY%
+    }
+    ;msgbox  'x%x%' 'y%wY%' %WINDOW_NAME%
+	Gui, grid:Show, %para%, Grid
 
     return
 }
@@ -108,7 +114,7 @@ global grid_hwnd
     WinGetPos, wX, wY, w, h, %WINDOW_NAME%
 	x := wX+w
 	;Gui, grid:Show, x%x% y%wY%, Grid
-    WinMove, x, wY 
+    WinMove,ahk_id %grid_hwnd%,, x, wY 
 
 ;Update Grid
     GuiControl, grid:-Redraw,MyGrid   ;-- Redraw off
@@ -194,10 +200,10 @@ global Col_g
 global Col_r
 global Col_b
 global Col_u
-    if (!chars) {
-        chars:=readChars()
-    }
-    cs:=chars[CharChoice]
+    ;  if (!chars) {
+    ;      chars:=readChars()
+    ;  }
+    cs:=LoadChar(CharChoice)
     for col,val in cs {
         Col_%col%:=val
     }
@@ -275,24 +281,6 @@ timediff(st) {
    return result
 }
 
-
-
-Array_DeepClone(Array, Objs:=0) {
-    if !Objs
-        Objs := {}
-    Obj := Array.Clone()
-    Objs[&Array] := Obj ; Save this new array
-    For Key, Val in Obj
-        if (IsObject(Val)) ; If it is a subarray
-            Obj[Key] := Objs[&Val] ; If we already know of a refrence to this array
-            ? Objs[&Val] ; Then point it to the new array
-            : Array_DeepClone(Val,Objs) ; Otherwise, clone this sub-array
-
-    return Obj
-}
-
-
-
 ;region ;labels; ################################################################################
 goto endlabel
 
@@ -322,6 +310,8 @@ ChangeChar:
 
 changeCfg:
     Gui, grid:Submit, NoHide
+    ;msgbox % LoadedConfig
+    setLastCfg()
     LoadConfig(LoadedConfig)
     return
 

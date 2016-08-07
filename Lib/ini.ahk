@@ -13,6 +13,11 @@ lastCfg(){
     return cfg
 }
 
+setLastCfg(){
+global LoadedConfig
+    setIniVal("lastsettings","lastCfg",LoadedConfig)
+}
+
 readChars() {
 global chars
     chars:={}

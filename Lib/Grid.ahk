@@ -52,6 +52,7 @@ getMoves() {
 		} 
 	}
 	}
+	drawMoves(moves)
 	showMoves(moves)
 	return moves
 }
@@ -247,23 +248,22 @@ toStr(a) {
 		b.delete("mana")
 	}
 	if b.HasKey("loyl") {
-
-		txt.= (StrLen(txt) ? ", " : "") b["loyl"] "p"
+		txt.= (StrLen(txt) ? "," : "") b["loyl"] "p"
 		b.delete("loyl")
 	}
 	if b.HasKey("void") {
-		txt.= (StrLen(txt) ? ", " : "") b["void"] "v"
+		txt.= (StrLen(txt) ? "," : "") b["void"] "v"
 		b.delete("void")
 	}
 	For key,value in b {
-		if InStr(key,"lf_") {
-			txt.= (StrLen(txt) ? ", " : "") value "*" key
+		if RegExMatch(key, "lf_(\w)", col) {  ;InStr(key,"lf_") {
+			txt.= (StrLen(txt) ? ", " : "") (value>1 ?  value : "") col1
 			b.delete(key)
 		}
 	}
 	For key,value in b {
-		if InStr(key,"extra_") {
-			txt.= (StrLen(txt) ? ", " : "") value "*" key
+		if RegExMatch(key, "extra_(\w)", col) { ;InStr(key,"extra_") {
+			txt.= (StrLen(txt) ? ", " : "") "X"(value>1 ?  value : "") col1
 			b.delete(key)
 		}
 	}
