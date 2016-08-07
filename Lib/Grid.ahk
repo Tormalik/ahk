@@ -1,7 +1,7 @@
 readState() {
 	initSettings()
 	t1:= A_now
-
+	clear()
 	arr	:= []
 	Loop, 7 {
 	j := A_Index

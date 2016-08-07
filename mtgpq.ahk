@@ -34,6 +34,8 @@ return
 ^F1::getMoves() ;global start hook
 
 #If WinActive(WINDOW_NAME)
+	~LButton::Clear()
+	~RButton::getMoves()
 	F1::getMoves()
 	F2::searchArea()
 	F3::readState()

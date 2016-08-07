@@ -74,11 +74,15 @@ AvailableConfigs(){
     return cfgs
 }
 
-LoadConfig(cfg:="Default") {
+LoadConfig(cfg:="default") {
 global LoadedConfig
     LoadedConfig := cfg
     vars := ["WINDOW_NAME","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING"]
     For i,var in vars {
+        val := getIniVal("default",var)
+        if (val != "N/A") {
+            %var%:=val
+        }
         val := getIniVal(cfg,var)
         ;msgbox % var " -> " val
         if (val != "N/A") {
