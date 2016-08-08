@@ -41,6 +41,7 @@ One Gui to rule them all
 
 ##ToDo
 
+* Bug: Last Char not remembered correctly 
 * include estimate value of unknown dropped gems
 * include possible remaining moves for opponent
 * Planeswalker recognition
@@ -48,6 +49,9 @@ One Gui to rule them all
 * move
 * refactor: create mtgpqGrid Class which wraps all the mechanics
 * highlight & tooltip per move
+* add 1p per match
+* value moves
+* show window on update
 
 ##Done
 

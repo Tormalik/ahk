@@ -9,6 +9,9 @@ COLORS := {  0xBFA058: "w"
 			,0x38312C: "v"  ;void
 			,0x31271D: "v"
 			,0x26211B: "v"
+			,0x504B32: "v" ;forest background
+			,0x424A38: "v" ;forest background
+			,0x181816: "v" ;forest background
 			,0x916E46: "p" }
 
 col2key := {w: "mana", g: "mana", r: "mana", b: "mana", u: "mana", p: "loyl", v: "void"}

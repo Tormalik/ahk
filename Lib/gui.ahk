@@ -21,7 +21,7 @@ global Col_u
     header := "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7`r`n"
 	StringTrimLeft, header, header, 1
     ;Remove first char
-	Gui, grid:+AlwaysOnTop +ToolWindow +LastFound
+	Gui, grid: +LastFound
 	Gui, grid:Add, ListView, +Grid h160 w210 vMyGrid, %header%
     Gui, grid:Default
     grid_hwnd := WinExist()
@@ -92,7 +92,7 @@ global Col_u
         para=x%x% y%wY%
     }
     ;msgbox  'x%x%' 'y%wY%' %WINDOW_NAME%
-	Gui, grid:Show, %para%, Grid
+	Gui, grid:Show, %para%, MtG:PQ Helper
 
     return
 }
@@ -159,7 +159,9 @@ global grid_hwnd
 ;Clear Moves
     GuiControl, grid:,MyEdit,
 
-;modal	
+;modal
+    WinActivate, AHK_ID %grid_hwnd%
+    WinActivate, WINDOW_NAME
     if (modal>0) {
 		WinWait, AHK_ID %grid_hwnd%
 		WinWaitClose, AHK_ID %grid_hwnd%

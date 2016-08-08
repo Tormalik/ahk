@@ -159,7 +159,10 @@ global col2key
 	if (ud>1 || lr>1) {
 		inc(ret, "f")
 		grid[i,j]:="X" ;add i,j if match
-		v := 1 + ( Col_%col% ? Col_%col% : 0 ) 
+		v := 1 + ( Col_%col% ? Col_%col% : 0 )
+		if (key="mana") {
+			inc(ret,"loyl") 
+		}
 		inc(ret,key,v) 
 		;msgbox % toStr(ret) ":" ud "x" lr
 		;msgbox % ret[key]

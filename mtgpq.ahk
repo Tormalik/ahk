@@ -43,7 +43,7 @@ return
 	F5::Reload
 	F6::
 		initSettings()
-		temp_color := getColor(5,7)
+		temp_color := getColor(6,5)
 		clipboard := temp_color
 		msgbox % "Col " temp_color
 		return
