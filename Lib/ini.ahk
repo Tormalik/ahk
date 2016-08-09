@@ -91,9 +91,23 @@ global LoadedConfig
     }
 }
 
-SaveConfig(name,config) {
-    For var,val in config {
-        setIniVal(config,var,val)
+SaveConfig(cfg:="") {
+global WINDOW_NAME
+global LoadedConfig
+global ORIGIN_X
+global ORIGIN_Y
+global SIZE_X
+global SIZE_Y
+global OFFSET_X
+global OFFSET_Y
+global PADDING
+
+    if (!StrLen(cfg)) {
+        cfg:=LoadedConfig
+    }
+    vars := ["WINDOW_NAME","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING"]
+    For i,var in vars {
+        setIniVal(cfg,var,%var%)
     }
 }
 

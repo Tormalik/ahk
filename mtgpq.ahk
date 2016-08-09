@@ -14,6 +14,7 @@ CoordMode, Pixel, Screen
 #Include Lib/printscreen.ahk 		;output to screen functions
 #Include Lib/Extensions.ahk 		;output to screen functions
 
+calibrate_step:=0
 init := false
 Process, Priority,, High
 SetBatchLines, -1
@@ -33,7 +34,7 @@ return
 ;region ;Labels and Hotkeys; ###########################################################
 ^F1::getMoves() ;global start hook
 
-#If WinActive(WINDOW_NAME)
+#If WinActive(WINDOW_NAME) or WinActive("AHK_ID " grid_hwnd)
 	~LButton::Clear()
 	~RButton::getMoves()
 	F1::getMoves()
@@ -47,10 +48,16 @@ return
 		clipboard := temp_color
 		msgbox % "Col " temp_color
 		return
-	F7::initSettings(true)
+	F7::initSettings(1)
+	F8::calibrate()
+
+#If WinActive(WINDOW_NAME) and (calibrate_step>0)
+	LButton::calibrate()
 
 #If WinActive("Visual Studio Code")
 	F5::Reload
+
+#IfWinActive
 
 ExitSub:
 	;savesettings()

@@ -1,5 +1,12 @@
 getCoords(i, j, ByRef x_start, ByRef y_start, ByRef x_end = 0, ByRef y_end = 0, ByRef w = 0, Byref h = 0) {
-global
+global WINDOW_NAME
+global ORIGIN_X
+global ORIGIN_Y
+global SIZE_X
+global SIZE_Y
+global OFFSET_X
+global OFFSET_Y
+global PADDING
 	initSettings()
 	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
 	;txt := "name:`t" WINDOW_NAME "`nwX*wY:`t " wX "x" wY "`nw*h:`t" w "x" h "`n"
@@ -16,6 +23,100 @@ global
 	
 	return  
 }
+
+calibrate() {
+global grid_hwnd
+global calibrate_step
+global calibrate_x1
+global calibrate_y1
+global WINDOW_NAME
+global LoadedConfig
+global ORIGIN_X
+global ORIGIN_Y
+global SIZE_X
+global SIZE_Y
+global OFFSET_X
+global OFFSET_Y
+global PADDING
+CoordMode, Mouse, Screen
+	if (!calibrate_step) {
+		calibrate_x1:=0
+		calibrate_y1:=0
+		calibrate_step:=1
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+		x := wX+w
+		WinMove,ahk_id %grid_hwnd%,, x, wY
+		GuiControl, grid:,CharChoice,
+		SB_SetText("click in the center of a corner gem")
+	}
+	if (calibrate_step=1) {
+		MouseGetPos, calibrate_x1, calibrate_y1
+		calibrate_step:=2
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+		x := wX+w
+		WinMove,ahk_id %grid_hwnd%,, x, wY
+		GuiControl, grid:,CharChoice,
+		SB_SetText("msgbox click in the center of the opposite corner gem")
+	} else if (calibrate_step=2) {
+		MouseGetPos, xpos, ypos
+		calcgridsize(xpos,ypos)
+		calibrate_step:=0
+		WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+		txt := ""
+		vars:= ["LoadedConfig","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING","WINDOW_NAME","wX","wY","w","h"]
+		for i,var in vars {
+			pad:= ("             " var)
+			StringRight, pad, pad, 12
+			txt .= pad " : " %var% "`n"
+		}
+		dialog(txt,"Consolas")
+		getCoords(1,1,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox start %x%x%y%
+		getCoords(7,7,x,y,x2,y2,w,h)
+		drawRect(0xC0FF0000, x, y, w, h)
+		msgbox end %x%x%y%
+		clear()
+		MsgBox, 4,, Would you like to save these settings?
+		IfMsgBox Yes
+		{
+			SaveConfig()
+			MsgBox Config Saved
+		}
+	}
+}
+
+calcgridsize(calibrate_x2,calibrate_y2){
+global calibrate_x1
+global calibrate_y1
+global WINDOW_NAME
+global ORIGIN_X
+global ORIGIN_Y
+global SIZE_X
+global SIZE_Y
+global OFFSET_X
+global OFFSET_Y
+global PADDING
+	WinGetPos, wX, wY, w, h, %WINDOW_NAME%
+	msgbox % wX "x" wY ", " w "x" h
+	x1:=(calibrate_x1 > calibrate_x2 ? calibrate_x2 : calibrate_x1)-wX
+	x2:=(calibrate_x1 > calibrate_x2 ? calibrate_x1 : calibrate_x2)-wX
+	y1:=(calibrate_y1 > calibrate_y2 ? calibrate_y2 : calibrate_y1)-wY
+	y2:=(calibrate_y1 > calibrate_y2 ? calibrate_y1 : calibrate_y2)-wY
+	msgbox % x1 "x" y1 ", " x2 "x" y2
+	cellx:=(x2-x1)/6
+	celly:=(y2-y1)/6
+	SIZE_X:=Round(0.777*cellx,2) ;(7/9)
+	SIZE_Y:=Round(0.777*celly,2)
+	OFFSET_X:=Round(0.222*cellx,2)
+	OFFSET_Y:=Round(0.222*celly,2)
+	PADDING:=Round(0.666*OFFSET_X,2)
+	ORIGIN_X:=Round(x1-(0.5*SIZE_X),2)
+	ORIGIN_Y:=Round(y1-(0.5*SIZE_X),2)
+	calibrate_x1:=0
+	calibrate_y1:=0
+}
+
 
 getCenter(i, j, ByRef x, ByRef y) {
 global

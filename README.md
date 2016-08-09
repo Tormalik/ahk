@@ -52,6 +52,7 @@ One Gui to rule them all
 * add 1p per match
 * value moves
 * show window on update
+* screen calibrator
 
 ##Done
 
