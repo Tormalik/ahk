@@ -32,3 +32,38 @@ Array_DeepClone(Array, Objs:=0) {
 
     return Obj
 }
+
+
+timediff(st) {
+   transform,S,MOD,st,60
+   stringlen,L1,S
+   if L1 =1
+   S=0%S%
+   if S=0
+   S=00
+
+   M1 :=(st/60)
+   transform,M2,MOD,M1,60
+   transform,M3,Floor,M2
+   stringlen,L2,M3
+   if L2 =1
+   M3=0%M3%
+   if M3=0
+   M3=00
+
+   H1 :=(M1/60)
+   transform,H2,Floor,H1
+   stringlen,L2,H2
+   if L2=1
+   H2=0%H2%
+   if H2=0
+   H2=00
+   result= %H2%:%M3%:%S%
+
+   return result
+}
+
+Null(){
+    return
+}
+

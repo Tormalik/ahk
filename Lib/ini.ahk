@@ -1,19 +1,20 @@
 ;region ;INI functions; ################################################################
-lastChar(){
+lastChar() {
     char := getIniVal("lastsettings","lastChar")
-    if (char="N/A")
-        char="gideon"
-    return char
+    return (char="N/A" ? "gideon" : char)
 }
 
-lastCfg(){
+setLastChar() {
+global CharChoice
+    ret:= setIniVal("lastsettings","lastChar",CharChoice)
+}
+
+lastCfg() {
     cfg := getIniVal("lastsettings","lastCfg")
-    if (cfg="N/A")
-        cfg="HomeNox"
-    return cfg
+    return (cfg="N/A" ? "HomeNox" : cfg)
 }
 
-setLastCfg(){
+setLastCfg() {
 global LoadedConfig
     setIniVal("lastsettings","lastCfg",LoadedConfig)
 }
@@ -101,7 +102,6 @@ global SIZE_Y
 global OFFSET_X
 global OFFSET_Y
 global PADDING
-
     if (!StrLen(cfg)) {
         cfg:=LoadedConfig
     }
@@ -112,7 +112,6 @@ global PADDING
 }
 
 getIniVal(section,var) {
-    val := "N/A"
     IniRead, val, config.ini, %section%, %var%, N/A
     return val    
 }

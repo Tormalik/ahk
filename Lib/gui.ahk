@@ -170,6 +170,12 @@ global grid_hwnd
     return
 }
 
+UpdateStatusbar(text) {
+global WINDOW_NAME
+global grid_hwnd
+
+}
+
 UpdateColors(){
 global Col_w
 global Col_g
@@ -202,15 +208,12 @@ global Col_g
 global Col_r
 global Col_b
 global Col_u
-    ;  if (!chars) {
-    ;      chars:=readChars()
-    ;  }
+    setLastChar()
     cs:=LoadChar(CharChoice)
     for col,val in cs {
         Col_%col%:=val
     }
     UpdateColors()
-    ;test()
     return
 }
 
@@ -253,35 +256,6 @@ dialog(message,font:="",modal:=1,config:="w230") {
 
 ;end_region
 
-;region ;helpers; ################################################################################
-timediff(st) {
-   transform,S,MOD,st,60
-   stringlen,L1,S
-   if L1 =1
-   S=0%S%
-   if S=0
-   S=00
-
-   M1 :=(st/60)
-   transform,M2,MOD,M1,60
-   transform,M3,Floor,M2
-   stringlen,L2,M3
-   if L2 =1
-   M3=0%M3%
-   if M3=0
-   M3=00
-
-   H1 :=(M1/60)
-   transform,H2,Floor,H1
-   stringlen,L2,H2
-   if L2=1
-   H2=0%H2%
-   if H2=0
-   H2=00
-   result= %H2%:%M3%:%S%
-
-   return result
-}
 
 ;region ;labels; ################################################################################
 goto endlabel
@@ -318,7 +292,9 @@ changeCfg:
     return
 
 endlabel:
-    a=1
+    a=
+   ;Null()
+    ;return
 
 
 ;end_region
