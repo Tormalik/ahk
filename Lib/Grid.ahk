@@ -39,14 +39,14 @@ getMoves() {
 		if (i<7) { ; horizontal swaps
 			cnt:=check(grid,i,j,true) ;true=right
 			if (cnt["f"]) {
-				key := i "," j "-r"
+				key := padRight(toVal(cnt),5,"0") "_" i "," j "-r"
 				moves[key] := cnt
 			}
 		} 
 		if (j<7) { ; horizontal swaps
 			cnt:=check(grid,i,j,false) ;false=down
 			if (cnt["f"]) {
-				key := i "," j "-d"
+				key := padRight(toVal(cnt),5,"0") "_" i "," j "-d"
 				moves[key] := cnt
 			}
 		} 
@@ -63,11 +63,11 @@ check(arr,i1,j1,right) {
 	i2:= (right ? i1+1 : i1) ; check right
 	j2:= (right ? j1 : j1+1) ; check down
 	;switch
-	tmp := grid[i2, j2]
-	;msgbox % 1 ": "  tmp " " grid[i2, j2]
+	t_tmp := grid[i2, j2]
+	;msgbox % 1 ": "  t_tmp " " grid[i2, j2]
 	grid[i2, j2] := grid[i1, j1]
-	grid[i1, j1] := tmp
-	;msgbox % 2 ": " tmp " " grid[i2, j2]
+	grid[i1, j1] := t_tmp
+	;msgbox % 2 ": " t_tmp " " grid[i2, j2]
 	;check
 	ret := {}
 	ret := sumr(ret, checkmove(grid, i1, j1, h1, v1))
@@ -239,40 +239,64 @@ sumr(ByRef ret,b) {
 
 inc(byRef ret, key ,val:=1) {
 	a:= (ret.HasKey(key) ? ret[key] : 0)
-	ret[key] := a + val
+	ret[key]:= a + val
 	return ret
 }
 
-toStr(a) {
+toVal(a) {
+	ret:= 0
+	For key,val in a {
+		if(key="mana") {
+			ret+= val
+		} else if(key="loyl") {
+			ret+= floor(0.5*val)
+		} else if(key="void") {
+			ret+= floor(0.25*val)
+		} else if RegExMatch(key, "extra_(\w)", col) {
+			ret+= 50*val
+		} 
+	}
+	return ret
+}
+
+toStr(a,linebreak:=0) {
 	b:=a.Clone()
 	txt:= ""
+	lb:=(linebreak ? "`n" : "; ")
+	
+	t_tmp:= ""
+	For key,value in b {
+		if RegExMatch(key, "extra_(\w)", col) {
+			t_tmp.= (StrLen(txt) ? "," : "") (value>1 ?  value : "") col1
+			b.delete(key)
+		}
+	}
+	txt.= (StrLen(t_tmp) ? "X" t_tmp lb : "")
+	t_tmp:= ""
 	if b.HasKey("mana") {
-		txt.= b["mana"] "m"
+		t_tmp.= (StrLen(t_tmp) ? "," : "") b["mana"] "m"
 		b.delete("mana")
 	}
 	if b.HasKey("loyl") {
-		txt.= (StrLen(txt) ? "," : "") b["loyl"] "p"
+		t_tmp.= (StrLen(t_tmp) ? "," : "") b["loyl"] "p"
 		b.delete("loyl")
 	}
 	if b.HasKey("void") {
-		txt.= (StrLen(txt) ? "," : "") b["void"] "v"
+		t_tmp.= (StrLen(t_tmp) ? "," : "") b["void"] "v"
 		b.delete("void")
 	}
+	txt.= (StrLen(t_tmp) ? t_tmp lb : "")
+	t_tmp:= ""
 	For key,value in b {
-		if RegExMatch(key, "lf_(\w)", col) {  ;InStr(key,"lf_") {
-			txt.= (StrLen(txt) ? ", " : "") (value>1 ?  value : "") col1
+		if RegExMatch(key, "lf_([wburgvp])", col) {  ;InStr(key,"lf_") {
+			t_tmp.= (StrLen(t_tmp) ? "," : "") (value>1 ?  value : "") col1
 			b.delete(key)
 		}
 	}
-	For key,value in b {
-		if RegExMatch(key, "extra_(\w)", col) { ;InStr(key,"extra_") {
-			txt.= (StrLen(txt) ? ", " : "") "X"(value>1 ?  value : "") col1
-			b.delete(key)
-		}
-	}
+	txt.= (StrLen(t_tmp) ? "L" t_tmp lb : "")
 	For key,value in b {
 		if (key!="f" && value>0) {
-			txt .= (StrLen(txt) ? ", " : "") key ":" value
+			txt .= (StrLen(txt) ? "," : "") key ":" value
 		}
 	}
 	return txt

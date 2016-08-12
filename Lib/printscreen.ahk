@@ -83,6 +83,7 @@ CoordMode, Mouse, Screen
 			SaveConfig()
 			MsgBox Config Saved
 		}
+		WinActivate, WINDOW_NAME
 	}
 }
 
@@ -131,10 +132,22 @@ drawMoves(moves) {
 global G	
 	StartDrawGDIP()
 	ClearDrawGDIP()
-	pBrush := Gdip_BrushCreateSolid(0xC0A0A0A0)		; polygon fill
-	pPen:=Gdip_CreatePen(0xC0FFFFFF, 2) 			; polygon outline
+	pBrush := Gdip_BrushCreateSolid(0x80A0A0A0)		; polygon fill
+	pPen:=Gdip_CreatePen(0x80FFFFFF, 2) 			; polygon outline
 	Gdip_SetInterpolationMode(G, 7)
+	cnt:=0
 	for key,val in moves {
+		cnt++
+	}
+	i:=0
+	for key,val in moves {
+		i++
+		if(i>=cnt){
+			Gdip_DeletePen(pPen)
+			Gdip_DeleteBrush(pBrush)
+			pBrush := Gdip_BrushCreateSolid(0xA0E0E070)		; polygon fill
+			pPen:=Gdip_CreatePen(0xA0FFFF80, 2) 			; polygon outline
+		}
 		RegExMatch(key, "([1-7]),([1-7])-([rd])", c)
 		drawMove(c1,c2,c3,val,pBrush,pPen)
 	}
@@ -196,16 +209,18 @@ global G
 	}
 	x1 := (x1+x4)/2
 	y1 := (y1+y4)/2
-	t:=toStr(value)
+	t:=toStr(value,1)
+	StringReplace, t, t, `n , `n, UseErrorLevel
+	cnt:= ErrorLevel
 	;msgbox % "'" t "'"
-	t:=StrReplace(t, "," , "`n",cnt)
 	options:="Center vCenter s12 "
 	outline:=" cFFFFFFFF"
 	color:=" cFF000000"
 	w:=0.7 ;outline width
 	Gdip_SetSmoothingMode(G,1)
-	y1-=4
-	y1-=cnt*8
+
+	y1-=q/4
+	y1-=cnt*q/4
 	;posis:=[("x" x1-w " y" y1-w outline),("x" x1-w " y" y1+w outline),("x" x1+w " y" y1-w outline),("x" x1+w " y" y1+w outline),("x" x1 " y" y1 color)]
 	posis:=[("x" x1 " y" y1 color)]
 	For i,pos in posis {

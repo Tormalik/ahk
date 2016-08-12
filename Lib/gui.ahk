@@ -191,9 +191,11 @@ global Col_u
 
 showMoves(moves) {
 global WINDOW_NAME
+global vkey
   	result := ""
-	For key, value in moves {
-		result .= key ":`t" toStr(value) "`n"
+    For key, value in moves {
+        vkey := substr(key,7)
+        result := vkey ":`t" toStr(value) "`n" result
 	}
     GuiControl, grid:,MyEdit, %result%
 	WinActivate, %WINDOW_NAME%
@@ -250,6 +252,7 @@ dialog(message,font:="",modal:=1,config:="w230") {
     if (modal>0) {
         WinWait, AHK_ID %modal_hwnd%
         WinWaitClose, AHK_ID %modal_hwnd%
+        WinActivate, WINDOW_NAME
     }
     return
 }

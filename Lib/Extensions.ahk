@@ -63,7 +63,21 @@ timediff(st) {
    return result
 }
 
-Null(){
+Null() {
     return
 }
 
+
+padLeft(str, size, fill:="") {
+   fill:= (strlen(fill) ? fill : A_Space)
+   loop % size-StrLen(str)
+      str .= fill
+   return str
+}
+
+padRight(str, size, fill:="") {
+   fill:= (strlen(fill) ? fill : A_Space)
+   loop % size-StrLen(str)
+      str := fill str 
+   return str
+}

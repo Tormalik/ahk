@@ -14,7 +14,7 @@ class Ini {
         }
     }
 
-    Cfg[] {
+    Config[] {
         get {
             cfg := this.getIniVal("lastsettings","lastCfg")
             return (cfg="N/A" ? "HomeNox" : cfg)
@@ -25,6 +25,45 @@ class Ini {
         }
     }
 
+    AllConfigs[] {
+        get {
+            if (_cfgs
+            cfgs:=[]
+            i:=0
+            Loop {
+                cfg := getIniVal("configs",("c" i++))
+                if(cfg="N/A") {
+                    break
+                }
+                cfgs.Push(cfg)
+            }
+            return cfgs
+        }
+    }
+
+    saveVars(section,vars) {
+        For key,val in vars {
+            setIniVal(section,key,value)
+        }
+    }
+
+    loadVars(section,ByRef vars,default:="") {
+        if(strlen(default)>0) {
+        For key,val in vars {
+            val := getIniVal(default,key)
+            if (val != "N/A") {
+                vars[key]:=val
+            }
+        }
+        }
+        For key,val in vars {
+            val := getIniVal(section,key)
+            if (val != "N/A") {
+                vars[key]:=val
+            }
+        }
+        return vars
+    }
 
     getIniVal(section,var) {
         IniRead, val, %this.inifile%, %section%, %var%, N/A
@@ -38,26 +77,19 @@ class Ini {
 }
 
 
-class Config extends Property{
+class Config {
     static vars := ["WINDOW_NAME","ORIGIN_X","ORIGIN_Y","SIZE_X","SIZE_Y","OFFSET_X","OFFSET_Y","PADDING"]
     
-    __New(){
-        this._cfgs:=this.Configs 
+    __New(ini,name) {
+        this.name:=name
+        this.ini :=ini
     }
 
-    getConfigs(){
-        if (_cfgs
-        cfgs:=[]
-        i:=0
-        Loop {
-            cfg := getIniVal("configs",("c" i++))
-            if(cfg="N/A") {
-                break
-            }
-            cfgs.Push(cfg)
-        }
-        return cfgs
+    save(){
+
     }
 
+    load(){
 
+    }
 }
