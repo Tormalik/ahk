@@ -53,6 +53,9 @@ One Gui to rule them all
 * value moves
 * show window on update
 * screen calibrator
+* bug grid does not get updated on showmoves
+* detect battlemode
+* detect playermove
 
 ##Done
 
@@ -65,3 +68,5 @@ One Gui to rule them all
 * create gui for color values
     * later: planeswalker and lvl select
 * show moves overlay
+* sort moves by value
+* highlight best move 
